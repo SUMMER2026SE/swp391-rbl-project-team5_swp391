@@ -1,8 +1,3 @@
-<%-- 
-    Document   : footer
-    Created on : May 25, 2024, 5:28:24?PM
-    Author     : DiepTCNN
---%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <jsp:include page="/includes/customer/header.jsp" />
 <footer id="footer" class="footer">

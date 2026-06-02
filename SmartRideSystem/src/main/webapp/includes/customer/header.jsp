@@ -1,8 +1,3 @@
-<%-- 
-    Document   : header2
-    Created on : Jun 24, 2024, 3:26:03?PM
-    Author     : ADMIN
---%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <title>Trang Chủ</title>
 <meta content name="description">

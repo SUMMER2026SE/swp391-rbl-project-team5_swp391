@@ -1,8 +1,3 @@
-<%-- 
-    Document   : profileCus
-    Created on : 30 thg 5, 2024, 21:04:50
-    Author     : MINH TUAN
---%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ page import="java.text.SimpleDateFormat" %>
