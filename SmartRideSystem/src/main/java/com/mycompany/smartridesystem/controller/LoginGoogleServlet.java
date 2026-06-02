@@ -27,7 +27,7 @@ public class LoginGoogleServlet extends HttpServlet {
         String email = GoogleLogin.getEmail(accessToken);
         Account acc = AccountDAO.getInstance().getAccountByEmail(email);
         if (acc == null) { //chÆ°a cÃ³ account
-            //táº¡o 1 account má»›i chá»‰ bao gá»“m: email, username (email), password
+            //tạo 1 account má»›i chá»‰ bao gồm: email, username (email), password
             AccountDAO.getInstance().createANewAccountForLoginGoogle(email, PasswordGenerator.generatePassword(6));
             acc = AccountDAO.getInstance().getAccountByEmail(email);
         }
