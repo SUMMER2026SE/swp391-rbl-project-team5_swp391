@@ -15,10 +15,6 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-/**
- *
- * @author LeQuangMinh
- */
 @WebServlet(name = "ChangePasswordServlet", urlPatterns = {"/changepassword"})
 public class ChangePasswordServlet extends HttpServlet {
 

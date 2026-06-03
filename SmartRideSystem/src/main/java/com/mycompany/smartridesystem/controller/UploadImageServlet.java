@@ -21,10 +21,6 @@ import java.nio.file.Paths;
 import java.util.Random;
 import com.mycompany.smartridesystem.util.SupabaseStorageUtil;
 
-/**
- *
- * @author LeQuangMinh
- */
 @WebServlet(name = "UploadImageServlet", urlPatterns = {"/uploadimage"})
 @MultipartConfig // ThÃƒÂªm annotation nÃƒÂ y
 public class UploadImageServlet extends HttpServlet {

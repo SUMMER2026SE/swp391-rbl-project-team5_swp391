@@ -6,10 +6,6 @@ package com.mycompany.smartridesystem.constant;
 
 import java.security.SecureRandom;
 
-/**
- *
- * @author LeQuangMinh
- */
 public class PasswordGenerator {
     private static final String UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"; 
     private static final String LOWER = "abcdefghijklmnopqrstuvwxyz"; 

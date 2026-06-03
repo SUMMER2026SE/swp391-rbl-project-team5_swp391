@@ -19,10 +19,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- *
- * @author LeQuangMinh
- */
 public class AccountDAO implements Serializable {
 
     private static AccountDAO instance;

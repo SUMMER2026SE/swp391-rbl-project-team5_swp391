@@ -1,8 +1,3 @@
-<%-- 
-    Document   : changepassword
-    Created on : 2 thg 6, 2024, 12:33:57
-    Author     : MINH TUAN
---%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
