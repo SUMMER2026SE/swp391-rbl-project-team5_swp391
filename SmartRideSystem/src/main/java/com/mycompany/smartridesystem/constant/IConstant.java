@@ -1,13 +1,7 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
- */
+
 package com.mycompany.smartridesystem.constant;
 
-/**
- *
- * @author LeQuangMinh
- */
+
 public interface IConstant {
     String GOOGLE_CLIENT_ID = "YOUR_GOOGLE_CLIENT_ID";
 

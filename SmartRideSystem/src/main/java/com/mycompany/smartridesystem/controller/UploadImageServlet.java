@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
+
 package com.mycompany.smartridesystem.controller;
 
 import com.mycompany.smartridesystem.dao.AccountDAO;
@@ -21,12 +18,9 @@ import java.nio.file.Paths;
 import java.util.Random;
 import com.mycompany.smartridesystem.util.SupabaseStorageUtil;
 
-/**
- *
- * @author LeQuangMinh
- */
+
 @WebServlet(name = "UploadImageServlet", urlPatterns = {"/uploadimage"})
-@MultipartConfig // ThÃƒÂªm annotation nÃƒÂ y
+@MultipartConfig 
 public class UploadImageServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
@@ -48,7 +42,7 @@ public class UploadImageServlet extends HttpServlet {
             HttpSession session = request.getSession();
             Account account = (Account) session.getAttribute("account");
             if (account == null) {
-                response.sendRedirect("login.jsp");  // Redirect to login if session is invalid
+                response.sendRedirect("login.jsp");  
                 return;
             }
             String id = request.getParameter("id");
@@ -58,7 +52,7 @@ public class UploadImageServlet extends HttpServlet {
             String publicUrl = fileUploadHandler.handleFileUpload(filePart, name, "profileImg");
             if (publicUrl == null) publicUrl = name;
 
-            // Delete old image if exists
+            
             if (account.getImage() != null && !account.getImage().isEmpty()) {
                 SupabaseStorageUtil.deleteFile(account.getImage());
             }
@@ -66,10 +60,10 @@ public class UploadImageServlet extends HttpServlet {
             AccountDAO dao = AccountDAO.getInstance();
             dao.updateProfileImage(Integer.parseInt(id), publicUrl);
             
-            // CÃ¡ÂºÂ­p nhÃ¡ÂºÂ­t thuÃ¡Â»â„¢c tÃƒÂ­nh image trong Ã„â€˜Ã¡Â»â€˜i tÃ†Â°Ã¡Â»Â£ng account
+            
             account.setImage(publicUrl);
 
-            // CÃ¡ÂºÂ­p nhÃ¡ÂºÂ­t lÃ¡ÂºÂ¡i Ã„â€˜Ã¡Â»â€˜i tÃ†Â°Ã¡Â»Â£ng account trong session
+            
             session.setAttribute("account", account);
 
             
@@ -77,37 +71,37 @@ public class UploadImageServlet extends HttpServlet {
         } catch (Exception e) {
             System.out.println(e);
         }
-//        if (filePart != null && filePart.getSize() > 0) {
-//            String fileName = fileUploadHandler.generateNewFileName(fileUploadHandler.getFileName(filePart));
-//            String filePath = fileUploadHandler.handleFileUpload(filePart, fileName);
-//            Account account = (Account) session.getAttribute("account");
-//            if (filePath != null) {
-//                // Update the database with the new file path
-//                AccountDAO.getInstance().updateProfileImage(account.getAccountId(), filePath);
-//
-//                response.setContentType("application/json");
-//                response.setCharacterEncoding("UTF-8");
-//                response.getWriter().write("{\"success\": true, \"filePath\": \"" + filePath + "\"}");
-//            } else {
-//                response.setContentType("application/json");
-//                response.setCharacterEncoding("UTF-8");
-//                response.getWriter().write("{\"success\": false}");
-//            }
-//        } else {
-//            response.setContentType("application/json");
-//            response.setCharacterEncoding("UTF-8");
-//            response.getWriter().write("{\"success\": false, \"message\": \"No file uploaded\"}");
-//        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
     
     private String generateBookingCode() {
-          //KhÃ¡Â»Å¸i tÃ¡ÂºÂ¡o mÃ¡Â»â„¢t Ã„â€˜Ã¡Â»â€˜i tÃ†Â°Ã¡Â»Â£ng Random
+          
         Random random = new Random();
 
-        // Sinh ra 6 sÃ¡Â»â€˜ ngÃ¡ÂºÂ«u nhiÃƒÂªn tÃ¡Â»Â« 0 Ã„â€˜Ã¡ÂºÂ¿n 999999
+        
         int randomNumber = random.nextInt(1000000);
 
-        // Format sÃ¡Â»â€˜ ngÃ¡ÂºÂ«u nhiÃƒÂªn thÃƒÂ nh chuÃ¡Â»â€”i, thÃƒÂªm vÃƒÂ o "BOOK"
+        
         String bookingCode = String.format("%06d", randomNumber);
 
         return bookingCode;

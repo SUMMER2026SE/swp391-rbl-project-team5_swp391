@@ -8,7 +8,7 @@ import java.net.URL;
 
 public class SupabaseStorageUtil {
     private static final String SUPABASE_URL = "https://zfvgigfjmbtgwgirdify.supabase.co";
-    // Replace this with the actual secret key for internal usage
+    
     private static final String SUPABASE_KEY = "YOUR_SUPABASE_KEY";
     private static final String BUCKET_NAME = "images";
 
@@ -26,7 +26,7 @@ public class SupabaseStorageUtil {
             conn.setRequestProperty("apikey", SUPABASE_KEY);
             conn.setRequestProperty("Authorization", "Bearer " + SUPABASE_KEY);
             
-            // Map file extension to the correct image Content-Type for in-browser preview
+            
             String contentType = "application/octet-stream";
             String lowerName = fileName.toLowerCase();
             if (lowerName.endsWith(".jpg") || lowerName.endsWith(".jpeg")) {
@@ -39,7 +39,7 @@ public class SupabaseStorageUtil {
                 contentType = "image/webp";
             }
             conn.setRequestProperty("Content-Type", contentType);
-            conn.setRequestProperty("x-upsert", "true"); // Allow overwriting existing files
+            conn.setRequestProperty("x-upsert", "true"); 
 
             try (OutputStream os = conn.getOutputStream()) {
                 byte[] buffer = new byte[4096];
@@ -67,7 +67,7 @@ public class SupabaseStorageUtil {
             return false;
         }
         try {
-            // Support deleting from both 'images' and 'profileImg' dynamically
+            
             String bucketName = "images";
             if (publicUrl.contains("/profileImg/")) {
                 bucketName = "profileImg";

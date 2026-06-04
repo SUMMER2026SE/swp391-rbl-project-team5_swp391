@@ -1,11 +1,5 @@
-/*
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
-*/
-/* 
-    Created on : 29 thg 6, 2024, 09:37:55
-    Author     : MINH TUAN
-*/
+
+
 #tudienjp * :not(svg, path) {
     all: revert
 }
@@ -398,7 +392,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
     font-family: inherit;
 }
 
-/* Simplified Sidebar */
+
 .sidebar-item {
     padding: 0.75rem 1rem !important;
     margin: 0.2rem 1rem !important;
@@ -406,18 +400,18 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
     align-items: center !important;
     border-radius: 0.5rem !important;
     transition: all 0.2s ease !important;
-    color: #1e293b !important; /* Dark Slate-800 for absolute contrast */
-    font-weight: 700 !important; /* Bold, highly readable */
-    font-size: 0.95rem !important; /* Slightly larger */
+    color: #1e293b !important; 
+    font-weight: 700 !important; 
+    font-size: 0.95rem !important; 
     text-decoration: none !important;
 }
 .sidebar-item:hover {
     background-color: #f1f5f9 !important;
-    color: #0f172a !important; /* Slate-900 */
+    color: #0f172a !important; 
 }
 .sidebar-item.active {
-    background-color: #fdf8eb !important; /* very light gold */
-    color: #854d0e !important; /* Deep Golden Amber for maximum readability */
+    background-color: #fdf8eb !important; 
+    color: #854d0e !important; 
     font-weight: 800 !important;
 }
 .icon-box {
@@ -428,8 +422,8 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
     width: 32px !important;
     height: 32px !important;
     border-radius: 0.5rem !important;
-    background-color: #e2e8f0 !important; /* Deeper gray for contrast */
-    color: #334155 !important; /* Slate-700 */
+    background-color: #e2e8f0 !important; 
+    color: #334155 !important; 
     transition: all 0.2s ease !important;
 }
 .sidebar-item.active .icon-box {
@@ -443,8 +437,8 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
     padding-left: 1.5rem !important;
     font-weight: 800 !important;
     text-transform: uppercase !important;
-    font-size: 0.8rem !important; /* Slightly larger */
-    color: #475569 !important; /* Slate-600 */
+    font-size: 0.8rem !important; 
+    color: #475569 !important; 
     margin-top: 1.5rem !important;
     margin-bottom: 0.5rem !important;
     letter-spacing: 0.05em !important;

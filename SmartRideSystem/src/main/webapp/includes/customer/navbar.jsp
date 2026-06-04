@@ -126,11 +126,10 @@
 
     * {
         box-sizing: border-box;
-        /*        margin: 0;
-                padding: 0;*/
+        
     }
 
-    /* Clean Logo styling & elegant hover */
+    
     .logo {
         background: transparent !important;
         border: none !important;
@@ -138,7 +137,7 @@
         padding: 0 !important;
     }
     
-    /* Logo icon - just the motorcycle graphic */
+    
     .logo img.logo-icon,
     #header .logo img.logo-icon,
     .header .logo img.logo-icon {
@@ -149,7 +148,7 @@
         transition: filter 0.4s ease-in-out, transform 0.3s ease !important;
     }
 
-    /* Brand name text next to logo - like motogo.vn */
+    
     .logo-brand-name {
         font-family: 'Poppins', 'Plus Jakarta Sans', sans-serif !important;
         font-size: 22px !important;
@@ -168,7 +167,7 @@
         transform: scale(1.05);
     }
 
-    /* At top of index page (dark hero) → white icon + white brand text */
+    
     body.index-page:not(.scrolled) .header .logo img.logo-icon {
         filter: brightness(0) invert(1) !important;
     }
@@ -178,7 +177,7 @@
         color: #ffffff !important;
     }
 
-    /* Scrolled / other pages → colored icon + gold gradient brand text */
+    
     body.index-page.scrolled .header .logo img.logo-icon,
     body:not(.index-page) .header .logo img.logo-icon {
         filter: none !important;
@@ -191,7 +190,7 @@
         background-clip: text !important;
     }
 
-    /* Default solid glassmorphic navbar for scrolled states & subpages */
+    
     #header {
         background: rgba(255, 255, 255, 0.95) !important;
         border-bottom: 1px solid rgba(181, 147, 73, 0.1) !important;
@@ -200,12 +199,12 @@
         transition: transform 0.35s cubic-bezier(0.165, 0.84, 0.44, 1), background-color 0.4s ease-in-out, border-bottom 0.4s ease-in-out, box-shadow 0.4s ease-in-out !important;
     }
 
-    /* Shift header up by 32px to hide announcement bar smoothly when scrolling down */
+    
     body.scrolled #header {
         transform: translateY(-32px) !important;
     }
 
-    /* Fade out top bar when scrolled to prevent overlapping visibility */
+    
     .top-announcement-bar {
         transition: opacity 0.3s ease, visibility 0.3s ease !important;
     }
@@ -215,14 +214,14 @@
         pointer-events: none !important;
     }
 
-    /* Transparent navbar only at the top of the Home page */
+    
     body.index-page:not(.scrolled) #header {
         background: transparent !important;
         border-bottom: none !important;
         box-shadow: none !important;
     }
 
-    /* White text for navbar on index page before scrolling */
+    
     body.index-page:not(.scrolled) .navmenu > ul > li > a, 
     body.index-page:not(.scrolled) .navmenu > ul > li > a:focus {
         color: #ffffff !important;
@@ -248,23 +247,23 @@
         font-family: 'Plus Jakarta Sans', sans-serif !important;
     }
 
-    /* Spread out the navigation bar items evenly with a modern flex gap */
+    
     .navmenu > ul {
         display: flex !important;
-        gap: 28px !important; /* Generous gap to distribute and spread out links beautifully */
+        gap: 28px !important; 
         align-items: center !important;
     }
 
-    /* Cinematic bright navbar text with matte gold hover */
+    
     .navmenu a, .navmenu a:focus {
         color: #1a1816 !important;
         font-family: 'Plus Jakarta Sans', sans-serif !important;
-        font-weight: 600 !important; /* Semi-bold weight for striking elegance */
+        font-weight: 600 !important; 
         font-size: 15px !important;
-        letter-spacing: 0.5px !important; /* Professional letter spacing */
+        letter-spacing: 0.5px !important; 
         transition: all 0.3s ease !important;
         position: relative !important;
-        padding: 10px 2px !important; /* Compact link padding relying on gap for spacing */
+        padding: 10px 2px !important; 
         background: transparent !important;
     }
     
@@ -284,7 +283,7 @@
         width: 100% !important;
     }
 
-    /* Completely eliminate the ugly yellow/beige background rectangle on hover and force transparent text color transition */
+    
     .navmenu li:hover>a,
     .navmenu a:hover, 
     .navmenu a.active,
@@ -340,7 +339,7 @@
         padding-left: 0rem !important;
     }
 
-    /* User Menu */
+    
     .user-menu-wrap {
         margin-left: 60px;
         position: relative;
@@ -468,7 +467,7 @@
         box-shadow: #b59349 0 0 5px !important;
     }
 
-    /*cu*/
+    
     .rental {
         width: 50%;
         padding: 2.5% 0%;
@@ -504,12 +503,12 @@
     }
     .gradient-button {
         background: #b59349 !important;
-        color: white !important; /* Màu chữ */
-        padding: 10px 20px; /* Đệm cho nút */
-        border-radius: 5px; /* Bo góc */
-        text-decoration: none; /* Xóa gạch chân */
-        display: inline-block; /* Hiển thị như một khối nội dòng */
-        transition: background 0.3s; /* Hiệu ứng chuyển đổi nền khi di chuột */
+        color: white !important; 
+        padding: 10px 20px; 
+        border-radius: 5px; 
+        text-decoration: none; 
+        display: inline-block; 
+        transition: background 0.3s; 
         margin-bottom: 4%;
     }
 
@@ -527,7 +526,7 @@
             console.log("Hàm này sẽ được thực hiện sau mỗi 10 giây.");
             $.ajax({
                 type: "POST",
-                url: "auto", // Thay đổi URL tới servlet của bạn
+                url: "auto", 
                 success: function (response) {
                     console.log("Data sent successfully:", response);
                 },
@@ -538,13 +537,13 @@
         
     }
 
-// Thiết lập hàm để thực hiện sau mỗi 10 giây
+
     setInterval(yourFunction, 1 * 60 * 60 * 1000);
 
-// Thực hiện lần đầu tiên sau khi trang load xong 5 giây để tránh lag trang
+
     setTimeout(yourFunction, 5000);
     
-    // Auto-detect current page and apply .active class with gold underline transition
+    
     document.addEventListener("DOMContentLoaded", function() {
         const path = window.location.pathname;
         const page = path.split("/").pop().toLowerCase();
@@ -555,7 +554,7 @@
             const href = link.getAttribute("href");
             if (href) {
                 const hrefLower = href.toLowerCase();
-                // Check if page matches href exactly, or starts with it (for query params/servlets), or default home
+                
                 if (page === hrefLower || 
                     (hrefLower !== "home" && page.startsWith(hrefLower.split(".")[0])) ||
                     (hrefLower === "home" && (page === "" || page === "home" || page === "index.jsp"))) {
@@ -565,7 +564,7 @@
             }
         });
         
-        // If a nested dropdown item is active, highlight the parent dropdown menu
+        
         if (activeFound) {
             const activeDropdownItem = document.querySelector(".navmenu .dropdown ul a.active");
             if (activeDropdownItem) {
@@ -576,7 +575,7 @@
             }
         }
         
-        // Universal scroll listener for navbar header styling across all pages
+        
         window.addEventListener('scroll', function() {
             if (window.scrollY > 100) {
                 document.body.classList.add('scrolled');
@@ -597,7 +596,7 @@
             menuContainer.classList.toggle('active');
         });
         
-        // Đóng dropdown khi click ra ngoài
+        
         document.addEventListener('click', function (e) {
             if (menuContainer.classList.contains('active') && !menuContainer.contains(e.target) && !miniPhoto.contains(e.target)) {
                 menuContainer.classList.remove('active');

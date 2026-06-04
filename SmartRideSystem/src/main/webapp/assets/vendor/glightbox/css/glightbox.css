@@ -198,7 +198,7 @@
 
 .gslide-video .gvideo-wrapper {
   width: 100%;
-        /* max-width: 160vmin; */
+        
   margin: auto;
 }
 
@@ -322,11 +322,7 @@
 }
 
 
-/*
- * Description for mobiles
- * something like facebook does the description
- * for the photos
-*/
+
 
 .glightbox-mobile .glightbox-container .gslide-description {
   height: auto !important;
@@ -498,7 +494,7 @@ iframe.wait-autoplay {
 }
 
 
-/*Skin */
+
 
 .glightbox-clean .gslide-description {
   background: #fff;
@@ -575,7 +571,7 @@ iframe.wait-autoplay {
 }
 
 
-/*CSS Animations*/
+
 
 .gfadeIn {
   -webkit-animation: gfadeIn 0.5s ease;

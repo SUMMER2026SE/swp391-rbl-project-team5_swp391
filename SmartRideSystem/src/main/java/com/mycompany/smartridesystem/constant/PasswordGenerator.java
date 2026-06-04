@@ -1,15 +1,9 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package com.mycompany.smartridesystem.constant;
 
 import java.security.SecureRandom;
 
-/**
- *
- * @author LeQuangMinh
- */
+
 public class PasswordGenerator {
     private static final String UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"; 
     private static final String LOWER = "abcdefghijklmnopqrstuvwxyz"; 
@@ -20,7 +14,7 @@ public class PasswordGenerator {
     private static SecureRandom random = new SecureRandom();
 
     public static void main(String[] args) {
-        int length = 12; // Desired password length
+        int length = 12; 
         String password = generatePassword(length);
         System.out.println("Generated Password: " + password);
     }
@@ -28,28 +22,28 @@ public class PasswordGenerator {
     public static String generatePassword(int length) {
         StringBuilder password = new StringBuilder(length);
 
-        // Ensure the password contains at least one character from each category
+        
         password.append(UPPER.charAt(random.nextInt(UPPER.length())));
         password.append(LOWER.charAt(random.nextInt(LOWER.length())));
         password.append(DIGITS.charAt(random.nextInt(DIGITS.length())));
         password.append(SPECIAL.charAt(random.nextInt(SPECIAL.length())));
 
-        // Fill the remaining length with random characters from all categories
+        
         for (int i = 4; i < length; i++) {
             password.append(ALL.charAt(random.nextInt(ALL.length())));
         }
 
-        // Shuffle the characters to ensure randomness
+        
         return shuffleString(password.toString());
     }
-    //xÃ¡o chuá»—i
+    
     private static String shuffleString(String string) {
         char[] array = string.toCharArray();
 
-        // Shuffle the array
+        
         for (int i = array.length - 1; i > 0; i--) {
             int index = random.nextInt(i + 1);
-            // Swap the characters
+            
             char temp = array[index];
             array[index] = array[i];
             array[i] = temp;

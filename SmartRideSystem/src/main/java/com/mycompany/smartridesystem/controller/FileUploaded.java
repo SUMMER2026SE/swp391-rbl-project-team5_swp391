@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package com.mycompany.smartridesystem.controller;
 
 import jakarta.servlet.http.Part;
@@ -10,7 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class FileUploaded {
-    // Keep constructors for compatibility
+    
     public FileUploaded(String uploadPath) {
     }
 
@@ -21,7 +18,7 @@ public class FileUploaded {
     public String handleFileUpload(Part part, String fileName, String bucketName) throws IOException {
         String originalFileName = getFileName(part);
         if (originalFileName != null && !originalFileName.isEmpty()) {
-            // Upload to Supabase and return the public URL
+            
             String publicUrl = com.mycompany.smartridesystem.util.SupabaseStorageUtil.uploadFile(part.getInputStream(), fileName, bucketName);
             return publicUrl;
         }

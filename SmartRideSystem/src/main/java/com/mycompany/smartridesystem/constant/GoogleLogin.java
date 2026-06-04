@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package com.mycompany.smartridesystem.constant;
 
 import com.mycompany.smartridesystem.dto.Account;
@@ -13,10 +10,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.fluent.Form;
 import org.apache.http.client.fluent.Request;
 import org.json.JSONObject;
-/**
- *
- * @author LeQuangMinh
- */
+
 public class GoogleLogin {
     public static String getToken(String code) throws ClientProtocolException, IOException {
 
@@ -49,7 +43,7 @@ public class GoogleLogin {
         String link = IConstant.GOOGLE_LINK_GET_USER_INFO + accessToken;
 
         String response = Request.Get(link).execute().returnContent().asString();
-        //GoogleAccount googlePojo = new Gson().fromJson(response, GoogleAccount.class);
+        
 
         return response;
 
@@ -61,13 +55,13 @@ public class GoogleLogin {
         return jsonObject.getString("email");
     }
     
-//    public static Account getAccountFromEmail(final String accessToken) throws IOException {
-//        String jsonInfo = getUserInfo(accessToken);
-//        JSONObject jsonObject = new JSONObject(jsonInfo);
-//        String email = jsonObject.getString("email");
-//        String firstName = jsonObject.getString("given_name");
-//        String lastName = jsonObject.getString("family_name");
-//        String image = jsonObject.getString("picture");
-//    }
+
+
+
+
+
+
+
+
 }
 

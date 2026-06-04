@@ -1,16 +1,7 @@
-/**
-* Template Name: Logis
-* Template URL: https://bootstrapmade.com/logis-bootstrap-logistics-website-template/
-* Updated: Jun 14 2024 with Bootstrap v5.3.3
-* Author: BootstrapMade.com
-* License: https://bootstrapmade.com/license/
-*/
 
-/*--------------------------------------------------------------
-# Font & Color Variables
-# Help: https://bootstrapmade.com/color-system/
---------------------------------------------------------------*/
-/* Fonts */
+
+
+
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
 :root {
@@ -19,16 +10,16 @@
   --nav-font: "Plus Jakarta Sans", "Poppins", sans-serif;
 }
 
-/* Global Colors - Updated to Bright Warm Silk & Gold Luxury Theme */
+
 :root { 
-  --background-color: #fbfaf8; /* Warm silk/cream luxury background */
-  --default-color: #2b2824; /* Elegant charcoal-brown default text */
-  --heading-color: #1a1816; /* Deep charcoal for headings */
-  --accent-color: #b59349; /* Premium Matte Gold accent */
-  --contrast-color: #ffffff; /* White contrast color */
+  --background-color: #fbfaf8; 
+  --default-color: #2b2824; 
+  --heading-color: #1a1816; 
+  --accent-color: #b59349; 
+  --contrast-color: #ffffff; 
 }
 
-/* Nav Menu Colors */
+
 :root {
   --nav-color: #1a1816;  
   --nav-hover-color: #b59349;
@@ -37,19 +28,17 @@
   --nav-dropdown-hover-color: #b59349; 
 }
 
-/* Template Custom Colors */
+
 :root {
-  --alt-background-color: #f5f2eb; /* Warm cream/beige for alt sections */
+  --alt-background-color: #f5f2eb; 
 }
 
-/* Smooth scroll */
+
 :root {
   scroll-behavior: smooth;
 }
 
-/*--------------------------------------------------------------
-# General
---------------------------------------------------------------*/
+
 body {
   color: var(--default-color);
   background-color: var(--background-color);
@@ -77,9 +66,7 @@ h6 {
   font-family: var(--heading-font);
 }
 
-/*--------------------------------------------------------------
-# Global Header
---------------------------------------------------------------*/
+
 .header {
   --background-color: rgba(251, 250, 248, 0.95);
   --heading-color: #1a1816;
@@ -152,18 +139,15 @@ h6 {
   box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
 }
 
-/* Global Header on Scroll
-------------------------------*/
+
 .scrolled .header {
   --background-color: rgba(255, 255, 255, 0.98);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(181, 147, 73, 0.2);
 }
 
-/*--------------------------------------------------------------
-# Navigation Menu
---------------------------------------------------------------*/
-/* Navmenu - Desktop */
+
+
 @media (min-width: 1200px) {
   .navmenu {
     padding: 0;
@@ -212,7 +196,7 @@ h6 {
   .navmenu .active:focus {
     background: var(--nav-hover-color);
     background-clip: text;
-    -webkit-background-clip: text; /* For Safari compatibility */
+    -webkit-background-clip: text; 
     color: transparent;
   }
 
@@ -273,7 +257,7 @@ h6 {
   }
 }
 
-/* Navmenu - Mobile */
+
 @media (max-width: 1199px) {
   .mobile-nav-toggle {
     color: var(--nav-color);
@@ -399,9 +383,7 @@ h6 {
   }
 }
 
-/*--------------------------------------------------------------
-# Global Footer
---------------------------------------------------------------*/
+
 .footer {
   --background-color: var(--alt-background-color);
   --default-color: #0a0a0a;
@@ -525,9 +507,7 @@ h6 {
   color: var(--default-color);
 }
 
-/*--------------------------------------------------------------
-# Preloader
---------------------------------------------------------------*/
+
 #preloader {
   position: fixed;
   inset: 0;
@@ -570,9 +550,7 @@ h6 {
   }
 }
 
-/*--------------------------------------------------------------
-# Scroll Top Button
---------------------------------------------------------------*/
+
 .scroll-top {
   position: fixed;
   visibility: hidden;
@@ -603,18 +581,14 @@ h6 {
   opacity: 1;
 }
 
-/*--------------------------------------------------------------
-# Disable aos animation delay on mobile devices
---------------------------------------------------------------*/
+
 @media screen and (max-width: 768px) {
   [data-aos-delay] {
     transition-delay: 0 !important;
   }
 }
 
-/*--------------------------------------------------------------
-# Global Page Titles & Breadcrumbs
---------------------------------------------------------------*/
+
 .page-title {
   --background-color: var(--alt-background-color);
   --heading-color: var(--contrast-color);
@@ -672,9 +646,7 @@ h6 {
   color: color-mix(in srgb, var(--default-color), transparent 50%);
 }
 
-/*--------------------------------------------------------------
-# Global Sections
---------------------------------------------------------------*/
+
 section,
 .section {
   color: var(--default-color);
@@ -692,9 +664,7 @@ section,
   }
 }
 
-/*--------------------------------------------------------------
-# Global Section Titles
---------------------------------------------------------------*/
+
 .section-title {
   text-align: center;
   padding: 30px 0;
@@ -741,9 +711,7 @@ section,
   }
 }
 
-/*--------------------------------------------------------------
-# Hero Section
---------------------------------------------------------------*/
+
 .hero {
   --default-color: black;
   --background-color: var(--alt-background-color);
@@ -855,9 +823,7 @@ section,
   font-weight: 600;
 }
 
-/*--------------------------------------------------------------
-# Featured Services Section
---------------------------------------------------------------*/
+
 .featured-services .service-item {
   position: relative;
   height: 100%;
@@ -911,9 +877,7 @@ section,
   color: var(--accent-color);
 }
 
-/*--------------------------------------------------------------
-# About Section
---------------------------------------------------------------*/
+
 .about .content h3 {
   font-size: 2rem;
   font-weight: 700;
@@ -1030,9 +994,7 @@ section,
   }
 }
 
-/*--------------------------------------------------------------
-# Services Section
---------------------------------------------------------------*/
+
 .services .card {
   background-color: var(--background-color);
   color: var(--default-color);
@@ -1080,9 +1042,7 @@ section,
   transform: scale(1.1);
 }
 
-/*--------------------------------------------------------------
-# Call To Action Section
---------------------------------------------------------------*/
+
 .call-to-action {
   --background-color: var(--alt-background-color);
   --default-color: #ffffff;
@@ -1145,9 +1105,7 @@ section,
   border: 2px solid;
 }
 
-/*--------------------------------------------------------------
-# Features Section
---------------------------------------------------------------*/
+
 .features .features-item {
   color: color-mix(in srgb, var(--default-color), transparent 20%);
 }
@@ -1192,9 +1150,7 @@ section,
   margin-bottom: 0;
 }
 
-/*--------------------------------------------------------------
-# Pricing Section
---------------------------------------------------------------*/
+
 .pricing .pricing-item {
   box-shadow: 0 3px 20px -2px color-mix(in srgb, var(--default-color), transparent 90%);
   border-top: 4px solid var(--background-color);
@@ -1307,11 +1263,9 @@ section,
   }
 }
 
-/*--------------------------------------------------------------
-# Testimonials Section
---------------------------------------------------------------*/
+
 .testimonials {
-  /* --default-color: #ffffff; */
+  
   --background-color: var(--alt-background-color);
   --heading-color: #ffffff;
   padding: 80px 0;
@@ -1431,9 +1385,7 @@ section,
   }
 }
 
-/*--------------------------------------------------------------
-# Faq Section
---------------------------------------------------------------*/
+
 .faq .faq-container {
   margin-top: 15px;
 }
@@ -1530,9 +1482,7 @@ section,
   transform: rotate(90deg);
 }
 
-/*--------------------------------------------------------------
-# Stats Section
---------------------------------------------------------------*/
+
 .stats .stats-item {
   padding: 30px;
   width: 100%;
@@ -1569,9 +1519,7 @@ section,
   font-weight: 500;
 }
 
-/*--------------------------------------------------------------
-# Team Section
---------------------------------------------------------------*/
+
 .team .member {
   border: 1px solid color-mix(in srgb, var(--default-color), transparent 90%);
   text-align: center;
@@ -1624,9 +1572,7 @@ section,
   margin: 0 2px;
 }
 
-/*--------------------------------------------------------------
-# Service Details Section
---------------------------------------------------------------*/
+
 .service-details .services-list {
   padding: 10px 30px;
   border: 1px solid color-mix(in srgb, var(--default-color), transparent 90%);
@@ -1689,9 +1635,7 @@ section,
   color: var(--accent-color);
 }
 
-/*--------------------------------------------------------------
-# Alt Pricing Section
---------------------------------------------------------------*/
+
 .alt-pricing .pricing-item {
   box-shadow: 0 3px 20px -2px color-mix(in srgb, var(--default-color), transparent 90%);
   padding-bottom: 30px;
@@ -1797,9 +1741,7 @@ section,
   color: var(--accent-color);
 }
 
-/*--------------------------------------------------------------
-# Contact Section
---------------------------------------------------------------*/
+
 .contact .info-item+.info-item {
   margin-top: 40px;
 }
@@ -1923,16 +1865,12 @@ section,
   }
 }
 
-/*--------------------------------------------------------------
-# Starter Section Section
---------------------------------------------------------------*/
+
 .starter-section {
-  /* Add your styles here */
+  
 }
 
-/*--------------------------------------------------------------
-# Get A Quote Section
---------------------------------------------------------------*/
+
 .get-a-quote .quote-bg {
   min-height: 500px;
   background-size: cover;
