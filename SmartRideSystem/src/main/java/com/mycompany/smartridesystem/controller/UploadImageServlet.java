@@ -18,7 +18,7 @@ import java.util.Random;
 import com.mycompany.smartridesystem.util.SupabaseStorageUtil;
 
 @WebServlet(name = "UploadImageServlet", urlPatterns = {"/uploadimage"})
-@MultipartConfig 
+@MultipartConfig
 public class UploadImageServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;

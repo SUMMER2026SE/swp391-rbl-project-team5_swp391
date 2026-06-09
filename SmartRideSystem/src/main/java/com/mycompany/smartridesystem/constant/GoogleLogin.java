@@ -9,7 +9,6 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.fluent.Form;
 import org.apache.http.client.fluent.Request;
 import org.json.JSONObject;
-
 public class GoogleLogin {
     public static String getToken(String code) throws ClientProtocolException, IOException {
 
