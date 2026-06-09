@@ -2,10 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package com.mycompany.smartride.controller;
-
-import com.mycompany.smartride.dao.AccountDAO;
-import com.mycompany.smartride.dto.Account;
+package com.mycompany.smartridesystem.controller;
+import com.mycompany.smartridesystem.dao.AccountDAO;
+import com.mycompany.smartridesystem.dto.Account;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -14,7 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
-
+import com.mycompany.smartridesystem.util.PasswordUtil;
 @WebServlet(name = "ChangePasswordServlet", urlPatterns = {"/changepassword"})
 public class ChangePasswordServlet extends HttpServlet {
 
@@ -77,7 +76,7 @@ public class ChangePasswordServlet extends HttpServlet {
         String confirmPassword = request.getParameter("confirmPassword");
         try {
             if (ac != null) {
-                if (!com.mycompany.smartride.util.PasswordUtil.checkPassword(password, ac.getPassWord())) {
+                if (!com.mycompany.smartridesystem.util.PasswordUtil.checkPassword(password, ac.getPassWord())) {
                     request.setAttribute("errorPass", "Mật khẩu hiện tại không đúng.");
                 } else if (password.equals(newPassword)) {
                     request.setAttribute("errorPass", "Mật khẩu hiện tại và mật khẩu cũ không được giống nhau.");
@@ -88,7 +87,7 @@ public class ChangePasswordServlet extends HttpServlet {
                 } else {
                     boolean isChanged = AccountDAO.getInstance().changePassword(ac.getAccountId(), newPassword);
                     if (isChanged) {
-                        ac.setPassWord(com.mycompany.smartride.util.PasswordUtil.hashPassword(newPassword));
+                        ac.setPassWord(com.mycompany.smartridesystem.util.PasswordUtil.hashPassword(newPassword));
                         session.setAttribute("account", ac);
                         request.setAttribute("successChange", "Thay đổi mật khẩu thành công.");
                     } else {
