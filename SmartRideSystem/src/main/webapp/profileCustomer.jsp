@@ -55,7 +55,7 @@
         .green { color: green; }
         .text-error { font-style: italic; }
         
-        /* Simplified Sidebar */
+        
         .sidebar-item {
             padding: 0.75rem 1rem !important;
             margin: 0.2rem 1rem !important;
@@ -63,18 +63,18 @@
             align-items: center !important;
             border-radius: 0.5rem !important;
             transition: all 0.2s ease !important;
-            color: #1e293b !important; /* Dark Slate-800 for absolute contrast */
-            font-weight: 700 !important; /* Bold, highly readable */
-            font-size: 0.95rem !important; /* Slightly larger */
+            color: #1e293b !important; 
+            font-weight: 700 !important; 
+            font-size: 0.95rem !important; 
             text-decoration: none !important;
         }
         .sidebar-item:hover {
             background-color: #f1f5f9 !important;
-            color: #0f172a !important; /* Slate-900 */
+            color: #0f172a !important; 
         }
         .sidebar-item.active {
-            background-color: #fdf8eb !important; /* very light gold */
-            color: #854d0e !important; /* Deep Golden Amber for maximum readability */
+            background-color: #fdf8eb !important; 
+            color: #854d0e !important; 
             font-weight: 800 !important;
         }
         .icon-box {
@@ -85,8 +85,8 @@
             width: 32px !important;
             height: 32px !important;
             border-radius: 0.5rem !important;
-            background-color: #e2e8f0 !important; /* Deeper gray for contrast */
-            color: #334155 !important; /* Slate-700 */
+            background-color: #e2e8f0 !important; 
+            color: #334155 !important; 
             transition: all 0.2s ease !important;
         }
         .sidebar-item.active .icon-box {
@@ -100,8 +100,8 @@
             padding-left: 1.5rem !important;
             font-weight: 800 !important;
             text-transform: uppercase !important;
-            font-size: 0.8rem !important; /* Slightly larger */
-            color: #475569 !important; /* Slate-600 */
+            font-size: 0.8rem !important; 
+            color: #475569 !important; 
             margin-top: 1.5rem !important;
             margin-bottom: 0.5rem !important;
             letter-spacing: 0.05em !important;
@@ -404,7 +404,7 @@
         const phoneText = document.getElementById("phone-text");
         const phoneRegex = /^0\d{9}$/;
 
-        //check email, ussername
+        
         const validEmail = () => {
             if (emailInput.value.trim() !== "") {
                 if (emailRegex.test(emailInput.value)) {
@@ -425,7 +425,7 @@
             }
         };
 
-        //check sdt
+        
         const validPhone = () => {
             if (phoneRegex.test(phoneInput.value)) {
                 phoneText.textContent = "";
@@ -438,13 +438,13 @@
         emailInput.addEventListener("input", validEmail);
         phoneInput.addEventListener("input", validPhone);
 
-        // Validate on submit
+        
         const formUpdate = document.getElementById("form-update");
         formUpdate.addEventListener("submit", function(event) {
             validEmail();
             validPhone();
             
-            // Required fields check
+            
             const firstName = document.getElementById("account-firstname").value.trim();
             const lastName = document.getElementById("account-lastname").value.trim();
             const dobVal = document.getElementById("account-dob").value;
@@ -462,7 +462,7 @@
             }
             
             if (emailText.textContent !== "" || phoneText.textContent !== "" || !firstName || !lastName) {
-                event.preventDefault(); // Stop submission
+                event.preventDefault(); 
                 if(!firstName) document.getElementById("account-firstname").focus();
                 else if(!lastName) document.getElementById("account-lastname").focus();
                 else if(emailText.textContent !== "") emailInput.focus();
@@ -487,7 +487,7 @@
             z-index: 9998 !important;
         }
         
-        /* Custom Cropper Styles for Circular Crop */
+        
         .cropper-view-box,
         .cropper-face {
             border-radius: 50%;
@@ -496,7 +496,7 @@
             opacity: 0.7;
         }
         
-        /* Custom Range Slider Thumb */
+        
         #zoom-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
@@ -518,11 +518,11 @@
         }
     </style>
     <script>
-        // Custom Toast Notification
+        
         function showToast(message, isError = false) {
             const toast = document.createElement('div');
             
-            // Apply inline CSS to guarantee rendering without Tailwind
+            
             toast.style.position = 'fixed';
             toast.style.top = '20px';
             toast.style.right = '20px';
@@ -551,13 +551,13 @@
             
             document.body.appendChild(toast);
             
-            // Animate in
+            
             setTimeout(() => {
                 toast.style.transform = 'translateX(0)';
                 toast.style.opacity = '1';
             }, 10);
             
-            // Animate out and remove
+            
             setTimeout(() => {
                 toast.style.transform = 'translateX(150%)';
                 toast.style.opacity = '0';
@@ -565,7 +565,7 @@
             }, 3000);
         }
 
-        // Move modals to body to fix z-index stacking issues
+        
         document.addEventListener('DOMContentLoaded', () => {
             const editModal = document.getElementById('editProfileModal');
             const cropModal = document.getElementById('cropImageModal');
@@ -597,7 +597,7 @@
                             cropper.destroy();
                         }
                         
-                        // Initialize cropper after a short delay so the image is rendered
+                        
                         setTimeout(() => {
                             const minZoom = 0.1;
                             const maxZoom = 3;
@@ -634,13 +634,13 @@
                 const btnText = document.getElementById('save-btn-text');
                 const btnSpinner = document.getElementById('save-btn-spinner');
                 
-                // Show spinner
+                
                 saveBtn.disabled = true;
                 cancelBtn.disabled = true;
                 if (btnText) btnText.classList.add('hidden');
                 if (btnSpinner) btnSpinner.classList.remove('hidden');
 
-                // Get the cropped canvas
+                
                 cropper.getCroppedCanvas({
                     width: 400,
                     height: 400
@@ -650,7 +650,7 @@
                     formData.append('file', blob, 'avatar.png');
                     formData.append('id', id);
                     
-                    // Gửi dữ liệu tới servlet bằng AJAX
+                    
                     $.ajax({
                         type: "POST",
                         url: "uploadimage",
@@ -661,7 +661,7 @@
                             showToast("Cập nhật ảnh đại diện thành công!");
                             modal.classList.add('hidden');
                             
-                            // Update all avatars dynamically without reloading
+                            
                             const newImgUrl = URL.createObjectURL(blob);
                             const profileImg = document.getElementById('profile-image');
                             if(profileImg) profileImg.src = newImgUrl;
@@ -670,7 +670,7 @@
                                 img.src = newImgUrl;
                             });
 
-                            // Reset spinner
+                            
                             saveBtn.disabled = false;
                             cancelBtn.disabled = false;
                             if (btnText) btnText.classList.remove('hidden');
@@ -680,7 +680,7 @@
                             showToast("Có lỗi xảy ra khi cập nhật ảnh.", true);
                             console.error("Error sending data:", error);
                             
-                            // Reset spinner
+                            
                             saveBtn.disabled = false;
                             cancelBtn.disabled = false;
                             if (btnText) btnText.classList.remove('hidden');
@@ -701,7 +701,7 @@
                 document.getElementById('image-upload').value = '';
             });
 
-            // Zoom functionality
+            
             if (zoomInBtn) {
                 zoomInBtn.addEventListener('click', () => {
                     if (cropper) cropper.zoom(0.1);
@@ -732,7 +732,7 @@
                 }
             });
 
-            // Form Update Profile AJAX
+            
             const formUpdate = document.getElementById('form-update');
             if (formUpdate) {
                 formUpdate.addEventListener('submit', function(e) {
@@ -744,7 +744,7 @@
                     const errorContainer = document.getElementById('form-error-container');
                     const errorText = document.getElementById('form-error-text');
                     
-                    // Show spinner
+                    
                     saveBtn.disabled = true;
                     btnText.style.display = 'none';
                     btnSpinner.style.display = 'inline-block';
@@ -754,14 +754,14 @@
                     
                     fetch('updateprofile', {
                         method: 'POST',
-                        body: new URLSearchParams(formData), // x-www-form-urlencoded
+                        body: new URLSearchParams(formData), 
                         headers: {
                             'X-Requested-With': 'XMLHttpRequest'
                         }
                     })
                     .then(response => response.json())
                     .then(data => {
-                        // Reset spinner
+                        
                         saveBtn.disabled = false;
                         btnText.style.display = 'inline-block';
                         btnSpinner.style.display = 'none';
@@ -771,7 +771,7 @@
                             const modal = document.getElementById('editProfileModal');
                             if(modal) modal.classList.add('hidden');
                             
-                            // Reload page after a short delay to see updated info
+                            
                             setTimeout(() => {
                                 window.location.reload();
                             }, 1000);
@@ -779,7 +779,7 @@
                             errorText.textContent = data.message;
                             errorContainer.style.display = 'flex';
                             
-                            // Optional: Scroll to error
+                            
                             errorContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                         }
                     })

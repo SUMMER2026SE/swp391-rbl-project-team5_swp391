@@ -41,7 +41,7 @@ public class GoogleLogin {
         String link = IConstant.GOOGLE_LINK_GET_USER_INFO + accessToken;
 
         String response = Request.Get(link).execute().returnContent().asString();
-        //GoogleAccount googlePojo = new Gson().fromJson(response, GoogleAccount.class);
+        
 
         return response;
 
@@ -53,13 +53,13 @@ public class GoogleLogin {
         return jsonObject.getString("email");
     }
     
-//    public static Account getAccountFromEmail(final String accessToken) throws IOException {
-//        String jsonInfo = getUserInfo(accessToken);
-//        JSONObject jsonObject = new JSONObject(jsonInfo);
-//        String email = jsonObject.getString("email");
-//        String firstName = jsonObject.getString("given_name");
-//        String lastName = jsonObject.getString("family_name");
-//        String image = jsonObject.getString("picture");
-//    }
+
+
+
+
+
+
+
+
 }
 

@@ -32,7 +32,7 @@
                 overflow-x: hidden;
             }
 
-            /* Floating Card Layout */
+            
             .login-wrapper {
                 min-height: 100vh;
                 width: 100%;
@@ -96,7 +96,7 @@
                 }
             }
 
-            /* Brand Logo Styling */
+            
             .brand-header {
                 display: flex;
                 align-items: center;
@@ -123,7 +123,7 @@
                 line-height: 1;
             }
 
-            /* Headings */
+            
             .welcome-title {
                 font-size: 32px;
                 font-weight: 800;
@@ -138,7 +138,7 @@
                 margin-bottom: 2rem;
             }
 
-            /* Elegant Input Controls */
+            
             .form-group-custom {
                 margin-bottom: 1.25rem;
                 position: relative;
@@ -182,7 +182,7 @@
                 font-weight: 500;
             }
 
-            /* Override autofill colors to preserve light theme aesthetics */
+            
             input:-webkit-autofill,
             input:-webkit-autofill:hover, 
             input:-webkit-autofill:focus, 
@@ -211,7 +211,7 @@
                 color: var(--primary-color);
             }
 
-            /* Custom Utilities */
+            
             .remember-forgot {
                 display: flex;
                 align-items: center;
@@ -250,7 +250,7 @@
                 color: var(--primary-color);
             }
 
-            /* Action Buttons */
+            
             .btn-login-submit {
                 background: linear-gradient(135deg, var(--primary-color) 0%, #a38241 100%) !important;
                 color: #ffffff !important;
@@ -303,7 +303,7 @@
                 margin-left: .75em;
             }
 
-            /* Google Button */
+            
             .btn-google-login {
                 background: #ffffff;
                 border: 1px solid rgba(0, 0, 0, 0.08);
@@ -334,7 +334,7 @@
                 width: auto;
             }
 
-            /* Register & Back */
+            
             .register-prompt {
                 text-align: center;
                 margin-top: 2rem;
@@ -380,7 +380,7 @@
                 border-color: rgba(0, 0, 0, 0.15);
             }
 
-            /* Cinematic Overlay Text */
+            
             .cinematic-content {
                 position: relative;
                 color: #ffffff;
@@ -414,7 +414,7 @@
                 margin: 0;
             }
 
-            /* Custom Error Message */
+            
             .alert-custom {
                 background-color: #fef2f2 !important;
                 border: 1px solid #fecaca !important;

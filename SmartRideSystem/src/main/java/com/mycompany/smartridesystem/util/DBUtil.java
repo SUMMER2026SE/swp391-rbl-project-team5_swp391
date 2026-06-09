@@ -13,15 +13,15 @@ import java.util.logging.Logger;
 
 public class DBUtil {
 
-    // =============================================
-    // Káº¾T Ná»I SUPABASE (PostgreSQL)
-    // =============================================
-    // Transaction Pooler - IPv4 compatible
+    
+    
+    
+    
     private static final String DB_URL = "jdbc:postgresql://aws-1-ap-northeast-1.pooler.supabase.com:6543/postgres?sslmode=require";
     private static final String DB_USER = "postgres.zfvgigfjmbtgwgirdify";
     private static final String DB_PASS = "Bimdiendie1@";
 
-    // Method to obtain a raw standard database connection
+    
     private static Connection getRawConnection() {
         try {
             Class.forName("org.postgresql.Driver");
@@ -36,8 +36,8 @@ public class DBUtil {
         try {
             Connection raw = getRawConnection();
 
-            // Return a dynamic proxy connection that transparently reconnects if
-            // stale/closed/null
+            
+            
             return (Connection) Proxy.newProxyInstance(
                     DBUtil.class.getClassLoader(),
                     new Class<?>[] { Connection.class },
@@ -64,7 +64,7 @@ public class DBUtil {
                 return null;
             }
 
-            // Auto-reconnect if the connection was closed or has become stale
+            
             try {
                 if (realConn == null || realConn.isClosed() || !realConn.isValid(2)) {
                     System.out.println("âš ï¸ DB Connection stale or closed. Reconnecting transparently...");

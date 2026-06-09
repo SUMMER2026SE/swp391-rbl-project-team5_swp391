@@ -22,11 +22,11 @@ public class LoginGoogleServlet extends HttpServlet {
         HttpSession session = request.getSession();
         String code = request.getParameter("code");
         String accessToken = GoogleLogin.getToken(code);
-        //String jsonAcc = GoogleLogin.getUserInfo(accessToken);
+        
         String email = GoogleLogin.getEmail(accessToken);
         Account acc = AccountDAO.getInstance().getAccountByEmail(email);
-        if (acc == null) { //chÆ°a cÃ³ account
-            //táº¡o 1 account má»›i chá»‰ bao gá»“m: email, username (email), password
+        if (acc == null) { 
+            
             AccountDAO.getInstance().createANewAccountForLoginGoogle(email, PasswordGenerator.generatePassword(6));
             acc = AccountDAO.getInstance().getAccountByEmail(email);
         }
@@ -46,4 +46,4 @@ public class LoginGoogleServlet extends HttpServlet {
     }
 
 }
-
+//dblchked loginGoogleServlet

@@ -87,7 +87,7 @@
                 color: white;
             }
 
-            /* Custom Hero Layout */
+            
             #hero {
                 min-height: 100vh;
                 display: flex;
@@ -104,7 +104,7 @@
             }
             #hero .container { position: relative; z-index: 3; }
 
-            /* Booking widget select/input */
+            
             .booking-select, .booking-input {
                 width: 100%;
                 padding: 10px 12px;
@@ -309,7 +309,7 @@
                 }
             }
 
-            /* Enhanced dark overlays for call-to-action and testimonials for 100% text legibility */
+            
             #call-to-action:before {
                 background: rgba(0, 0, 0, 0.65) !important;
             }
@@ -356,7 +356,7 @@
                 font-style: italic !important;
                 font-family: 'Plus Jakarta Sans', sans-serif !important;
             }
-            /* ── Home FAQ ── */
+            
             .home-faq-item {
                 border-bottom: 1px dashed #ddd;
                 padding: 18px 0;
@@ -1334,7 +1334,7 @@
                 }
             }
 
-            // Hero form submit: save params → go to motorbikes (Xe Máy selection)
+            
             function heroFormSubmit(e) {
                 e.preventDefault();
                 var startDate = document.getElementById('heroStartDate').value;
@@ -1342,7 +1342,7 @@
                 var pickup    = document.getElementById('heroPickupLoc').value;
                 var returnL   = document.getElementById('heroReturnLoc').value;
 
-                // Hide previous errors
+                
                 var errDiv = document.getElementById('heroErrorMsg');
                 if (errDiv) errDiv.style.display = 'none';
 
@@ -1366,8 +1366,8 @@
                 }
 
                 var minTime = new Date();
-                minTime.setHours(minTime.getHours() + 1); // Require at least 1 hour advance booking
-                minTime.setMinutes(minTime.getMinutes() - 5); // 5 min grace period for filling out the form
+                minTime.setHours(minTime.getHours() + 1); 
+                minTime.setMinutes(minTime.getMinutes() - 5); 
 
                 if (start < minTime) {
                     showHeroError("Vui lòng đặt xe trước 1 tiếng");
@@ -1379,19 +1379,19 @@
                     return false;
                 }
 
-                // Store in sessionStorage for booking page to read
+                
                 try {
                     sessionStorage.setItem('hs_startDate',  startDate);
                     sessionStorage.setItem('hs_endDate',    endDate);
                     sessionStorage.setItem('hs_pickup',     pickup);
                     sessionStorage.setItem('hs_returnLoc',  returnL);
                 } catch(ex) {}
-                // Navigate directly to booking page (step 2 = XE MÁY)
+                
                 window.location.href = 'booking';
                 return false;
             }
 
-            // Booking widget helpers
+            
             function toggleReturnLocation(cb) {
                 var returnLoc = document.getElementById('heroReturnLoc');
                 var pickupLoc = document.getElementById('heroPickupLoc');
@@ -1407,7 +1407,7 @@
                 }
             }
 
-            // Set default dates: now -> now+2days
+            
             (function() {
                 function pad(n) { return String(n).padStart(2,'0'); }
                 function fmt(d) {

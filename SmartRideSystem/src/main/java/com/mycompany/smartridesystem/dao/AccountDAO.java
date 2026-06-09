@@ -20,8 +20,8 @@ public class AccountDAO implements Serializable {
     private static AccountDAO instance;
     private Connection conn = DBUtil.makeConnection();
 
-    // CÃ¡ÂºÂ¥m new trÃ¡Â»Â±c tiÃ¡ÂºÂ¿p DAO
-    //ChÃ¡Â»â€° new DAO qua hÃƒÂ m static getInstance() Ã„â€˜Ã¡Â»Æ’ quÃ¡ÂºÂ£n lÃƒÂ­ Ã„â€˜Ã†Â°Ã¡Â»Â£c sÃ¡Â»â€˜ object/instance Ã„â€˜ÃƒÂ£ new - SINGLETON DESIGN PATTERN
+    
+    
     private AccountDAO() {
     }
 
@@ -117,23 +117,23 @@ public class AccountDAO implements Serializable {
     }
 
     public boolean createToken(String token, String email) {
-        Timestamp expiration = new Timestamp(System.currentTimeMillis() + 1 * 60 * 1000); // 1 phÃƒÂºt
+        Timestamp expiration = new Timestamp(System.currentTimeMillis() + 1 * 60 * 1000); 
         String checkEmailSql = "SELECT COUNT(*) FROM \"Account\" WHERE \"Email\" = ?";
         String insertTokenSql = "INSERT INTO \"PasswordResetToken\" (\"Email\", \"Token\", \"Expiration\", \"AccountID\") "
                 + "SELECT \"Email\", ?, ?, \"AccountID\" FROM \"Account\" WHERE \"Email\" = ?";
         try {
-            // KiÃ¡Â»Æ’m tra xem email cÃƒÂ³ tÃ¡Â»â€œn tÃ¡ÂºÂ¡i khÃƒÂ´ng
+            
             PreparedStatement checkEmailStmt = conn.prepareStatement(checkEmailSql);
             checkEmailStmt.setString(1, email);
             ResultSet rs = checkEmailStmt.executeQuery();
             rs.next();
             int count = rs.getInt(1);
             if (count == 0) {
-                // Email khÃƒÂ´ng tÃ¡Â»â€œn tÃ¡ÂºÂ¡i
+                
                 return false;
             }
 
-            // Email tÃ¡Â»â€œn tÃ¡ÂºÂ¡i, tiÃ¡ÂºÂ¿p tÃ¡Â»Â¥c chÃƒÂ¨n token
+            
             PreparedStatement insertTokenStmt = conn.prepareStatement(insertTokenSql);
             insertTokenStmt.setString(1, token);
             insertTokenStmt.setTimestamp(2, expiration);
@@ -369,7 +369,7 @@ public class AccountDAO implements Serializable {
 
     public Map<Integer, Integer> updateRoleAndGetStatuses(int accountId, boolean isActive, int role, int disablerole) {
         String sql = "UPDATE \"Account\" SET \"RoleID\" = ? WHERE \"AccountID\" = ?";
-        int newRoleId = isActive ? role : disablerole;  // 1 for active, 4 for disable
+        int newRoleId = isActive ? role : disablerole;  
         PreparedStatement st;
         ResultSet rs;
 
@@ -407,10 +407,10 @@ public class AccountDAO implements Serializable {
         try {
             StringBuilder sql = new StringBuilder("SELECT * FROM \"Account\" WHERE 1=1");
             if (!username.isEmpty() && !name.isEmpty()) {
-                // NÃ¡ÂºÂ¿u cÃ¡ÂºÂ£ hai Ã„â€˜iÃ¡Â»Âu kiÃ¡Â»â€¡n khÃƒÂ´ng rÃ¡Â»â€”ng, sÃ¡Â»Â­ dÃ¡Â»Â¥ng OR
+                
                 sql.append(" AND (\"Username\" LIKE ? OR (\"FirstName\" || ' ' || \"LastName\") LIKE ?)");
             } else if (!username.isEmpty() || !name.isEmpty()) {
-                // NÃ¡ÂºÂ¿u mÃ¡Â»â„¢t trong hai Ã„â€˜iÃ¡Â»Âu kiÃ¡Â»â€¡n khÃƒÂ´ng rÃ¡Â»â€”ng, sÃ¡Â»Â­ dÃ¡Â»Â¥ng AND
+                
                 if (!username.isEmpty()) {
                     sql.append(" AND \"Username\" LIKE ?");
                 } else if (!name.isEmpty()) {

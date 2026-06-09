@@ -1,5 +1,4 @@
 package com.mycompany.smartridesystem.constant;
-
 public interface IConstant {
     String GOOGLE_CLIENT_ID = "YOUR_GOOGLE_CLIENT_ID";
 
