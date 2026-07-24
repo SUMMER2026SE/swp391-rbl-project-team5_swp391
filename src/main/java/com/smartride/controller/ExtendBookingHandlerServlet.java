@@ -10,6 +10,7 @@ import com.smartride.dao.ExtensionDAO;
 import com.smartride.dao.MotorcycleDetailDAO;
 import com.smartride.dao.MotorcycleStatusDAO;
 import com.smartride.dao.PaymentDAO;
+import com.smartride.dao.NotificationDAO;
 import com.smartride.dto.AccessoryDetail;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -46,7 +47,7 @@ public class ExtendBookingHandlerServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ExtendBookingHandlerServlet</title>");
+            out.println("<title>Servlet ExtendBookingHandlerServlet</title>");            
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet ExtendBookingHandlerServlet at " + request.getContextPath() + "</h1>");
@@ -61,57 +62,64 @@ public class ExtendBookingHandlerServlet extends HttpServlet {
             throws ServletException, IOException {
         processRequest(request, response);
     }
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L; 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HashMap<String, Object> dataMap = new HashMap<>();
-
+        
         for (Part part : request.getParts()) {
-            String fieldName = part.getName();
+            String fieldName = part.getName();          
             InputStream inputStream = part.getInputStream();
             String value = new BufferedReader(new InputStreamReader(inputStream))
                     .lines().collect(java.util.stream.Collectors.joining("\n"));
             dataMap.put(fieldName, value);
-
+            
         }
         // Convert JSON data to HashMap
         Gson gson = new Gson();
         try {
-            Type type = new TypeToken<HashMap<String, Object>>() {}.getType();
-            dataMap.putAll(gson.fromJson((String) dataMap.get("jsonData"), type));
+             Type type = new TypeToken<HashMap<String, Object>>() {}.getType();
+             dataMap.putAll(gson.fromJson((String) dataMap.get("jsonData"), type));
         } catch (Exception e) {
-            e.printStackTrace();
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid JSON format");
-            return;
+             e.printStackTrace();
+             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid JSON format");
+             return;
         }
-
+       
         // Process other data from dataMap
         String bookingid = (String) dataMap.get("bookingid");
         String returnPre = (String) dataMap.get("returnTimePre");
         String returnDate = (String) dataMap.get("returnDate");
         String paymentDate = (String) dataMap.get("paymenttime");
         int amount = Integer.parseInt((String) dataMap.get("amount"));
-
+        
         //Extend
         ExtensionDAO daoE = ExtensionDAO.getInstance();
         daoE.addExtension(returnPre, returnDate, amount/100000, bookingid);
-
+        
         //Payment
         // Định dạng chuỗi đầu vào
         DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-
+        
         // Chuyển đổi chuỗi thành LocalDateTime
         LocalDateTime dateTime = LocalDateTime.parse(paymentDate, inputFormatter);
-
+        
         // Định dạng chuỗi đầu ra
         DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
+        
         // Chuyển đổi LocalDateTime thành chuỗi định dạng mới
         String paymentDateText = dateTime.format(outputFormatter);
         PaymentDAO daoP = PaymentDAO.getInstance();
         daoP.addPayment(bookingid, "Ngân hàng", paymentDateText, amount/100000, "Giao dịch thành công");
-
+        
+        // Notify staff
+        NotificationDAO.getInstance().insertStaffNotification(
+            "Khách gia hạn thuê xe",
+            "Đơn " + bookingid + " vừa được gia hạn và thanh toán thành công " + (amount/100000) + "k.",
+            "manageBooking"
+        );
+        
         // Send confirmation email
 //       StringBuilder emailContent = new StringBuilder();
 //        emailContent.append("<!DOCTYPE html>\n");

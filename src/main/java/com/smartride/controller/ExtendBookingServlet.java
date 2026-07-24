@@ -30,12 +30,18 @@ public class ExtendBookingServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-
+        
         String bookingid = request.getParameter("bookingid");
         BookingDAO daoB = BookingDAO.getInstance();
         Booking booking = daoB.getBookingById(bookingid);
+        
+        if (booking == null) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Booking not found");
+            return;
+        }
+        
         request.setAttribute("booking", booking);
-
+        
         SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
@@ -47,7 +53,7 @@ public class ExtendBookingServlet extends HttpServlet {
             String timeStartPart = timeFormat.format(dateStart);
             String dateEndPart = dateFormat.format(dateEnd);
             String timeEndPart = timeFormat.format(dateEnd);
-
+            
             request.setAttribute("startDate", dateStartPart);
             request.setAttribute("startTime", timeStartPart);
             request.setAttribute("endDate", dateEndPart);
@@ -55,24 +61,24 @@ public class ExtendBookingServlet extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+        
         MotorcycleDAO daoM = MotorcycleDAO.getInstance();
         LinkedHashMap<Motorcycle, Integer> listM = daoM.getListMotorcycleByBookingId(booking.getBookingID());
         request.setAttribute("listM", listM );
-
-
+        
+        
         AccessoryDAO daoA = AccessoryDAO.getInstance();
         LinkedHashMap<Accessory, Integer>  listA = daoA.getListByBookingId(booking.getBookingID());
         request.setAttribute("listA", listA);
-
+        
         PriceListDAO daoP = PriceListDAO.getInstance();
         List<PriceList> listP = daoP.getAllPriceList();
         request.setAttribute("listP", listP);
-
+        
         PaymentDAO daoPM = PaymentDAO.getInstance();
         List<Payment> listPM = daoPM.getListByBookingId(booking.getBookingID());
         request.setAttribute("listPM", listPM);
-
+        
         request.getRequestDispatcher("extendBooking.jsp").forward(request, response);
     }
 

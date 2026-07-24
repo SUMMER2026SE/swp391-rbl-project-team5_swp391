@@ -134,8 +134,9 @@ public class BookingInforHander extends HttpServlet {
         // Save front and back files if present
         String uploadedFilePath = null;
         String custIdStr = customerId.equalsIgnoreCase("Not") ? "Temp" : customerId;
-        String filenameFront = "imageIdC" + custIdStr + "_front.jpg";
-        String filenameBack = "imageIdC" + custIdStr + "_back.jpg";
+        long timestamp = System.currentTimeMillis();
+        String filenameFront = "imageIdC" + custIdStr + "_" + timestamp + "_front.jpg";
+        String filenameBack = "imageIdC" + custIdStr + "_" + timestamp + "_back.jpg";
         
         String uploadedFrontPath = null;
         String uploadedBackPath = null;
@@ -164,30 +165,13 @@ public class BookingInforHander extends HttpServlet {
         }
 
         if (customerId.equalsIgnoreCase("Not")) {
-            if (uploadedFilePath == null) {
-                uploadedFilePath = filenameFront + "," + filenameBack;
-            }
+            // Do not use a dummy string. Allow it to remain null if no image was uploaded.
+            
             daoC.createNewCustomer(identityCard, uploadedFilePath, issuedon, expdate, "CMND/CCCD", 1, accountId);
+            // We ALREADY uploaded the image as imageIdCTemp_front.jpg and got the public URL in uploadedFilePath.
+            // We DO NOT need to upload it again, because the stream is already exhausted.
+            // Just update the customer with the correct URL we already obtained!
             int newCustomerId = daoC.getCustomerbyAccountID(accountId).getCustomerId();
-            
-            String finalFilenameFront = "imageIdC" + newCustomerId + "_front.jpg";
-            String finalFilenameBack = "imageIdC" + newCustomerId + "_back.jpg";
-            String finalFrontPath = null;
-            String finalBackPath = null;
-            
-            if (fileFrontPart != null) {
-                finalFrontPath = fileUploaded.handleFileUpload(fileFrontPart, finalFilenameFront);
-            } else {
-                finalFrontPath = finalFilenameFront;
-            }
-            
-            if (fileBackPart != null) {
-                finalBackPath = fileUploaded.handleFileUpload(fileBackPart, finalFilenameBack);
-            } else {
-                finalBackPath = finalFilenameBack;
-            }
-            
-            uploadedFilePath = finalFrontPath + "," + finalBackPath;
             daoC.updateCustomer(identityCard, uploadedFilePath, issuedon, expdate, "CMND/CCCD", newCustomerId);
         } else {
             int existingCustomerId = Integer.parseInt(customerId);
@@ -195,8 +179,6 @@ public class BookingInforHander extends HttpServlet {
                 Customer oldCust = daoC.getCustomerbyAccountID(accountId);
                 if (oldCust != null && oldCust.getIdentityCardImage() != null) {
                     uploadedFilePath = oldCust.getIdentityCardImage();
-                } else {
-                    uploadedFilePath = filenameFront + "," + filenameBack;
                 }
             } else {
                 Customer oldCust = daoC.getCustomerbyAccountID(accountId);
@@ -250,10 +232,17 @@ public class BookingInforHander extends HttpServlet {
         
         System.out.println(accountId);
         
-        // Generate booking ID
+        // Generate booking ID - ensure it is unique in the DB
         String bookingid = (String) dataMap.get("bookingId");
         if (bookingid == null || bookingid.isEmpty() || "undefined".equals(bookingid)) {
             bookingid = generateBookingCode();
+        }
+        // Retry until we get a non-duplicate ID
+        BookingDAO daoCheck = BookingDAO.getInstance();
+        int retries = 0;
+        while (daoCheck.getBookingById(bookingid) != null && retries < 10) {
+            bookingid = generateBookingCode();
+            retries++;
         }
 
         // Read voucherID (0 = no voucher)
@@ -358,7 +347,7 @@ public class BookingInforHander extends HttpServlet {
             bikeCounts.put(bikeName, bikeCounts.getOrDefault(bikeName, 0) + 1);
             List<Integer> list = daoMD.getListAvailableMotorcycleDetailIdByMotorcycleName(bikeName);
             int randomElement = list.get(random.nextInt(list.size()));
-            daoMS.insertMotorcycleStatus(randomElement, "STAFF00001", "KhÃ´ng cÃ³ sáºµn", formattedDateString, "Chá» nhÃ¢n viÃªn xÃ¡c nháº­n");
+            daoMS.insertMotorcycleStatus(randomElement, "STAFF00001", "\u004b\u0068\u00f4\u006e\u0067 \u0063\u00f3 \u0073\u1eb5\u006e", formattedDateString, "\u0043\u0068\u1edd \u006e\u0068\u00e2\u006e \u0076\u0069\u00ea\u006e \u0078\u00e1\u0063 \u006e\u0068\u1ead\u006e");
             daoBD.addBookingDetail(randomElement, bookingid, bikePrice);
         }
 
@@ -396,7 +385,7 @@ public class BookingInforHander extends HttpServlet {
         
         String paymentDateText = dateTime.format(outputFormatter);
         PaymentDAO daoP = PaymentDAO.getInstance();
-        daoP.addPayment(bookingid, "Ngân hàng", paymentDateText, amount, "Giao dịch thành công");
+        daoP.addPayment(bookingid, "Ngân hàng", paymentDateText, amount, "Thành công");
         
         StringBuilder emailContent = new StringBuilder();
         emailContent.append("<!DOCTYPE html>\n");
@@ -490,15 +479,10 @@ public class BookingInforHander extends HttpServlet {
     }
 
     private String generateBookingCode() {
-          //Khá»Ÿi táº¡o má»™t Ä‘á»‘i tÆ°á»£ng Random
-        Random random = new Random();
-
-        // Sinh ra 6 sá»‘ ngáº«u nhiÃªn tá»« 0 Ä‘áº¿n 999999
-        int randomNumber = random.nextInt(1000000);
-
-        // Format sá»‘ ngáº«u nhiÃªn thÃ nh chuá»—i, thÃªm vÃ o "BOOK"
-        String bookingCode = "BOOK" + String.format("%06d", randomNumber);
-
+        // Dùng timestamp + random để tránh trùng BookingID
+        long timestamp = System.currentTimeMillis() % 100000L; // 5 chữ số cuối timestamp
+        int random = new Random().nextInt(1000);               // 3 chữ số random
+        String bookingCode = "BK" + String.format("%05d", timestamp) + String.format("%03d", random);
         return bookingCode;
     }
     @Override
