@@ -1,6 +1,7 @@
 package com.smartride.controller;
 
 import com.smartride.dao.EventDAO;
+import com.smartride.dao.NotificationDAO;
 import com.smartride.dao.StaffDAO;
 import com.smartride.dto.Event;
 import com.smartride.dto.Staff;
@@ -24,6 +25,10 @@ public class eventStaffServlet extends HttpServlet {
         
         List<Staff> staffList = staffDAO.getAllStaff();
         List<Event> eventList = eventDAO.getAllEvent();
+        
+        for (Event event : eventList) {
+            event.setPublished(NotificationDAO.getInstance().isEventPublished(event.getEventTitle()));
+        }
         
         request.setAttribute("staffList", staffList);
         request.setAttribute("eventList", eventList);

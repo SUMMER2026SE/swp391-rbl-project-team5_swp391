@@ -30,7 +30,7 @@ public class FavoriteServlet extends HttpServlet {
 
         Account account = (Account) session.getAttribute("account");
         int accountId = account.getAccountId();
-
+        
         String action = request.getParameter("action");
         String motorcycleId = request.getParameter("motorcycleId");
 
@@ -72,7 +72,7 @@ public class FavoriteServlet extends HttpServlet {
         }
         out.flush();
     }
-
+    
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

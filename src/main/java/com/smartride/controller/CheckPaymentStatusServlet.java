@@ -34,8 +34,13 @@ public class CheckPaymentStatusServlet extends HttpServlet {
             BookingDAO dao = BookingDAO.getInstance();
             Booking booking = dao.getBookingById(bookingId);
             
-            if (booking != null && "Đã thanh toán".equals(booking.getStatusBooking())) {
-                out.print("{\"status\":\"paid\"}");
+            if (booking != null) {
+                String st = booking.getStatusBooking();
+                if ("Đã thanh toán".equals(st) || "Đang thuê".equals(st)) {
+                    out.print("{\"status\":\"paid\"}");
+                } else {
+                    out.print("{\"status\":\"pending\"}");
+                }
             } else {
                 out.print("{\"status\":\"pending\"}");
             }

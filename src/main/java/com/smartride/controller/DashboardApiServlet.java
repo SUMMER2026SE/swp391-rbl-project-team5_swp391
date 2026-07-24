@@ -27,16 +27,28 @@ public class DashboardApiServlet extends HttpServlet {
             period = "30days"; // Default
         }
 
-        DashboardDAO dashboardDAO = DashboardDAO.getInstance();
-        DashboardStatsData data = dashboardDAO.getDashboardData(period, startDate, endDate);
-
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json;charset=UTF-8");
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
+        response.setHeader("Pragma", "no-cache"); // HTTP 1.0.
+        response.setDateHeader("Expires", 0); // Proxies.
         
-        Gson gson = new Gson();
-        try (PrintWriter out = response.getWriter()) {
-            out.print(gson.toJson(data));
-            out.flush();
+        try {
+            DashboardDAO dashboardDAO = DashboardDAO.getInstance();
+            DashboardStatsData data = dashboardDAO.getDashboardData(period, startDate, endDate);
+            
+            Gson gson = new Gson();
+            String jsonStr = gson.toJson(data);
+            
+            try (PrintWriter out = response.getWriter()) {
+                out.print(jsonStr);
+                out.flush();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            try (PrintWriter out = response.getWriter()) {
+                out.print("{}"); // Return empty object on error to avoid syntax errors
+                out.flush();
+            }
         }
     }
 }

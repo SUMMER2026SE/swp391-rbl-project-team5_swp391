@@ -1,9 +1,9 @@
 package com.smartride.controller;
 
-import com.smartride.dao.MotorcycleDAO;
-import com.smartride.dao.PriceListDAO;
-import com.smartride.dto.Motorcycle;
-import com.smartride.dto.PriceList;
+import com.smartride.dao.AccountDAO;
+import com.smartride.dao.ContactDAO;
+import com.smartride.dto.Account;
+import com.smartride.dto.Contact;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -13,23 +13,22 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 
-@WebServlet(name="PricingManagementServlet", urlPatterns={"/pricingManage"})
-public class PricingManagementServlet extends HttpServlet {
+@WebServlet(name="ContactManagementServlet", urlPatterns={"/contactManage"})
+public class ContactManagementServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         
+        ContactDAO cd = ContactDAO.getInstance();
+        AccountDAO ad = AccountDAO.getInstance();
         
-        PriceListDAO pd = PriceListDAO.getInstance();
-        MotorcycleDAO md = MotorcycleDAO.getInstance();
+        List<Contact> listContact = cd.getAllContact();
+        List<Account> listA = ad.getAllAccount();
         
-        List<PriceList> listP = pd.getAllPriceList();
-        List<Motorcycle> listM = md.getAll();
+        request.setAttribute("listContact", listContact);
+        request.setAttribute("listA", listA);
         
-        request.setAttribute("listP", listP);
-        request.setAttribute("listM", listM);
-        request.getRequestDispatcher("pricingManagement.jsp").forward(request, response);
-        
+        request.getRequestDispatcher("contactManagement.jsp").forward(request, response);
     } 
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

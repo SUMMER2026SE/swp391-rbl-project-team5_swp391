@@ -43,8 +43,8 @@ public class ConfirmReturnServlet extends HttpServlet {
             // Nếu chỉ preview (modal lần đầu mở) → không commit DB
             if ("true".equals(previewOnly)) {
                 String json = String.format(
-                        "{\"overdueDays\":%d,\"lateFee\":%.0f}",
-                        overdueDays, lateFee
+                    "{\"overdueDays\":%d,\"lateFee\":%.0f}",
+                    overdueDays, lateFee
                 );
                 response.getWriter().write(json);
                 return;
@@ -67,8 +67,8 @@ public class ConfirmReturnServlet extends HttpServlet {
 
             // 4. Trả JSON về cho frontend
             String json = String.format(
-                    "{\"success\":true,\"overdueDays\":%d,\"lateFee\":%.0f}",
-                    overdueDays, lateFee
+                "{\"success\":true,\"overdueDays\":%d,\"lateFee\":%.0f}",
+                overdueDays, lateFee
             );
             response.getWriter().write(json);
 
