@@ -18,6 +18,8 @@
         <link rel="stylesheet" href="fonts/material-icon/css/material-design-iconic-font.min.css">
         <link rel="stylesheet" href="vendor/nouislider/nouislider.min.css">
         
+        <!-- Select2 CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
         <!-- Premium Google Fonts, FontAwesome 6 and Bootstrap Icons for stunning typography and elements -->
         <link href="https://fonts.googleapis.com" rel="preconnect">
         <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
@@ -1819,6 +1821,18 @@
                         <fieldset>
                             <h2>NGÀY & GIỜ</h2>
                             <p class="desc">Hãy lựa chọn ngày giờ và địa điểm bạn muốn giao / trả xe</p>
+                            
+                            <!-- CAM KẾT GIAO XE -->
+                            <div style="background:#f0faf0; border:1px solid #b2dfb2; border-radius:12px; padding:16px 20px; margin-bottom: 24px; display: flex; gap: 15px; align-items: flex-start;">
+                                <div style="width: 40px; height: 40px; border-radius: 50%; background: #e8f5e9; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                    <i class="fas fa-shipping-fast text-green-600 text-lg"></i>
+                                </div>
+                                <div>
+                                    <h4 style="margin:0 0 4px; color:#2e7d32; font-size:14px; font-weight: 700;">Cam kết giao xe đúng hạn!</h4>
+                                    <p style="margin:0; font-size:13px; color:#388e3c; line-height: 1.5;">SmartRide cam kết giao xe tận nơi chậm nhất trong <strong>45 phút</strong> kể từ lúc <strong>nhân viên duyệt đơn</strong> (hoặc theo đúng giờ đã hẹn). Nếu giao trễ quá thời gian này, hệ thống sẽ tự động tặng <strong>Mã giảm giá 50.000đ</strong> trực tiếp vào đơn hàng của bạn! <em>*Lưu ý: Vui lòng đặt xe cách thời điểm hiện tại ít nhất 15 phút để chúng tôi kịp chuẩn bị.</em></p>
+                                </div>
+                            </div>
+                            
                             <div class="form-row">
                                 <div class="form-flex">
                                     <div class="form-group">
@@ -1852,54 +1866,75 @@
                                     </div>
                                 </div>
                             </div>
+                            
+                            <div style="background-color: #fef3c7; border-left: 4px solid #f59e0b; padding: 12px 16px; margin: 15px 0; border-radius: 4px;">
+                                <p style="margin: 0; font-size: 13.5px; color: #92400e; font-weight: 500; display: flex; align-items: flex-start; gap: 8px;">
+                                    <span style="font-size: 16px;">💡</span>
+                                    <span><b>Lưu ý giao xe:</b> Miễn phí giao/nhận tận nơi trong bán kính <b>3km</b>. Từ km thứ 4, phụ phí cực rẻ chỉ <b>5.000đ/km</b> (sẽ tự động tính ở bước thanh toán). <br>⛔ Nếu địa chỉ <b>trên 20km</b>, quý khách vui lòng chọn nhận xe tại Cửa hàng hoặc nhập một địa chỉ khác gần hơn.</span>
+                                </p>
+                            </div>
+
                             <div class="form-row location">
                                 <div class="form-flex">
                                     <div class="form-group">
                                         <label for="pickuplocation" class="form-label">Địa điểm nhận xe <span class="note-star"> *</span></label>
-                                        <select name="pickuplocation" id="pickuplocation" class="form-label" onchange="toggleCustomLocation('pickup')">
-                                            <option value="Tại cửa hàng SmartRide - 202 Hải Phòng, Đà Nẵng">📍 Tại cửa hàng SmartRide</option>
-                                            <option value="Ga Đà Nẵng - Số 202 đường Hải Phòng">Ga Đà Nẵng – 202 Hải Phòng, Tam Thuận</option>
-                                            <option value="Sân bay Quốc tế Đà Nẵng - 132 Phan Đình Phùng">✈️ Sân bay Đà Nẵng – 132 Phan Đình Phùng</option>
-                                            <option value="Bến xe Trung tâm - 33 Tôn Đức Thắng">Bến xe Trung tâm – 33 Tôn Đức Thắng, Hải Châu</option>
-                                            <option value="Chợ Hàn - 119 Trần Phú">Chợ Hàn – 119 Trần Phú, Hải Châu</option>
-                                            <option value="Vincom Plaza - 910A Ngô Quyền">Vincom Plaza – 910A Ngô Quyền, Sơn Trà</option>
-                                            <option value="Cầu Rồng - Trần Hưng Đạo">Cầu Rồng – Trần Hưng Đạo, Hải Châu</option>
-                                            <option value="Ngũ Hành Sơn - Huyền Trân Công Chúa">Ngũ Hành Sơn – Huyền Trân Công Chúa</option>
-                                            <option value="Lotte Mart - 6 Nại Nam">Lotte Mart – 6 Nại Nam, Hải Châu</option>
-                                            <option value="Phố đi bộ Bạch Đằng - Bạch Đằng">Phố đi bộ Bạch Đằng, Hải Châu</option>
-                                            <option value="Bệnh viện Đà Nẵng - 124 Hải Phòng">Bệnh viện Đà Nẵng – 124 Hải Phòng</option>
-                                            <option value="Your own address">✏️ Địa chỉ của bạn (tự nhập)</option>
+                                        <select name="pickuplocation" id="pickuplocation" class="form-label select2-location" onchange="toggleCustomLocation('pickup')" style="width: 100%;">
+                                            <option value="Tại cửa hàng SmartRide - 254 Nguyễn Văn Linh, Thạc Gián, Thanh Khê, Đà Nẵng" data-icon="fa-store" data-highlight="true">Tại cửa hàng SmartRide</option>
+                                            <option value="Ga Đà Nẵng - Số 202 đường Hải Phòng" data-icon="fa-map-marker-alt">Ga Đà Nẵng</option>
+                                            <option value="Sân bay Quốc tế Đà Nẵng - 132 Phan Đình Phùng" data-icon="fa-map-marker-alt">Sân bay Đà Nẵng</option>
+                                            <option value="Bến xe Trung tâm - 33 Tôn Đức Thắng" data-icon="fa-map-marker-alt">Bến xe Trung tâm</option>
+                                            <option value="Chợ Hàn - 119 Trần Phú" data-icon="fa-map-marker-alt">Chợ Hàn</option>
+                                            <option value="Vincom Plaza - 910A Ngô Quyền" data-icon="fa-map-marker-alt">Vincom Plaza</option>
+                                            <option value="Cầu Rồng - Trần Hưng Đạo" data-icon="fa-map-marker-alt">Cầu Rồng</option>
+                                            <option value="Ngũ Hành Sơn - Huyền Trân Công Chúa" data-icon="fa-map-marker-alt">Ngũ Hành Sơn</option>
+                                            <option value="Lotte Mart - 6 Nại Nam" data-icon="fa-map-marker-alt">Lotte Mart</option>
+                                            <option value="Phố đi bộ Bạch Đằng - Bạch Đằng" data-icon="fa-map-marker-alt">Phố đi bộ Bạch Đằng</option>
+                                            <option value="Bệnh viện Đà Nẵng - 124 Hải Phòng" data-icon="fa-map-marker-alt">Bệnh viện Đà Nẵng</option>
+                                            <option value="Your own address" data-icon="fa-map-location-dot" data-highlight="true">Địa chỉ của bạn (tự nhập)</option>
                                         </select>
-                                        <input type="text" id="custom_pickup_input" placeholder="Nhập địa chỉ nhận xe của bạn..." style="display:none; margin-top:8px; border:1px solid #ebebeb; padding:10px 15px; border-radius:5px; width:100%; box-sizing:border-box; font-family:'Montserrat',sans-serif; font-size:14px;" oninput="updateCustomLocation('pickup')" />
+                                        <div id="pickup_custom_wrapper" style="display:none; margin-top:8px;">
+                                            <div style="display: flex; gap: 10px;">
+                                                <input type="text" id="custom_pickup_input" placeholder="Nhập địa chỉ nhận xe của bạn..." style="border:1px solid #ebebeb; padding:10px 15px; border-radius:5px; flex: 1; box-sizing:border-box; font-family:'Montserrat',sans-serif; font-size:14px;" onblur="calcDistance('pickup')" oninput="updateCustomLocation('pickup')" />
+                                                <button type="button" onclick="autoGeolocate('pickup')" style="background-color: #4f46e5; color: white; border: none; padding: 0 15px; border-radius: 5px; cursor: pointer; font-weight: bold; white-space: nowrap;"><i class="fas fa-location-crosshairs"></i> Tự động lấy vị trí</button>
+                                            </div>
+                                            <div id="pickup_distance_info" style="font-size: 12px; color: #64748b; margin-top: 5px;"></div>
+                                        </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="returnlocation" class="form-label">Địa điểm trả xe <span class="note-star"> *</span></label>
-                                        <select name="returnlocation" id="returnlocation" class="form-label" onchange="toggleCustomLocation('return')">
-                                            <option value="Tại cửa hàng SmartRide - 202 Hải Phòng, Đà Nẵng">📍 Tại cửa hàng SmartRide</option>
-                                            <option value="Ga Đà Nẵng - Số 202 đường Hải Phòng">Ga Đà Nẵng – 202 Hải Phòng, Tam Thuận</option>
-                                            <option value="Sân bay Quốc tế Đà Nẵng - 132 Phan Đình Phùng">✈️ Sân bay Đà Nẵng – 132 Phan Đình Phùng</option>
-                                            <option value="Bến xe Trung tâm - 33 Tôn Đức Thắng">Bến xe Trung tâm – 33 Tôn Đức Thắng, Hải Châu</option>
-                                            <option value="Chợ Hàn - 119 Trần Phú">Chợ Hàn – 119 Trần Phú, Hải Châu</option>
-                                            <option value="Vincom Plaza - 910A Ngô Quyền">Vincom Plaza – 910A Ngô Quyền, Sơn Trà</option>
-                                            <option value="Cầu Rồng - Trần Hưng Đạo">Cầu Rồng – Trần Hưng Đạo, Hải Châu</option>
-                                            <option value="Ngũ Hành Sơn - Huyền Trân Công Chúa">Ngũ Hành Sơn – Huyền Trân Công Chúa</option>
-                                            <option value="Lotte Mart - 6 Nại Nam">Lotte Mart – 6 Nại Nam, Hải Châu</option>
-                                            <option value="Phố đi bộ Bạch Đằng - Bạch Đằng">Phố đi bộ Bạch Đằng, Hải Châu</option>
-                                            <option value="Bệnh viện Đà Nẵng - 124 Hải Phòng">Bệnh viện Đà Nẵng – 124 Hải Phòng</option>
-                                            <option value="Your own address">✏️ Địa chỉ của bạn (tự nhập)</option>
+                                        <select name="returnlocation" id="returnlocation" class="form-label select2-location" onchange="toggleCustomLocation('return')" style="width: 100%;">
+                                            <option value="Tại cửa hàng SmartRide - 254 Nguyễn Văn Linh, Thạc Gián, Thanh Khê, Đà Nẵng" data-icon="fa-store" data-highlight="true">Tại cửa hàng SmartRide</option>
+                                            <option value="Ga Đà Nẵng - Số 202 đường Hải Phòng" data-icon="fa-map-marker-alt">Ga Đà Nẵng</option>
+                                            <option value="Sân bay Quốc tế Đà Nẵng - 132 Phan Đình Phùng" data-icon="fa-map-marker-alt">Sân bay Đà Nẵng</option>
+                                            <option value="Bến xe Trung tâm - 33 Tôn Đức Thắng" data-icon="fa-map-marker-alt">Bến xe Trung tâm</option>
+                                            <option value="Chợ Hàn - 119 Trần Phú" data-icon="fa-map-marker-alt">Chợ Hàn</option>
+                                            <option value="Vincom Plaza - 910A Ngô Quyền" data-icon="fa-map-marker-alt">Vincom Plaza</option>
+                                            <option value="Cầu Rồng - Trần Hưng Đạo" data-icon="fa-map-marker-alt">Cầu Rồng</option>
+                                            <option value="Ngũ Hành Sơn - Huyền Trân Công Chúa" data-icon="fa-map-marker-alt">Ngũ Hành Sơn</option>
+                                            <option value="Lotte Mart - 6 Nại Nam" data-icon="fa-map-marker-alt">Lotte Mart</option>
+                                            <option value="Phố đi bộ Bạch Đằng - Bạch Đằng" data-icon="fa-map-marker-alt">Phố đi bộ Bạch Đằng</option>
+                                            <option value="Bệnh viện Đà Nẵng - 124 Hải Phòng" data-icon="fa-map-marker-alt">Bệnh viện Đà Nẵng</option>
+                                            <option value="Your own address" data-icon="fa-map-location-dot" data-highlight="true">Địa chỉ của bạn (tự nhập)</option>
                                         </select>
-                                        <input type="text" id="custom_return_input" placeholder="Nhập địa chỉ trả xe của bạn..." style="display:none; margin-top:8px; border:1px solid #ebebeb; padding:10px 15px; border-radius:5px; width:100%; box-sizing:border-box; font-family:'Montserrat',sans-serif; font-size:14px;" oninput="updateCustomLocation('return')" />
+                                        <div id="return_custom_wrapper" style="display:none; margin-top:8px;">
+                                            <div style="display: flex; gap: 10px;">
+                                                <input type="text" id="custom_return_input" placeholder="Nhập địa chỉ trả xe của bạn..." style="border:1px solid #ebebeb; padding:10px 15px; border-radius:5px; flex: 1; box-sizing:border-box; font-family:'Montserrat',sans-serif; font-size:14px;" onblur="calcDistance('return')" oninput="updateCustomLocation('return')" />
+                                                <button type="button" onclick="autoGeolocate('return')" style="background-color: #4f46e5; color: white; border: none; padding: 0 15px; border-radius: 5px; cursor: pointer; font-weight: bold; white-space: nowrap;"><i class="fas fa-location-crosshairs"></i> Tự động lấy vị trí</button>
+                                            </div>
+                                            <div id="return_distance_info" style="font-size: 12px; color: #64748b; margin-top: 5px;"></div>
+                                        </div>
                                     </div>
                                     <script>
                                         function toggleCustomLocation(type) {
                                             var select = document.getElementById(type + 'location');
+                                            var wrapper = document.getElementById(type + '_custom_wrapper');
                                             var input = document.getElementById('custom_' + type + '_input');
                                             var selectedOption = select.options[select.selectedIndex];
                                             if (selectedOption.text.includes('(tự nhập)')) {
-                                                input.style.display = 'block';
+                                                wrapper.style.display = 'block';
                                                 input.required = true;
                                             } else {
-                                                input.style.display = 'none';
+                                                wrapper.style.display = 'none';
                                                 input.required = false;
                                             }
                                         }
@@ -2279,12 +2314,12 @@
                                                             <c:set var="imagesArr" value="${fn:split(c.identityCardImage, ',')}" />
                                                             
                                                             <div class="upload-card-wrapper" style="flex: 1; min-width: 0;">
-                                                                <label for="imageFront" class="upload-card">
+                                                                <label for="imageFrontAuth" class="upload-card">
                                                                     <i class="bi bi-person-vcard"></i>
                                                                     <span class="upload-title">Cập nhật mặt trước</span>
                                                                     <span class="upload-subtitle">Nhấn để chọn ảnh mới</span>
                                                                 </label>
-                                                                <input type="file" name="imageFront" id="imageFront" style="display: none;" />
+                                                                <input type="file" name="imageFront" id="imageFrontAuth" style="display: none;" />
                                                                 
                                                                 <!-- Preview Container (managed by JS) -->
                                                                 <div class="image-preview-container" style="display: none;">
@@ -2304,12 +2339,12 @@
                                                             </div>
 
                                                             <div class="upload-card-wrapper" style="flex: 1; min-width: 0;">
-                                                                <label for="imageBack" class="upload-card">
+                                                                <label for="imageBackAuth" class="upload-card">
                                                                     <i class="bi bi-credit-card-2-back"></i>
                                                                     <span class="upload-title">Cập nhật mặt sau</span>
                                                                     <span class="upload-subtitle">Nhấn để chọn ảnh mới</span>
                                                                 </label>
-                                                                <input type="file" name="imageBack" id="imageBack" style="display: none;" />
+                                                                <input type="file" name="imageBack" id="imageBackAuth" style="display: none;" />
                                                                 
                                                                 <!-- Preview Container (managed by JS) -->
                                                                 <div class="image-preview-container" style="display: none;">
@@ -2498,6 +2533,17 @@
                                         <input type="hidden" id="applied-discount" value="0"/>
                                         <input type="hidden" id="applied-voucher-id" value="0"/>
                                     </div>
+                                    
+                                    <!-- CAM KẾT GIAO XE -->
+                                    <div style="background:#f0faf0; border:1px solid #b2dfb2; border-radius:12px; padding:16px 20px; margin-bottom: 20px; display: flex; gap: 15px; align-items: flex-start;">
+                                        <div style="width: 40px; height: 40px; border-radius: 50%; background: #e8f5e9; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                            <i class="fas fa-shipping-fast text-green-600 text-lg"></i>
+                                        </div>
+                                        <div>
+                                            <h4 style="margin:0 0 4px; color:#2e7d32; font-size:14px; font-weight: 700;">Cam kết giao xe đúng hạn!</h4>
+                                            <p style="margin:0; font-size:13px; color:#388e3c; line-height: 1.5;">SmartRide cam kết giao xe tận nơi chậm nhất trong <strong>45 phút</strong> kể từ lúc <strong>nhân viên duyệt đơn</strong> (hoặc theo đúng giờ đã hẹn). Nếu giao trễ quá thời gian này, hệ thống sẽ tự động tặng ngay <strong>Mã giảm giá 50.000đ</strong> đền bù vào đơn hàng của bạn! <em>*Lưu ý: Vui lòng đặt xe cách thời điểm hiện tại ít nhất 15 phút.</em></p>
+                                        </div>
+                                    </div>
 
                                     <!-- ĐIỀU KHOẢN -->
                                     <div style="background:#fffbf2; border:1px solid #f0e4b8; border-radius:12px; padding:20px;">
@@ -2519,7 +2565,8 @@
                                         </div>
                                         <label style="display:flex; align-items:center; gap:10px; cursor:pointer; font-size:14px; font-weight:600; color:#333;">
                                             <input type="checkbox" id="daily-checkbox-term" style="width:18px; height:18px; accent-color:#b59349; cursor:pointer;" />
-                                            Tôi đã đọc và đồng ý với <span style="color:#b59349; text-decoration:underline; cursor:pointer;" onclick="document.getElementById('terms-modal').style.display='flex'">Điều khoản &amp; Chính sách</span> của SmartRide
+                                            <span>Tôi đã đọc và đồng ý với <span style="color:#b59349; text-decoration:underline; cursor:pointer;" onclick="document.getElementById('terms-modal').style.display='flex'">Điều khoản dịch vụ</span> &amp; 
+                                            <span style="color:#3b82f6; text-decoration:underline; cursor:pointer;" onclick="document.getElementById('contract-modal').style.display='flex'">Hợp đồng thuê xe</span></span>
                                         </label>
                                     </div>
 
@@ -2636,14 +2683,29 @@
                                 var summaryAmt = document.getElementById('deposit-summary-amount');
                                 var summaryLbl = document.getElementById('deposit-summary-label');
                                 if (!dataEl || !summaryAmt) return;
-                                var rawAmt = dataEl.getAttribute('data-amount');
+                                var methodCash = document.getElementById('check-cash') && document.getElementById('check-cash').style.background === 'rgb(181, 147, 73)';
+                                var rawAmt = dataEl.getAttribute(methodCash ? 'data-full-amount' : 'data-amount');
                                 var amt = rawAmt ? parseInt(rawAmt) : 0;
-                                if (amt > 0) {
-                                    summaryAmt.textContent = '&#8363;' + amt.toLocaleString('vi-VN');
+                                
+                                // Update title and button
+                                var titleBox = summaryAmt.previousElementSibling;
+                                var submitBtn = document.querySelector('#payment-method-container button');
+                                
+                                if (methodCash) {
+                                    if (titleBox) titleBox.textContent = 'TỔNG TIỀN (KHI NHẬN XE)';
+                                    summaryLbl.textContent = 'Thanh toán tiền mặt khi nhận xe';
+                                    if (submitBtn) submitBtn.textContent = 'Xác nhận đặt xe (Thanh toán sau)';
+                                } else {
+                                    if (titleBox) titleBox.textContent = 'SỐ TIỀN ĐẶT CỌC';
                                     try {
                                         var h4 = dataEl.parentElement ? dataEl.parentElement.querySelector('h4') : null;
-                                        summaryLbl.textContent = h4 ? h4.textContent.trim() : 'Số tiền cần thanh toán trước';
+                                        summaryLbl.textContent = h4 ? h4.textContent.trim() : 'Cần đặt cọc (50% theo ngày):';
                                     } catch(e) {}
+                                    if (submitBtn) submitBtn.textContent = 'Xác nhận thanh toán';
+                                }
+
+                                if (amt > 0) {
+                                    summaryAmt.textContent = '&#8363;' + amt.toLocaleString('vi-VN');
                                 }
                             }
                             window.syncDepositSummary = syncDepositSummary;
@@ -2677,8 +2739,8 @@
                                 <div style="text-align:center; background:#fff; border:2px solid #e5e7eb; border-radius:16px; padding:20px; margin-bottom:18px;">
                                     <img id="sepay-qr-img" src="" alt="QR SePay" style="width:220px; height:220px; border-radius:8px; display:block; margin:0 auto;">
                                     <div style="margin-top:12px;">
-                                        <div style="font-size:13px; color:#666; margin-bottom:4px;">Ngân hàng: <strong>Vietcombank (VCB)</strong></div>
-                                        <div style="font-size:13px; color:#666; margin-bottom:4px;">Số tài khoản: <strong>1037077133</strong></div>
+                                        <div style="font-size:13px; color:#666; margin-bottom:4px;">Ngân hàng: <strong>MBBank (MBB)</strong></div>
+                                        <div style="font-size:13px; color:#666; margin-bottom:4px;">Số tài khoản: <strong>0943515000</strong></div>
                                         <div style="font-size:13px; color:#666;">Số tiền: <strong id="sepay-amount-text" style="color:#b59349;"></strong></div>
                                     </div>
                                 </div>
@@ -2712,6 +2774,27 @@
 
         </div>
 
+        <!-- MODAL HỢP ĐỒNG THUÊ XE PREVIEW -->
+        <div id="contract-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.65); z-index:99999; align-items:center; justify-content:center; padding:20px; box-sizing:border-box;">
+            <div style="background:#fff; border-radius:12px; max-width:850px; width:100%; height:90vh; overflow:hidden; display:flex; flex-direction:column; box-shadow:0 24px 60px rgba(0,0,0,0.3);">
+                <div style="padding:16px 24px; border-bottom:1px solid #eee; display:flex; align-items:center; justify-content:space-between; background:#fafafa;">
+                    <div>
+                        <h3 style="margin:0; color:#3b82f6; font-size:18px;"><i class="fas fa-file-signature"></i> Hợp Đồng Thuê Xe (Bản xem trước)</h3>
+                        <p style="margin:4px 0 0; font-size:12px; color:#777;">Hợp đồng thực tế sẽ có đầy đủ thông tin của bạn sau khi thanh toán cọc.</p>
+                    </div>
+                    <button type="button" onclick="document.getElementById('contract-modal').style.display='none'"
+                        style="background:#f1f5f9; border:none; width:34px; height:34px; border-radius:50%; font-size:18px; cursor:pointer; color:#475569; transition: background 0.2s;">&times;</button>
+                </div>
+                <div style="flex:1; width:100%; overflow:hidden;">
+                    <iframe src="contract.jsp?id=preview" style="width:100%; height:100%; border:none;"></iframe>
+                </div>
+                <div style="padding:14px 24px; border-top:1px solid #eee; display:flex; justify-content:flex-end; background:#fafafa;">
+                    <button type="button" onclick="document.getElementById('daily-checkbox-term').checked=true; document.getElementById('contract-modal').style.display='none'; if(typeof toggleNextButton==='function') toggleNextButton();"
+                        style="padding:10px 24px; background:#3b82f6; color:#fff; border:none; border-radius:8px; font-size:14px; font-weight:700; cursor:pointer; box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.5);">Đã đọc &amp; Đồng ý</button>
+                </div>
+            </div>
+        </div>
+
         <!-- MODAL ĐIỀU KHOẢN SMARTRIDE -->
         <div id="terms-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.55); z-index:99999; align-items:center; justify-content:center; padding:20px; box-sizing:border-box;">
             <div style="background:#fff; border-radius:16px; max-width:720px; width:100%; max-height:85vh; overflow:hidden; display:flex; flex-direction:column; box-shadow:0 24px 60px rgba(0,0,0,0.25);">
@@ -2738,21 +2821,27 @@
                     <hr style="border:none; border-top:1px solid #f0e4b8; margin:14px 0;">
                     <h4 style="color:#b59349; margin:0 0 6px;">4. Sử dụng Xe</h4>
                     <p><strong>An toàn:</strong> Tuân thủ luật giao thông, đội mũ bảo hiểm khi lái xe.<br>
+                    <strong>Phạm vi di chuyển:</strong> Không được phép tự ý lái xe ra khỏi phạm vi bán kính 50km tính từ cửa hàng (chỉ giới hạn trong Đà Nẵng, Hội An và phụ cận) nếu không có sự đồng ý trước của SmartRide.<br>
                     <strong>Bảo quản:</strong> Chịu trách nhiệm xe suốt thời gian thuê. Hư hại phải báo cáo ngay.<br>
                     <strong>Trả xe:</strong> Đúng giờ, đúng địa điểm. <strong>Trả muộn bị tính phí thêm.</strong></p>
                     <hr style="border:none; border-top:1px solid #f0e4b8; margin:14px 0;">
-                    <h4 style="color:#b59349; margin:0 0 6px;">5. Bảo hiểm &amp; Trách nhiệm</h4>
+                    <h4 style="color:#b59349; margin:0 0 6px;">5. Phụ phí & Bồi thường (Áp dụng lúc trả xe)</h4>
+                    <p><strong>Phạt trả muộn:</strong> Trả xe quá giờ quy định mà không gia hạn trước sẽ bị tính phí phụ thu (VD: 50,000đ/giờ). Quá 6 tiếng tính thành 1 ngày thuê.<br>
+                    <strong>Hư hỏng, xước xát:</strong> Mọi vết xước, móp méo vỏ xe, hoặc hư hỏng linh kiện phát sinh (được đối chiếu dựa trên ảnh chụp lúc giao xe) sẽ được định giá và yêu cầu bồi thường trực tiếp.<br>
+                    <strong>Xăng xe:</strong> Khách hàng cần trả xe với mức xăng tối thiểu bằng mức xăng lúc nhận xe, nếu thiếu sẽ phụ thu tiền đổ bù.</p>
+                    <hr style="border:none; border-top:1px solid #f0e4b8; margin:14px 0;">
+                    <h4 style="color:#b59349; margin:0 0 6px;">6. Bảo hiểm &amp; Trách nhiệm</h4>
                     <p><strong>Bảo hiểm:</strong> SmartRide cung cấp bảo hiểm cơ bản cho xe thuê.<br>
                     <strong>Trách nhiệm:</strong> Người thuê chịu trách nhiệm pháp lý với mọi hành động khi sử dụng xe.</p>
                     <hr style="border:none; border-top:1px solid #f0e4b8; margin:14px 0;">
-                    <h4 style="color:#b59349; margin:0 0 6px;">6. Hủy Bỏ &amp; Hoàn Tiền</h4>
+                    <h4 style="color:#b59349; margin:0 0 6px;">7. Hủy Bỏ &amp; Hoàn Tiền</h4>
                     <p><strong>Hủy miễn phí:</strong> Trước 24 giờ so với thời gian nhận xe.<br>
                     <strong>Hoàn tiền:</strong> Xử lý trong vòng <strong>7 ngày làm việc</strong> sau khi xác nhận hủy.</p>
                     <hr style="border:none; border-top:1px solid #f0e4b8; margin:14px 0;">
-                    <h4 style="color:#b59349; margin:0 0 6px;">7. Quyền riêng tư</h4>
+                    <h4 style="color:#b59349; margin:0 0 6px;">8. Quyền riêng tư</h4>
                     <p>SmartRide cam kết bảo vệ thông tin cá nhân và không chia sẻ cho bên thứ ba ngoài mục đích dịch vụ.</p>
                     <hr style="border:none; border-top:1px solid #f0e4b8; margin:14px 0;">
-                    <h4 style="color:#b59349; margin:0 0 6px;">8. Liên hệ</h4>
+                    <h4 style="color:#b59349; margin:0 0 6px;">9. Liên hệ</h4>
                     <p>Mọi thắc mắc về điều khoản, vui lòng liên hệ qua email hoặc số điện thoại trên website. Chi tiết đầy đủ tại <a href="policies.jsp" target="_blank" style="color:#b59349; font-weight:600;">trang Chính sách</a>.</p>
                 </div>
                 <div style="padding:14px 24px; border-top:1px solid #f0e4b8; display:flex; justify-content:flex-end; gap:10px; background:#fafafa;">
@@ -3419,6 +3508,54 @@
                                     </table>
                             `;
 
+                            // Tính phí giao nhận (3km đầu miễn phí, từ km 4 tính 5k/km)
+                            const distanceMap = {
+                                "Tại cửa hàng SmartRide - 254 Nguyễn Văn Linh, Thạc Gián, Thanh Khê, Đà Nẵng": 0,
+                                "Ga Đà Nẵng - Số 202 đường Hải Phòng": 0,
+                                "Bệnh viện Đà Nẵng - 124 Hải Phòng": 1,
+                                "Chợ Hàn - 119 Trần Phú": 2,
+                                "Phố đi bộ Bạch Đằng - Bạch Đằng": 2,
+                                "Sân bay Quốc tế Đà Nẵng - 132 Phan Đình Phùng": 3,
+                                "Cầu Rồng - Trần Hưng Đạo": 3,
+                                "Vincom Plaza - 910A Ngô Quyền": 4,
+                                "Lotte Mart - 6 Nại Nam": 5,
+                                "Bến xe Trung tâm - 33 Tôn Đức Thắng": 6,
+                                "Ngũ Hành Sơn - Huyền Trân Công Chúa": 12,
+                                "Your own address": 8 // Mặc định 8km cho địa chỉ tự nhập
+                            };
+
+                            let pickupLoc = document.getElementById('pickuplocation') ? document.getElementById('pickuplocation').value : '';
+                            let returnLoc = document.getElementById('returnlocation') ? document.getElementById('returnlocation').value : '';
+                            
+                            let distPickup = 0;
+                            if (distanceMap[pickupLoc] === undefined) {
+                                let datasetDist = document.getElementById('custom_pickup_input').dataset.dist;
+                                distPickup = datasetDist ? parseFloat(datasetDist) : (pickupLoc ? 8 : 0);
+                            } else {
+                                distPickup = distanceMap[pickupLoc];
+                            }
+                            
+                            let distReturn = 0;
+                            if (distanceMap[returnLoc] === undefined) {
+                                let datasetDist = document.getElementById('custom_return_input').dataset.dist;
+                                distReturn = datasetDist ? parseFloat(datasetDist) : (returnLoc ? 8 : 0);
+                            } else {
+                                distReturn = distanceMap[returnLoc];
+                            }
+                            
+                            // Tổng khoảng cách cần giao + nhận (chỉ tính 1 chiều đi từ cửa hàng)
+                            let totalDistance = parseFloat((distPickup + distReturn).toFixed(1));
+                            
+                            // Công thức: 3km đầu Free. Từ km 4: 5k/km.
+                            let deliveryFee = 0;
+                            if (totalDistance > 3) {
+                                deliveryFee = Math.ceil(totalDistance - 3) * 5000;
+                            }
+                            window.calculatedDeliveryFee = deliveryFee;
+                            
+                            // Cộng phí giao xe vào tổng
+                            totalAmount += deliveryFee;
+
                             // Apply voucher discount if any
                             const appliedDiscount = parseInt(document.getElementById('applied-discount').value) || 0;
                             const finalAmount = Math.max(0, totalAmount - appliedDiscount);
@@ -3440,34 +3577,66 @@
                             const depositPercent = Math.round(depositRate * 100);
                             const depositAmount = Math.round(finalAmount * depositRate);
 
+                            // Hiển thị dòng Phí giao xe nếu có
+                            let deliveryHtml = '';
+                            if (totalDistance > 0) {
+                                if (deliveryFee === 0) {
+                                    deliveryHtml = `
+                                        <div style="display:flex; justify-content:space-between; width:100%; align-items:center; margin-top:6px;">
+                                            <span style="font-size:14px; color:#6b7280; font-weight:500;"><i class="fas fa-motorcycle" style="color:#6b7280; font-size:12px; margin-right:4px;"></i> Phí giao/nhận xe (` + totalDistance + `km):</span>
+                                            <span style="font-size:15px; color:#16a34a; font-weight:700;">Miễn phí</span>
+                                        </div>
+                                    `;
+                                } else {
+                                    deliveryHtml = `
+                                        <div style="display:flex; justify-content:space-between; width:100%; align-items:center; margin-top:6px;">
+                                            <span style="font-size:14px; color:#6b7280; font-weight:500;"><i class="fas fa-motorcycle" style="color:#6b7280; font-size:12px; margin-right:4px;"></i> Phí giao/nhận xe (` + totalDistance + `km):</span>
+                                            <span style="font-size:15px; color:#333; font-weight:600;">₫` + deliveryFee.toLocaleString() + `</span>
+                                        </div>
+                                    `;
+                                }
+                            }
+
                             if (appliedDiscount > 0) {
                                 // Giá gốc gạch ngang + dòng giảm + giá sau giảm
                                 totalFooterHtml = `
                                     <div style="display:flex; justify-content:space-between; width:100%; align-items:center; margin-top:10px; padding-top:10px; border-top:2px solid #e0c87a;">
                                         <h4 style="margin:0; font-size:16px; color:#888;">Tạm tính:</h4>
-                                        <span style="font-size:18px; color:#aaa; text-decoration:line-through; font-weight:600;">₫` + totalAmount.toLocaleString() + `</span>
+                                        <span style="font-size:18px; color:#aaa; text-decoration:line-through; font-weight:600;">₫` + (totalAmount - deliveryFee).toLocaleString() + `</span>
                                     </div>
+                                    ` + deliveryHtml + `
                                     <div style="display:flex; justify-content:space-between; width:100%; align-items:center; margin-top:6px;">
                                         <span style="font-size:14px; color:#16a34a; font-weight:600;">🎉 Voucher giảm:</span>
                                         <span style="font-size:15px; color:#16a34a; font-weight:700;">-₫` + appliedDiscount.toLocaleString() + `</span>
                                     </div>
                                     <div style="display:flex; justify-content:space-between; width:100%; align-items:center; margin-top:10px; padding-top:10px; border-top:1px dashed #e0c87a;">
                                         <h4 style="margin:0; font-size:16px; color:#333; font-weight:600;">Tổng thanh toán:</h4>
-                                        <h4 style="margin:0; font-size:16px; color:#333; font-weight:600;">₫` + finalAmount.toLocaleString() + `</h4>
+                                        <h4 id="true-total-amount" style="margin:0; font-size:16px; color:#333; font-weight:600;">₫` + finalAmount.toLocaleString('vi-VN') + `</h4>
                                     </div>
                                     <div style="display:flex; justify-content:space-between; width:100%; align-items:center; margin-top:10px; padding-top:10px; border-top:2px solid #b59349;">
-                                        <h4 style="margin:0; font-size:18px; color:#333; font-weight:700;">Cần đặt cọc (` + depositPercent + `% ` + depositPlanLabel + `):</h4>
+                                        <div style="margin:0;">
+                                            <h4 style="margin:0 0 4px 0; font-size:17px; color:#333; font-weight:700;">Thanh toán trước (` + depositPercent + `% ` + depositPlanLabel + `):</h4>
+                                            <span style="font-size:12px; color:#92400e; font-weight:500; background:#fef3c7; border:1px solid #f59e0b; border-radius:4px; padding:2px 7px; display:inline-block;">💵 Hoặc thanh toán <b>100%</b> bằng Tiền mặt khi nhận xe</span>
+                                        </div>
                                         <h2 id="dataInput" data-amount="` + depositAmount + `" style="margin:0; font-size:26px; color:#b59349; font-weight:700;">₫` + depositAmount.toLocaleString('vi-VN') + `</h2>
                                     </div>
                                 `;
                             } else {
                                 totalFooterHtml = `
                                     <div style="display:flex; justify-content:space-between; width:100%; align-items:center; margin-top:10px; padding-top:10px; border-top:1px dashed #e0c87a;">
+                                        <h4 style="margin:0; font-size:16px; color:#888;">Tạm tính:</h4>
+                                        <span style="font-size:16px; color:#333; font-weight:600;">₫` + (totalAmount - deliveryFee).toLocaleString() + `</span>
+                                    </div>
+                                    ` + deliveryHtml + `
+                                    <div style="display:flex; justify-content:space-between; width:100%; align-items:center; margin-top:10px; padding-top:10px; border-top:1px dashed #e0c87a;">
                                         <h4 style="margin:0; font-size:16px; color:#333; font-weight:600;">Tổng thanh toán:</h4>
-                                        <h4 style="margin:0; font-size:16px; color:#333; font-weight:600;">₫` + finalAmount.toLocaleString() + `</h4>
+                                        <h4 id="true-total-amount" style="margin:0; font-size:16px; color:#333; font-weight:600;">₫` + finalAmount.toLocaleString('vi-VN') + `</h4>
                                     </div>
                                     <div style="display:flex; justify-content:space-between; width:100%; align-items:center; margin-top:10px; padding-top:10px; border-top:2px solid #b59349;">
-                                        <h4 style="margin:0; font-size:18px; color:#333; font-weight:700;">Cần đặt cọc (` + depositPercent + `% ` + depositPlanLabel + `):</h4>
+                                        <div style="margin:0;">
+                                            <h4 style="margin:0 0 4px 0; font-size:17px; color:#333; font-weight:700;">Thanh toán trước (` + depositPercent + `% ` + depositPlanLabel + `):</h4>
+                                            <span style="font-size:12px; color:#92400e; font-weight:500; background:#fef3c7; border:1px solid #f59e0b; border-radius:4px; padding:2px 7px; display:inline-block;">💵 Hoặc thanh toán <b>100%</b> bằng Tiền mặt khi nhận xe</span>
+                                        </div>
                                         <h2 id="dataInput" data-amount="` + depositAmount + `" style="margin:0; font-size:26px; color:#b59349; font-weight:700;">₫` + depositAmount.toLocaleString('vi-VN') + `</h2>
                                     </div>
                                 `;
@@ -3793,10 +3962,10 @@
                 });
                 
                 // Add event listeners to validate form on image change
-                const frontInput = document.getElementById('imageFront');
-                const backInput = document.getElementById('imageBack');
-                if (frontInput) frontInput.addEventListener('change', validateForm);
-                if (backInput) backInput.addEventListener('change', validateForm);
+                const frontInputsAll = document.querySelectorAll('input[name="imageFront"]');
+                const backInputsAll = document.querySelectorAll('input[name="imageBack"]');
+                frontInputsAll.forEach(input => input.addEventListener('change', validateForm));
+                backInputsAll.forEach(input => input.addEventListener('change', validateForm));
                 
                 // Add zoom capability to all existing images
                 document.querySelectorAll('.existing-image .img-preview').forEach(function(img) {
@@ -4067,10 +4236,10 @@
                     setTimeout(function() {
                         var ctxPath = '${pageContext.request.contextPath}';
                         var bid = (response && response.bookingId) ? response.bookingId : (window._cashBookingId ? window._cashBookingId : '');
-                        window.location.href = ctxPath + (ctxPath.endsWith('/') ? '' : '/') + 'bookingHistoryDetail?bookingId=' + bid;
+                        window.location.href = ctxPath + (ctxPath.endsWith('/') ? '' : '/') + 'bookingHistoryDetail?bookingId=' + bid + '&autoContract=1';
                     }, 2000);
                 } else {
-                    if (!window._sepayBookingId) window._sepayBookingId = 'BK' + Date.now();
+                    if (!window._sepayBookingId) window._sepayBookingId = 'BK' + (Date.now() % 100000).toString().padStart(5, '0') + Math.floor(Math.random() * 1000).toString().padStart(3, '0');
                     var bookingId = window._sepayBookingId;
                     
                     var sepaySection = document.getElementById('sepay-payment-section');
@@ -4082,7 +4251,7 @@
                     document.getElementById('sepay-transfer-note').textContent = bookingId;
                     document.getElementById('sepay-amount-text').textContent = amount.toLocaleString('vi-VN') + ' ₫';
                     
-                    var qrUrl = 'https://qr.sepay.vn/img?bank=VCB&acc=1037077133&template=compact&amount=' + amount + '&des=' + encodeURIComponent(bookingId);
+                    var qrUrl = 'https://img.vietqr.io/image/MB-0943515000-compact2.png?amount=' + amount + '&addInfo=' + encodeURIComponent(bookingId) + '&accountName=SMARTRIDE';
                     document.getElementById('sepay-qr-img').src = qrUrl;
                     
                     if (window.sepayInterval) clearInterval(window.sepayInterval);
@@ -4132,7 +4301,7 @@
                                         });
                                     }
                                     
-                                    setTimeout(function() { window.location.href = ctxPath + (ctxPath.endsWith('/') ? '' : '/') + 'bookingHistoryDetail?bookingId=' + bookingId; }, 3000);
+                                    setTimeout(function() { window.location.href = ctxPath + (ctxPath.endsWith('/') ? '' : '/') + 'bookingHistoryDetail?bookingId=' + bookingId + '&autoContract=1'; }, 3000);
                                 }
                             }).catch(function() {});
                     }, 5000);
@@ -4204,13 +4373,15 @@
 
             if (method === 'cash') {
                 if (!window._cashBookingId) {
-                    window._cashBookingId = 'BK' + Math.floor(Math.random() * 100000000).toString().padStart(8, '0');
+                    // timestamp 5 ký tự cuối + 3 số random → khớp format backend
+                    window._cashBookingId = 'BK' + (Date.now() % 100000).toString().padStart(5, '0') + Math.floor(Math.random() * 1000).toString().padStart(3, '0');
                 }
                 var bookingId = window._cashBookingId;
                 BookingHandler({ action: 'finish', bookingId: bookingId, method: 'CASH', amount: amount, time: formatDateVN() }, onSuccess, onError);
             } else {
                 if (!window._sepayBookingId) {
-                    window._sepayBookingId = 'BK' + Math.floor(Math.random() * 100000000).toString().padStart(8, '0');
+                    // timestamp 5 ký tự cuối + 3 số random → khớp format backend
+                    window._sepayBookingId = 'BK' + (Date.now() % 100000).toString().padStart(5, '0') + Math.floor(Math.random() * 1000).toString().padStart(3, '0');
                 }
                 var bookingId = window._sepayBookingId;
                 BookingHandler({ action: 'create_only', bookingId: bookingId, method: 'SEPAY', amount: amount, time: formatDateVN() }, onSuccess, onError);
@@ -4349,7 +4520,8 @@
             var identityCard = document.getElementById("identityCard").value;
             var issuedon = document.getElementById("issuedon").value;
             var expdate = document.getElementById("expdate").value;
-            var total = document.getElementById("dataInput").textContent.trim();
+            var totalEl = document.getElementById("true-total-amount");
+            var total = totalEl ? totalEl.textContent.trim() : document.getElementById("dataInput").textContent.trim();
             
             
             // Chuyển các chuỗi ngày thành đối tượng Date
@@ -4390,6 +4562,12 @@
             console.log(bikeDetails);
             console.log(accessoriesData);
             console.log(fistname);
+            let deliveryFee = window.calculatedDeliveryFee || 0;
+            
+            if (deliveryFee > 0) {
+                pickupLocation += " (Phí giao xe: " + deliveryFee + "đ)";
+            }
+
             var data = {
                 pickupDate: pickupDate + " " + pickupTime,
                 pickupLocation: pickupLocation,
@@ -4427,14 +4605,14 @@
             formData.append("jsonData", JSON.stringify(data));
 
             // Add files to formData
-            var frontInputs = document.querySelectorAll('input[name="imageFront"], input[id="imageFront"]');
+            var frontInputs = document.querySelectorAll('input[name="imageFront"]');
             for (var i = 0; i < frontInputs.length; i++) {
                 if (frontInputs[i].files && frontInputs[i].files.length > 0) {
                     formData.append("fileFront", frontInputs[i].files[0]);
                     break;
                 }
             }
-            var backInputs = document.querySelectorAll('input[name="imageBack"], input[id="imageBack"]');
+            var backInputs = document.querySelectorAll('input[name="imageBack"]');
             for (var i = 0; i < backInputs.length; i++) {
                 if (backInputs[i].files && backInputs[i].files.length > 0) {
                     formData.append("fileBack", backInputs[i].files[0]);
@@ -4940,7 +5118,294 @@
 
         // Voucher được xử lý qua hàm applyVoucher() ở script phía trên (kết nối servlet /applyVoucher → database)
         </script>
-    </body>
+    <!-- Select2 JS -->
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+        
+        <script>
+        window.deliveryFee = 0;
+        
+        function toggleCustomLocation(type) {
+            var select = document.getElementById(type + 'location');
+            var wrapper = document.getElementById(type + '_custom_wrapper');
+            var input = document.getElementById('custom_' + type + '_input');
+            if (select.value === 'Your own address') {
+                wrapper.style.display = 'block';
+                input.required = true;
+            } else {
+                wrapper.style.display = 'none';
+                input.required = false;
+                document.getElementById(type + '_distance_info').innerHTML = '';
+            }
+            recalculateDeliveryFee();
+        }
+        
+        function autoGeolocate(type) {
+            if (navigator.geolocation) {
+                var btn = event.currentTarget;
+                var oldHtml = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    var lat = position.coords.latitude;
+                    var lon = position.coords.longitude;
+                    
+                    fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + lat + '&lon=' + lon + '&accept-language=vi')
+                    .then(response => response.json())
+                    .then(data => {
+                        btn.innerHTML = oldHtml;
+                        var address;
+                        if (data && data.display_name) {
+                            address = data.display_name.replace(/ Ward/g, '').replace(/ District/g, '');
+                        } else {
+                            // Fallback: dùng tọa độ khi không lấy được tên địa chỉ
+                            address = lat.toFixed(5) + ', ' + lon.toFixed(5);
+                        }
+                        document.getElementById('custom_' + type + '_input').value = address;
+                        updateCustomLocation(type);
+                        processDistance(lat, lon, type);
+                    })
+                    .catch(error => {
+                        console.error('Error reverse geocoding:', error);
+                        btn.innerHTML = oldHtml;
+                        // Fallback: dùng tọa độ thay vì báo lỗi cứng
+                        var fallbackAddress = lat.toFixed(5) + ', ' + lon.toFixed(5);
+                        document.getElementById('custom_' + type + '_input').value = fallbackAddress;
+                        updateCustomLocation(type);
+                        processDistance(lat, lon, type);
+                    });
+                }, function(error) {
+                    btn.innerHTML = oldHtml;
+                    Swal.fire({icon: 'error', title: 'Lỗi định vị', text: 'Vui lòng cho phép trình duyệt truy cập vị trí của bạn.'});
+                }, { timeout: 10000 });
+            } else {
+                Swal.fire({icon: 'warning', title: 'Không hỗ trợ', text: 'Trình duyệt của bạn không hỗ trợ định vị.'});
+            }
+        }
+        
+        function calcDistance(type) {
+            var address = document.getElementById('custom_' + type + '_input').value;
+            if (!address || address.trim() === '') return;
+            
+            var info = document.getElementById(type + '_distance_info');
+            info.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang tính khoảng cách...';
+            
+            fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(address + ', Đà Nẵng, Việt Nam') + '&accept-language=vi&limit=1')
+            .then(function(response) { return response.json(); })
+            .then(function(data) {
+                if (data && data.length > 0) {
+                    processDistance(parseFloat(data[0].lat), parseFloat(data[0].lon), type);
+                } else {
+                    info.innerHTML = '<span style="color:#ef4444;"><i class="fas fa-exclamation-circle"></i> Không tìm thấy địa chỉ này, vui lòng thử lại.</span>';
+                    var inputEl = document.getElementById('custom_' + type + '_input');
+                    if (inputEl) inputEl.dataset.dist = "8";
+                    if (type === 'pickup') window._pickupFee = 25000;
+                    else window._returnFee = 25000;
+                    recalculateDeliveryFee();
+                    updateTotal();
+                }
+            })
+            .catch(function() {
+                info.innerHTML = '<span style="color:#ef4444;"><i class="fas fa-exclamation-circle"></i> Lỗi tính khoảng cách.</span>';
+                var inputEl = document.getElementById('custom_' + type + '_input');
+                if (inputEl) inputEl.dataset.dist = "8";
+                if (type === 'pickup') window._pickupFee = 25000;
+                else window._returnFee = 25000;
+                recalculateDeliveryFee();
+                updateTotal();
+            });
+        }
+
+        // Tọa độ cửa hàng SmartRide
+        var SHOP_LAT = 16.0609, SHOP_LON = 108.2057;
+
+        function haversineKm(lat1, lon1, lat2, lon2) {
+            var R = 6371;
+            var dLat = (lat2 - lat1) * Math.PI / 180;
+            var dLon = (lon2 - lon1) * Math.PI / 180;
+            var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                    Math.sin(dLon/2) * Math.sin(dLon/2);
+            return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        }
+
+        // Lưu phí giao từng loại
+        window._pickupFee  = 0;
+        window._returnFee  = 0;
+
+        function processDistance(lat, lon, type) {
+            var km  = haversineKm(SHOP_LAT, SHOP_LON, lat, lon);
+            var fee = 0;
+            if (km > 20) {
+                // Không nhận đơn
+                var info = document.getElementById(type + '_distance_info');
+                info.innerHTML = '<span style="color:#ef4444;"><i class="fas fa-ban"></i> Khoảng cách <strong>' + km.toFixed(1) + ' km</strong> – vượt quá 20km, hệ thống không nhận đơn.</span>';
+                if (type === 'pickup') window._pickupFee = 0;
+                else window._returnFee = 0;
+                recalculateDeliveryFee();
+                return;
+            }
+            if (km > 3) {
+                fee = Math.ceil(km - 3) * 5000;
+            }
+            var feeStr = fee > 0 ? fee.toLocaleString('vi-VN') + 'đ' : 'Miễn phí';
+            var color  = fee > 0 ? '#d97706' : '#16a34a';
+            var icon   = fee > 0 ? 'fa-motorcycle' : 'fa-check-circle';
+
+            var info = document.getElementById(type + '_distance_info');
+            info.innerHTML =
+                '<span style="color:' + color + '; font-weight:600;">'+
+                '<i class="fas ' + icon + '"></i> '+
+                'Khoảng cách: <strong>' + km.toFixed(1) + ' km</strong>. '+
+                'Phụ phí giao: <strong>' + feeStr + '</strong></span>';
+
+            // Lưu vào dataset để updateTotal() tính lại giá trị chính xác
+            var inputEl = document.getElementById('custom_' + type + '_input');
+            if (inputEl) {
+                inputEl.dataset.dist = km.toFixed(1);
+            }
+
+            if (type === 'pickup') window._pickupFee = fee;
+            else window._returnFee = fee;
+            recalculateDeliveryFee();
+            updateTotal();
+        }
+
+        function recalculateDeliveryFee() {
+            window.deliveryFee = (window._pickupFee || 0) + (window._returnFee || 0);
+            // Cập nhật hiển thị tổng phụ phí nếu có element
+            var el = document.getElementById('delivery-fee-display');
+            if (el) {
+                el.textContent = window.deliveryFee > 0
+                    ? window.deliveryFee.toLocaleString('vi-VN') + 'đ'
+                    : 'Miễn phí';
+            }
+        }
+
+
+        </script>
+    <!-- CONTRACT SAMPLE MODAL -->
+    <div id="contract-sample-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:10000; align-items:center; justify-content:center; backdrop-filter:blur(4px);" onclick="if(event.target===this)this.style.display='none'">
+        <div style="background:#f1f5f9; width:95%; max-width:850px; height:90vh; border-radius:8px; display:flex; flex-direction:column; box-shadow:0 10px 40px rgba(0,0,0,0.5); overflow:hidden;">
+            
+            <!-- Header Toolbar -->
+            <div style="background:#333639; padding:12px 20px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #222;">
+                <div style="display:flex; align-items:center; gap:12px; color:#fff;">
+                    <i class="fas fa-file-pdf" style="color:#ef4444; font-size:20px;"></i>
+                    <span style="font-family:sans-serif; font-size:14px; letter-spacing:0.5px;">Hop_dong_thue_xe_SmartRide.pdf</span>
+                </div>
+                <button onclick="document.getElementById('contract-sample-modal').style.display='none'" style="background:transparent; border:none; color:#a1a1aa; cursor:pointer; font-size:20px; transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#a1a1aa'"><i class="fas fa-times"></i></button>
+            </div>
+
+            <!-- PDF Viewer Body -->
+            <div style="flex-grow:1; overflow-y:auto; padding:30px; display:flex; justify-content:center; align-items:flex-start; background:#525659; scrollbar-width:thin;">
+                <!-- A4 Paper -->
+                <div style="background:#fff; width:100%; max-width:700px; padding:50px 60px; box-shadow:0 5px 15px rgba(0,0,0,0.2); font-family:'Times New Roman', Times, serif; color:#000; line-height:1.5;">
+                    
+                    <!-- National Header -->
+                    <div style="text-align:center; margin-bottom:30px;">
+                        <div style="font-weight:bold; font-size:16px;">CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</div>
+                        <div style="font-weight:bold; font-size:15px; text-decoration:underline;">Độc lập - Tự do - Hạnh phúc</div>
+                    </div>
+
+                    <!-- Contract Title -->
+                    <div style="text-align:center; margin-bottom:30px;">
+                        <h2 style="font-size:22px; font-weight:bold; margin:0;">HỢP ĐỒNG THUÊ XE MÁY</h2>
+                        <div style="font-style:italic; font-size:14px;">(Bản điện tử / Hợp đồng mẫu)</div>
+                    </div>
+
+                    <div style="font-size:15px; text-align:justify;">
+                        <p style="margin-bottom:15px;">Hôm nay, ngày <span id="modal-date">...</span>, tại Đà Nẵng, chúng tôi gồm có:</p>
+
+                        <div style="font-weight:bold; margin-top:20px; font-size:16px;">BÊN A (BÊN CHO THUÊ): CỬA HÀNG XE MÁY SMARTRIDE</div>
+                        <ul style="list-style-type:none; padding-left:0; margin-top:10px; margin-bottom:20px;">
+                            <li>- <b>Địa chỉ:</b> 254 Nguyễn Văn Linh, Thạc Gián, Thanh Khê, Đà Nẵng</li>
+                            <li>- <b>Điện thoại:</b> 0987.654.321</li>
+                            <li>- <b>Đại diện:</b> Ông Nguyễn Văn A (Quản lý cửa hàng)</li>
+                        </ul>
+
+                        <div style="font-weight:bold; font-size:16px;">BÊN B (BÊN THUÊ XE): <span style="text-transform:uppercase;" id="modal-customer-name">[TÊN KHÁCH HÀNG]</span></div>
+                        <ul style="list-style-type:none; padding-left:0; margin-top:10px; margin-bottom:20px;">
+                            <li>- <b>CCCD/CMND/Hộ chiếu số:</b> <span id="modal-customer-cccd">[SỐ CCCD]</span></li>
+                            <li>- <b>Điện thoại liên hệ:</b> <span id="modal-customer-phone">[SỐ ĐIỆN THOẠI]</span></li>
+                        </ul>
+
+                        <p>Sau khi bàn bạc, hai bên thống nhất ký kết Hợp đồng thuê xe máy với các điều khoản sau đây:</p>
+
+                        <p style="font-weight:bold; margin-top:20px; margin-bottom:5px;">ĐIỀU 1: ĐỐI TƯỢNG HỢP ĐỒNG</p>
+                        <p>Bên A đồng ý cho Bên B thuê xe máy. Chi tiết về loại xe, biển số, đơn giá và thời gian thuê được ghi nhận chi tiết tại Hóa đơn điện tử hoặc Biên bản bàn giao xe đính kèm.</p>
+
+                        <p style="font-weight:bold; margin-top:20px; margin-bottom:5px;">ĐIỀU 2: TRÁCH NHIỆM BÊN A</p>
+                        <p>1. Giao xe đúng loại, đúng thời gian và địa điểm đã thỏa thuận.<br>
+                        2. Cung cấp đầy đủ giấy tờ xe (bản sao công chứng) và 02 mũ bảo hiểm.<br>
+                        3. Hỗ trợ cứu hộ 24/7 nếu xe gặp sự cố kỹ thuật không do lỗi của Bên B.</p>
+
+                        <p style="font-weight:bold; margin-top:20px; margin-bottom:5px;">ĐIỀU 3: TRÁCH NHIỆM BÊN B</p>
+                        <p>1. Sử dụng xe đúng mục đích, chấp hành nghiêm chỉnh luật giao thông đường bộ.<br>
+                        2. Không tự ý lái xe ra khỏi phạm vi bán kính 50km tính từ cửa hàng khi chưa được sự đồng ý của Bên A.<br>
+                        3. Không tự ý cầm cố, thế chấp, giao xe cho bên thứ ba.<br>
+                        4. Chịu trách nhiệm bồi thường 100% chi phí sửa chữa theo báo giá chính hãng nếu xảy ra va quệt, hư hỏng do lỗi cố ý hoặc vô ý của Bên B.</p>
+
+                        <p style="font-weight:bold; margin-top:20px; margin-bottom:5px;">ĐIỀU 4: ĐIỀU KHOẢN CHUNG</p>
+                        <p>Hợp đồng điện tử này có giá trị pháp lý tương đương bản giấy. Việc Bên B xác nhận thanh toán đặt cọc qua website SmartRide được xem là Bên B đã đọc, hiểu rõ và đồng ý ký kết toàn bộ các điều khoản của Hợp đồng này.</p>
+
+                        <!-- Signatures -->
+                        <div style="display:flex; justify-content:space-between; margin-top:50px; text-align:center;">
+                            <div style="width:45%;">
+                                <div style="font-weight:bold;">ĐẠI DIỆN BÊN B</div>
+                                <div style="font-style:italic; font-size:13px; color:#555;">(Xác nhận điện tử qua hệ thống)</div>
+                                <div style="margin-top:60px; font-weight:bold; text-transform:uppercase;" id="modal-customer-sign">[TÊN KHÁCH HÀNG]</div>
+                            </div>
+                            <div style="width:45%;">
+                                <div style="font-weight:bold;">ĐẠI DIỆN BÊN A</div>
+                                <div style="font-style:italic; font-size:13px; color:#555;">(Đã ký đóng dấu)</div>
+                                <div style="margin-top:60px; font-weight:bold;">SMARTRIDE</div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Notice bar at bottom -->
+            <div style="background:#fffbeb; padding:12px 20px; border-top:1px solid #fde68a; display:flex; justify-content:space-between; align-items:center;">
+                <div style="font-size:13px; color:#92400e; display:flex; align-items:center; gap:8px;">
+                    <i class="fas fa-info-circle"></i> Bản hợp đồng chính thức sẽ được gửi kèm chi tiết xe vào Email sau khi bạn thanh toán.
+                </div>
+                <button onclick="document.getElementById('contract-sample-modal').style.display='none'" style="background:#b59349; color:#fff; border:none; padding:8px 24px; border-radius:6px; font-weight:bold; cursor:pointer;">Đóng</button>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        function openContractModal() {
+            // Get values from form
+            let fName = document.getElementById('first_name') ? document.getElementById('first_name').value.trim() : '';
+            let lName = document.getElementById('last_name') ? document.getElementById('last_name').value.trim() : '';
+            let fullName = (fName + ' ' + lName).trim() || '[CHƯA NHẬP TÊN]';
+            
+            let phone = document.getElementById('phonenumber') ? document.getElementById('phonenumber').value.trim() : '';
+            phone = phone || '[CHƯA NHẬP SĐT]';
+            
+            let cccd = document.getElementById('identityCard') ? document.getElementById('identityCard').value.trim() : '';
+            cccd = cccd || '[CHƯA NHẬP CCCD]';
+
+            // Set current date
+            let today = new Date();
+            let dateStr = today.getDate() + ' tháng ' + (today.getMonth() + 1) + ' năm ' + today.getFullYear();
+
+            // Populate modal
+            document.getElementById('modal-customer-name').innerText = fullName;
+            document.getElementById('modal-customer-sign').innerText = fullName;
+            document.getElementById('modal-customer-phone').innerText = phone;
+            document.getElementById('modal-customer-cccd').innerText = cccd;
+            document.getElementById('modal-date').innerText = dateStr;
+
+            // Show modal
+            document.getElementById('contract-sample-modal').style.display = 'flex';
+        }
+
+</body>
 
 </html>
 
@@ -4958,13 +5423,3 @@
 <!-- fix patch 39 -->
 
 <!-- fix patch 40 -->
-
-<%-- minor tweak 3 --%>
-
-<%-- minor tweak 17 --%>
-
-<%-- minor tweak 29 --%>
-
-<%-- minor tweak 33 --%>
-
-<%-- minor tweak 44 --%>
