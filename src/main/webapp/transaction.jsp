@@ -610,29 +610,3 @@
 <!-- fix patch 35 -->
 
 <!-- fix patch 49 -->
-
-<%-- minor tweak 0 --%>
-
-<%-- minor tweak 1 --%>
-
-<%-- minor tweak 2 --%>
-
-<%-- minor tweak 4 --%>
-
-<%-- minor tweak 5 --%>
-
-<%-- minor tweak 6 --%>
-
-<%-- minor tweak 10 --%>
-
-<%-- minor tweak 12 --%>
-
-<%-- minor tweak 13 --%>
-
-<%-- minor tweak 20 --%>
-
-<%-- minor tweak 32 --%>
-
-<%-- minor tweak 47 --%>
-
-<%-- minor tweak 49 --%>

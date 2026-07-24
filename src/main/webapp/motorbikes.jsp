@@ -1403,54 +1403,7 @@
                         <!-- Selected filters will be displayed here -->
                     </div>
                 </div>
-                <!-- SMART ASSISTANT BANNER -->
-                <div class="container" style="margin-top: 40px; margin-bottom: 20px;">
-                    <div style="background: linear-gradient(135deg, #1a1816 0%, #362f27 100%); border-radius: 24px; padding: 40px; color: white; box-shadow: 0 20px 40px rgba(0,0,0,0.15); position: relative; overflow: hidden;">
-                        <!-- Decorative circle -->
-                        <div style="position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(181,147,73,0.3) 0%, rgba(255,255,255,0) 70%); border-radius: 50%;"></div>
-                        
-                        <div class="row align-items-center position-relative" style="z-index: 1;">
-                            <div class="col-lg-6 mb-4 mb-lg-0">
-                                <h3 style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 2rem; margin-bottom: 15px; color: #b59349;">
-                                    <i class="bi bi-stars"></i> Trợ Lý SmartRide
-                                </h3>
-                                <p style="font-size: 1.1rem; color: #e0e0e0; margin-bottom: 0;">Bạn dự định khám phá những địa điểm tuyệt đẹp nào tại Đà Nẵng? Hệ thống sẽ gợi ý cho bạn chiếc xe hoàn hảo nhất!</p>
-                            </div>
-                            <div class="col-lg-6">
-                                <form action="searchCriteria" method="get" onsubmit="return handleSmartSearch(event, this)">
-                                    <div class="d-flex gap-2">
-                                        <div class="flex-grow-1 position-relative">
-                                            <i class="bi bi-geo-alt position-absolute" style="left: 15px; top: 50%; transform: translateY(-50%); color: #b59349; font-size: 1.2rem; pointer-events: none;"></i>
-                                            <select name="locations" class="form-select form-select-lg" style="border-radius: 12px; border: none; background: #ffffff; color: #1a1816; font-weight: 500; font-family: 'Plus Jakarta Sans', sans-serif; box-shadow: 0 5px 15px rgba(0,0,0,0.1); cursor: pointer; padding-left: 45px; height: 56px;" required>
-                                                <option value="" selected disabled>-- Chọn địa điểm du lịch --</option>
-                                                <c:forEach items="${listLocations}" var="loc">
-                                                    <option value="${loc.locationId}">${loc.locationName}</option>
-                                                </c:forEach>
-                                            </select>
-                                        </div>
-                                        <button type="submit" class="btn" style="background: #b59349; color: white; border-radius: 12px; font-weight: 700; padding: 0 30px; height: 56px; white-space: nowrap; font-family: 'Plus Jakarta Sans', sans-serif; box-shadow: 0 5px 15px rgba(181,147,73,0.4); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='translateY(0)';">
-                                            Gợi ý ngay <i class="bi bi-magic ms-1"></i>
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
-                <script>
-                function handleSmartSearch(e, form) {
-                    e.preventDefault();
-                    
-                    const btn = form.querySelector('button');
-                    btn.disabled = true;
-                    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang xử lý...';
-                    
-                    setTimeout(() => {
-                        form.submit();
-                    }, 1000);
-                }
-                </script>
 
                 <div class="list">
                     <div style="text-align: center; margin-top: 40px;">
@@ -1496,26 +1449,30 @@
                                         <h2><a href="motorcycleDetail?id=${motorbike.motorcycleId}">${motorbike.model}</a></h2>
                                         <div class="category-label">${categoryMap[motorbike.categoryID]}</div>
                                         <div class="price-section">
-                                            <c:choose>
-                                                <c:when test="${not empty activeEvent and activeEvent.discount > 0}">
-                                                    <div style="display: flex; gap: 8px; justify-content: center; align-items: center; margin-bottom: 5px;">
-                                                        <span style="font-size: 14px; color: #999; text-decoration: line-through;">
-                                                            <fmt:formatNumber value="${priceMap[motorbike.priceListID]}" type="number" maxFractionDigits="0"/>₫
-                                                        </span>
-                                                        <span style="color: #dc2626; font-size: 12px; font-weight: bold; background: #fee2e2; padding: 2px 6px; border-radius: 4px;">
-                                                            -<fmt:formatNumber value="${activeEvent.discount * 100}" maxFractionDigits="0"/>%
-                                                        </span>
-                                                    </div>
-                                                    <div class="price-main">
-                                                        <fmt:formatNumber value="${priceMap[motorbike.priceListID] * (1 - activeEvent.discount)}" type="number" maxFractionDigits="0"/>₫<span class="price-unit">/ngày</span>
-                                                    </div>
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <div class="price-main">
-                                                        <fmt:formatNumber value="${priceMap[motorbike.priceListID]}" type="number" maxFractionDigits="0"/>₫<span class="price-unit">/ngày</span>
-                                                    </div>
-                                                </c:otherwise>
-                                            </c:choose>
+                                            <c:forEach items="${priceLists}" var="p">
+                                                <c:if test="${motorbike.priceListID == p.priceListId}">
+                                                    <c:choose>
+                                                        <c:when test="${not empty activeEvent and activeEvent.discount > 0}">
+                                                            <div style="display: flex; gap: 8px; justify-content: center; align-items: center; margin-bottom: 5px;">
+                                                                <span style="font-size: 14px; color: #999; text-decoration: line-through;">
+                                                                    <fmt:formatNumber value="${p.dailyPriceForDay}" type="number" maxFractionDigits="0"/>₫
+                                                                </span>
+                                                                <span style="color: #dc2626; font-size: 12px; font-weight: bold; background: #fee2e2; padding: 2px 6px; border-radius: 4px;">
+                                                                    -<fmt:formatNumber value="${activeEvent.discount * 100}" maxFractionDigits="0"/>%
+                                                                </span>
+                                                            </div>
+                                                            <div class="price-main">
+                                                                <fmt:formatNumber value="${p.dailyPriceForDay * (1 - activeEvent.discount)}" type="number" maxFractionDigits="0"/>₫<span class="price-unit">/ngày</span>
+                                                            </div>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <div class="price-main">
+                                                                <fmt:formatNumber value="${p.dailyPriceForDay}" type="number" maxFractionDigits="0"/>₫<span class="price-unit">/ngày</span>
+                                                            </div>
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </c:if>
+                                            </c:forEach>
                                         </div>
                                         <div class="button-wrapper">
                                             <a href="motorcycleDetail?id=${motorbike.motorcycleId}" class="btn outline-huhu">CHI TIẾT</a>
@@ -2068,9 +2025,3 @@
 <!-- fix patch 33 -->
 
 <!-- fix patch 47 -->
-
-<%-- minor tweak 26 --%>
-
-<%-- minor tweak 35 --%>
-
-<%-- minor tweak 36 --%>

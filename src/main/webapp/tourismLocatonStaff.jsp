@@ -9,17 +9,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản lý các địa điểm du lịch - SmartRide</title>
-
+    
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
+    
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
+    
     <!-- Bootstrap Icons & Font Awesome -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+    
     <!-- SweetAlert2 -->
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css" rel="stylesheet">
 
@@ -34,7 +34,7 @@
             --bg: #f0f2f5;
             --card-shadow: 0 4px 24px rgba(0,0,0,0.06);
         }
-
+        
         body, html {
             background-color: var(--bg);
             margin: 0;
@@ -70,7 +70,7 @@
             text-decoration: none;
             font-weight: 600;
         }
-
+        
         /* Content Card */
         .content-card {
             background: #fff;
@@ -100,7 +100,7 @@
             box-shadow: 0 6px 16px rgba(181, 147, 73, 0.3);
             color: #fff;
         }
-
+        
         .action-btn {
             width: 32px;
             height: 32px;
@@ -178,7 +178,7 @@
             border-color: var(--gold);
             box-shadow: 0 0 0 3px rgba(181, 147, 73, 0.15);
         }
-
+        
         /* Table Customization */
         .datatable-top { padding: 0 0 20px 0 !important; }
         .datatable-search .datatable-input {
@@ -271,7 +271,7 @@
                             <tr>
                                 <td class="fw-bold">#${loc.locationId}</td>
                                 <td>
-                                    <img src="${empty loc.locationImage ? 'images/default.jpg' : (loc.locationImage.startsWith('http') ? loc.locationImage : 'images/'.concat(loc.locationImage))}"
+                                    <img src="${empty loc.locationImage ? 'images/default.jpg' : (loc.locationImage.startsWith('http') ? loc.locationImage : 'images/'.concat(loc.locationImage))}" 
                                          class="img-location" alt="Location">
                                 </td>
                                 <td class="fw-bold text-dark" style="text-align: left;">${loc.locationName}</td>
@@ -290,7 +290,7 @@
                                 </td>
                                 <td>
                                     <div class="d-flex justify-content-center">
-                                        <button class="action-btn btn-edit" title="Sửa"
+                                        <button class="action-btn btn-edit" title="Sửa" 
                                             onclick="editTouristLocation('${loc.locationId}', '${loc.locationName.replace("'", "\\'")}', '${loc.locationImage}', '${loc.description.replace("'", "\\'")}', '${loc.urlArticle.replace("'", "\\'")}')">
                                             <i class="bi bi-pencil-fill"></i>
                                         </button>
@@ -470,10 +470,62 @@
                 });
             }
 
-            if (typeof setupLivePreview === 'function') {
-                setupLivePreview('locationImage', 'locationImagePreview');
-                setupLivePreview('editLocationImage', 'editLocationImagePreview');
+            // Function to setup live preview and lightbox
+            function setupLivePreview(inputId, previewId) {
+                var input = document.getElementById(inputId);
+                var previewContainer = document.getElementById(previewId);
+                if (input && previewContainer) {
+                    previewContainer.style.position = 'relative';
+                    previewContainer.style.display = 'inline-block';
+
+                    input.addEventListener('change', function(event) {
+                        var file = event.target.files[0];
+                        previewContainer.innerHTML = '';
+                        if (file) {
+                            var reader = new FileReader();
+                            reader.onload = function(e) {
+                                var img = document.createElement('img');
+                                img.src = e.target.result;
+                                img.className = 'img-fluid img-thumbnail cursor-pointer';
+                                img.style.maxWidth = '150px';
+                                img.style.cursor = 'pointer';
+                                img.setAttribute('onclick', 'if(window.parent && window.parent.openLightbox) window.parent.openLightbox(this.src)');
+                                
+                                var btn = document.createElement('button');
+                                btn.innerHTML = '&times;';
+                                btn.type = 'button';
+                                btn.style.position = 'absolute';
+                                btn.style.top = '5px';
+                                btn.style.right = '5px';
+                                btn.style.background = '#ef4444';
+                                btn.style.color = 'white';
+                                btn.style.border = 'none';
+                                btn.style.borderRadius = '50%';
+                                btn.style.width = '24px';
+                                btn.style.height = '24px';
+                                btn.style.display = 'flex';
+                                btn.style.alignItems = 'center';
+                                btn.style.justifyContent = 'center';
+                                btn.style.cursor = 'pointer';
+                                btn.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
+                                btn.style.fontSize = '16px';
+                                btn.style.lineHeight = '1';
+                                btn.onclick = function() {
+                                    input.value = '';
+                                    previewContainer.innerHTML = '';
+                                };
+                                
+                                previewContainer.appendChild(img);
+                                previewContainer.appendChild(btn);
+                            };
+                            reader.readAsDataURL(file);
+                        }
+                    });
+                }
             }
+
+            setupLivePreview('locationImage', 'locationImagePreview');
+            setupLivePreview('editLocationImage', 'editLocationImagePreview');
         });
 
         // Xóa địa điểm
@@ -503,13 +555,13 @@
 
             var imgContainer = document.getElementById('editLocationImagePreview');
             imgContainer.innerHTML = '';
-
+            
             if (locationImage && locationImage.trim() !== '') {
                 var imgSrc = locationImage.startsWith('http') ? locationImage : 'images/' + locationImage;
                 imgContainer.innerHTML = `
                     <div style="position:relative; display:inline-block;">
-                        <img src="\${imgSrc}" class="img-thumbnail" style="max-width:150px; max-height:150px; border-radius:8px;">
-                        <button type="button" title="Xóa ảnh này" onclick="clearEditImage()"
+                        <img src="\${imgSrc}" class="img-thumbnail cursor-pointer" style="max-width:150px; max-height:150px; border-radius:8px; cursor: pointer;" onclick="if(window.parent && window.parent.openLightbox) window.parent.openLightbox(this.src)">
+                        <button type="button" title="Xóa ảnh này" onclick="clearEditImage()" 
                                 style="position:absolute; top:-10px; right:-10px; background:#ef4444; color:white; border:none; border-radius:50%; width:24px; height:24px; cursor:pointer; font-weight:bold;">&times;</button>
                     </div>
                 `;
@@ -527,7 +579,7 @@
         // Form Add Submit Ajax
         $('#addLocationForm').submit(function (event) {
             event.preventDefault();
-
+            
             // Validate image ext
             var fileInput = document.getElementById('locationImage').value;
             var ext = fileInput.split('.').pop().toLowerCase();
@@ -582,20 +634,20 @@
         function manageRecommendations(locationId, locationName) {
             $('#recLocationId').val(locationId);
             $('#recLocationName').text(locationName);
-
+            
             var tbody = $('#recTableBody');
             tbody.empty();
-
+            
             var recs = recommendData[locationId] || [];
             if (recs.length === 0) {
                 tbody.append('<tr><td colspan="4" class="text-center py-5 text-muted"><i class="bi bi-inbox fs-1 d-block mb-2 text-black-50"></i>Chưa có xe phù hợp nào cho địa điểm này</td></tr>');
             } else {
                 recs.forEach(function(rec) {
                     var imgSrc = rec.image ? (rec.image.startsWith('http') ? rec.image : 'images/' + rec.image) : 'images/default.jpg';
-                    var reasonHtml = rec.reason
+                    var reasonHtml = rec.reason 
                         ? '<span class="fst-italic text-secondary"><i class="bi bi-quote"></i>' + rec.reason + '</span>'
                         : '<span class="text-muted fst-italic">Không có lý do cụ thể</span>';
-
+                    
                     var tr = `
                         <tr>
                             <td class="text-start">
@@ -614,10 +666,10 @@
                     tbody.append(tr);
                 });
             }
-
+            
             $('#recMotorcycleId').val('');
             $('#recReason').val('');
-
+            
             var recModal = new bootstrap.Modal(document.getElementById('recommendationModal'));
             recModal.show();
         }
@@ -631,14 +683,14 @@
                 Swal.fire('Lỗi', 'Vui lòng chọn một chiếc xe!', 'warning');
                 return;
             }
-
+            
             var recs = recommendData[locId] || [];
             var exists = recs.some(rec => rec.motorcycleId === motId);
             if (exists) {
                 Swal.fire('Đã tồn tại', 'Xe này đã có trong danh sách gợi ý của địa điểm này.', 'info');
                 return;
             }
-
+            
             var reason = $('#recReason').val().trim();
             $.post('TourismLocationServletStaff', {
                 action: 'add',

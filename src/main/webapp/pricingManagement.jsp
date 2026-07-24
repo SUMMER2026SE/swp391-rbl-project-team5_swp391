@@ -1,4 +1,4 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+﻿<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -103,7 +103,7 @@
                 background: #ffffff;
                 border-radius: 16px;
                 padding: 20px;
-                box-shadow: 0 4px 25px rgba(0, 0, 0, 0.04);
+                box-shadow: 0 4px 25px rgba(0, 0, 0, 0.04); 
             }
 
             .table-image {
@@ -118,19 +118,19 @@
 
             /* --- Header: Giống Voucher --- */
             .table thead th {
-                background: #f8fafc !important;
-                color: #1e293b !important;
+                background: #f8fafc !important; 
+                color: #1e293b !important; 
                 font-size: 0.85rem !important;
                 font-weight: 800 !important;
                 text-transform: uppercase !important;
                 letter-spacing: 0.5px !important;
-                border: none !important;
+                border: none !important; 
                 border-bottom: 2px solid #cbd5e1 !important;
                 border-right: 1px solid #e2e8f0 !important;
                 padding: 16px 16px !important;
                 text-align: center;
                 vertical-align: middle;
-                white-space: nowrap;
+                white-space: nowrap; 
             }
             .table thead th:last-child {
                 border-right: none !important;
@@ -150,10 +150,10 @@
                 background: transparent;
                 vertical-align: middle;
                 border: none !important;
-                border-bottom: 2px solid #e2e8f0 !important;
+                border-bottom: 2px solid #e2e8f0 !important; 
                 border-right: 1px solid #cbd5e1 !important;
-                padding: 14px 16px !important;
-                color: #1e293b;
+                padding: 14px 16px !important; 
+                color: #1e293b; 
                 font-weight: 500;
                 font-size: 14px;
                 text-align: center;
@@ -174,7 +174,7 @@
                 background-color: transparent !important;
             }
             .table-image tbody tr:hover td, .table-image tbody tr:hover th {
-                background-color: #f8fafc !important;
+                background-color: #f8fafc !important; 
             }
 
             /* --- Premium Solid Buttons --- */
@@ -238,7 +238,7 @@
                 border-radius: 20px;
                 box-shadow: 0 10px 30px rgba(0,0,0,0.03);
             }
-
+            
             .addnew h3, .editmotor h3 {
                 color: #1a1816;
                 font-weight: 800;
@@ -341,7 +341,7 @@
 
                                         <tbody id="table-body">
                                             <tr>
-                                                <th scope="row" class="text-muted fw-bold" style="font-size: 15px;">#${p.priceListId}</th>
+                                                <th scope="row" class="text-muted fw-bold" style="font-size: 15px;">#${p.priceListId}</th>     
 
                                                 <td style="color: #0f172a; font-weight: 600;"><fmt:formatNumber value="${p.dailyPriceForDay}" pattern="#,##0"/> <span style="font-size: 11px; color: #64748b;">VNĐ</span></td>
                                                 <td style="color: #0f172a; font-weight: 600;"><fmt:formatNumber value="${p.dailyPriceForWeek}" pattern="#,##0"/> <span style="font-size: 11px; color: #64748b;">VNĐ</span></td>
@@ -434,11 +434,11 @@
                             <div class="modal-body" style="padding: 30px;">
                                 <form action="updatePricing" method="post">
                                     <div class="alert alert-warning" style="font-size: 13px; background-color: #fff3cd; border-left: 4px solid #ffc107; color: #664d03; padding: 10px 15px; border-radius: 4px;">
-                                        <i class="fas fa-info-circle me-2"></i>
+                                        <i class="fas fa-info-circle me-2"></i> 
                                         <strong>Lưu ý:</strong> Bạn đang cập nhật một <strong>Gói Giá</strong>. Mức giá mới này sẽ tự động thay đổi cho <strong>tất cả các xe</strong> thuộc danh sách mẫu xe bên ngoài.
                                     </div>
                                     <input type="hidden" id="modal-id" name="id" value="" >
-
+                                    
                                     <div class="form-group" style="margin-bottom: 20px;">
                                         <label style="font-weight: 600; color: #1e293b; margin-bottom: 8px; display: block; text-align: left;">Giá Thuê Theo Ngày (VNĐ)</label>
                                         <input type="number" class="form-control" id="modal-priceForDay" name="priceForDay" step="0.01" min="0" required style="border-radius: 8px; padding: 10px 15px;">
@@ -451,7 +451,7 @@
                                         <label style="font-weight: 600; color: #1e293b; margin-bottom: 8px; display: block; text-align: left;">Giá Thuê Theo Tháng (VNĐ)</label>
                                         <input type="number" class="form-control" id="modal-priceForMonth" name="priceForMonth" step="0.01" min="0" required style="border-radius: 8px; padding: 10px 15px;">
                                     </div>
-
+                                    
                                     <div style="text-align: right; margin-top: 10px;">
                                         <button type="button" class="btn btn-secondary" data-dismiss="modal" style="background: #e2e8f0; color: #475569; border: none;">Hủy</button>
                                         <button type="submit" class="btn btn-gold" style="margin-left: 10px;">Lưu Thay Đổi</button>

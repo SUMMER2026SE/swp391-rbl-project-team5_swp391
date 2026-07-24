@@ -1,5 +1,6 @@
-﻿<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="en">
@@ -18,6 +19,9 @@
         <style>
     body, html { height: 100%; margin: 0; font-family: 'Poppins', sans-serif; background-color: #f8fafc; }
     .container-fluid { padding: 2rem; }
+    
+    .cursor-pointer { transition: all 0.2s ease-in-out; }
+    .cursor-pointer:hover { opacity: 0.8; transform: scale(1.03); }
     
     /* --- Card Container --- */
     .card { background: #fff; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); border: none; margin-bottom: 2rem; }
@@ -45,15 +49,17 @@
     .desc-text { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; max-width: 160px; color: #6c757d; font-size: 13px; text-align: center; margin: 0 auto; }
 
     /* --- Button Styles --- */
-    .btn-custom-add { background: #f59e0b; color: #fff; border: none; border-radius: 6px; padding: 8px 16px; font-weight: 500; font-size: 0.9rem; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 6px; }
-    .btn-custom-add:hover { background: #d97706; color: #fff; transform: translateY(-1px); }
+    .btn-premium { background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%); color: white !important; border-radius: 50rem; padding: 8px 20px; font-weight: 500; border: none; transition: all 0.3s ease; box-shadow: 0 .125rem .25rem rgba(0,0,0,.075); display: inline-flex; align-items: center; gap: 5px; }
+    .btn-premium:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(184, 134, 11, 0.4); color: white; }
     
-    .action-buttons { white-space: nowrap; }
-    .action-buttons .btn { border-radius: 5px; padding: 5px 10px; margin: 0 2px; font-size: 0.85rem; transition: all 0.15s; border: 1px solid; cursor: pointer; }
-    .btn-edit { background-color: #e0f2fe; color: #0369a1; border-color: #bae6fd !important; }
-    .btn-edit:hover { background-color: #bae6fd; color: #075985; }
-    .btn-delete { background-color: #fee2e2; color: #dc2626; border-color: #fecaca !important; }
-    .btn-delete:hover { background-color: #fecaca; color: #991b1b; }
+    .rounded-pill { border-radius: 50rem !important; }
+    .btn-action-outline { padding: 4px 16px; font-weight: 500; font-size: 0.875rem; background: transparent; border-width: 1px; border-style: solid; transition: all 0.2s; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; justify-content: center; }
+    .btn-outline-primary-custom { color: #0d6efd; border-color: #0d6efd; }
+    .btn-outline-primary-custom:hover { color: #fff; background-color: #0d6efd; }
+    .btn-outline-success-custom { color: #198754; border-color: #198754; }
+    .btn-outline-success-custom:hover { color: #fff; background-color: #198754; }
+    .btn-outline-danger-custom { color: #dc3545; border-color: #dc3545; }
+    .btn-outline-danger-custom:hover { color: #fff; background-color: #dc3545; }
 
     /* --- Modal Styles --- */
     .modal-content { border-radius: 12px; border: none; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
@@ -88,7 +94,7 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h3 class="card-title"><i class="fa fa-calendar-alt text-primary mr-2"></i> DANH SÁCH SỰ KIỆN</h3>
-                    <button class="btn btn-custom-add" data-toggle="modal" data-target="#addEventModal">
+                    <button class="btn btn-premium shadow-sm" data-toggle="modal" data-target="#addEventModal">
                         <i class="fa fa-plus-circle"></i> Thêm Sự Kiện
                     </button>
                 </div>
@@ -112,29 +118,62 @@
                             <tbody>
                                         <c:forEach var="eventLists" items="${eventList}">
                                             <tr>
-                                                <td>${eventLists.eventID}</td>
+                                                <td class="fw-bold text-muted" style="white-space: nowrap;">${eventLists.eventID}</td>
 
-                                                <td style="max-width: 100px;">${eventLists.eventTitle}</td>
-                                                <td>${eventLists.createdDate}</td>
-                                                <td>${eventLists.startDate}</td>
-                                                <td>${eventLists.endDate}</td>
-                                                <td style="max-width: 250px;">${eventLists.content}</td>
-                                                <td class="w-25" style="max-width: 150px;">
-                                                    <img src="${empty eventLists.eventImage ? 'images/default.jpg' : (eventLists.eventImage.startsWith('http') ? eventLists.eventImage : 'images/'.concat(eventLists.eventImage))}"
-                                                         class="img-fluid img-thumbnail" loading="lazy" alt="Event Image">
-                                                </td>
-                                                <td>
-                                                    <span style="background: #dcfce7; color: #166534; padding: 4px 10px; border-radius: 12px; font-weight: 600; font-size: 13px;">
-                                                        <fmt:formatNumber value="${eventLists.discount * 100}" maxFractionDigits="1" minFractionDigits="0"/>%
+                                                <td style="max-width: 150px; font-weight: 600; color: #334155;">
+                                                    <span style="font-family: monospace; font-size: 0.9rem; color: #b8860b; background-color: rgba(184, 134, 11, 0.1); padding: 0.4rem 0.8rem; border-radius: 6px; border: 1px dashed #d4af37; display: inline-block;">
+                                                        ${eventLists.eventTitle}
                                                     </span>
                                                 </td>
-                                                <td class="action-buttons">
-                                                    <div class="buttons">
-                                                        <button class="btn btn-edit" onclick="editEventForm('${eventLists.eventID}', '${eventLists.eventTitle}', '${eventLists.createdDate}', '${eventLists.startDate}', '${eventLists.endDate}', '${eventLists.content}', '${eventLists.eventImage}', '${eventLists.discount}', '${eventLists.staffID}')">
-                                                            <i class="fa fa-edit"></i>
+                                                <td style="color: #6c757d; white-space: nowrap;">${eventLists.createdDate}</td>
+                                                <td style="color: #6c757d; white-space: nowrap;">${eventLists.startDate}</td>
+                                                <td style="color: #6c757d; white-space: nowrap;">${eventLists.endDate}</td>
+
+                                                <td>
+                                                    <div class="desc-text">${eventLists.content}</div>
+                                                </td>
+
+                                                <td>
+                                                    <c:choose>
+                                                        <c:when test="${not empty eventLists.eventImage}">
+                                                            <img src="${eventLists.eventImage.startsWith('http') ? eventLists.eventImage : 'images/'.concat(eventLists.eventImage)}" alt="Event Image" class="cursor-pointer" onclick="if(window.parent && window.parent.openLightbox) window.parent.openLightbox(this.src)">
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <span style="color: #94a3b8; font-style: italic; font-size: 13px;">Không có ảnh</span>
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </td>
+                                                <td style="color: #198754; font-weight: 700; font-size: 1.1rem; white-space: nowrap;">
+                                                    <fmt:formatNumber value="${eventLists.discount * 100}" maxFractionDigits="1" minFractionDigits="0"/>%
+                                                </td>
+                                                <td style="vertical-align: middle;">
+                                                    <div style="display: flex; flex-direction: row; gap: 8px; justify-content: center; flex-wrap: wrap;">
+                                                        <button class="btn rounded-pill btn-action-outline btn-outline-primary-custom" 
+                                                                data-id="${eventLists.eventID}"
+                                                                data-title="${fn:escapeXml(eventLists.eventTitle)}"
+                                                                data-created="${eventLists.createdDate}"
+                                                                data-start="${eventLists.startDate}"
+                                                                data-end="${eventLists.endDate}"
+                                                                data-content="${fn:escapeXml(eventLists.content)}"
+                                                                data-img="${eventLists.eventImage}"
+                                                                data-discount="${eventLists.discount}"
+                                                                onclick="editEventForm(this)" title="Chỉnh sửa">
+                                                            <i class="fa fa-pencil-square-o"></i> Sửa
                                                         </button>
-                                                        <button class="btn btn-delete" onclick="confirmDelete('${eventLists.eventID}')">
-                                                            <i class="fa fa-trash"></i>
+                                                        <c:choose>
+                                                            <c:when test="${eventLists.published}">
+                                                                <button id="publish-btn-${eventLists.eventID}" class="btn rounded-pill btn-action-outline publish-btn" data-id="${eventLists.eventID}" style="background-color: #198754; color: #fff; cursor: default; opacity: 0.8;" title="Đã phát hành" disabled>
+                                                                    <i class="fa fa-check-circle"></i> Đã phát hành
+                                                                </button>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <button id="publish-btn-${eventLists.eventID}" class="btn rounded-pill btn-action-outline btn-outline-success-custom publish-btn" data-id="${eventLists.eventID}" onclick="publishNotification('event', '${eventLists.eventID}')" title="Phát hành">
+                                                                    <i class="fa fa-paper-plane"></i> Phát hành
+                                                                </button>
+                                                            </c:otherwise>
+                                                        </c:choose>
+                                                        <button class="btn rounded-pill btn-action-outline btn-outline-danger-custom" onclick="confirmDelete('${eventLists.eventID}')" title="Xóa">
+                                                            <i class="fa fa-trash"></i> Xóa
                                                         </button>
                                                     </div>
                                                 </td>
@@ -144,73 +183,73 @@
                         </table>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-</div>
-                
-<!-- Add Event Modal -->
+            <!-- Add Event Modal -->
 <div class="modal fade" id="addEventModal" tabindex="-1" role="dialog" aria-labelledby="addEventModalLabel">
     <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header" style="background: #3b82f6; border-bottom: none; padding: 1.25rem 1.5rem;">
-                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close" style="opacity: 0.9;"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="addEventModalLabel" style="color: #fff; font-weight: 600; font-size: 1.125rem;"><i class="fa fa-plus-circle"></i> Thêm Mới Sự Kiện</h4>
+        <div class="modal-content" style="border-radius: 12px; border: none; box-shadow: 0 10px 25px rgba(0,0,0,0.1);">
+            <div class="modal-header" style="border-bottom: none; padding-bottom: 0; background: transparent;">
+                <button type="button" data-dismiss="modal" aria-label="Close" style="float: right; background: transparent; border: none; font-size: 1.5rem; line-height: 1; cursor: pointer; color: #64748b; padding: 0; outline: none; transition: color 0.2s;" onmouseover="this.style.color='#0f172a'" onmouseout="this.style.color='#64748b'"><i class="fa fa-times"></i></button>
+                <h4 class="modal-title" id="addEventModalLabel" style="font-weight: 700; color: #212529; font-size: 1.25rem;"><i class="fa fa-ticket"></i> Thêm Mới Sự Kiện</h4>
             </div>
-            <form class="form-horizontal addnew-event-form" id="addLocationForm" action="AddNewEventStaff" method="post" enctype="multipart/form-data">
-                <div class="modal-body" style="padding: 1.5rem;">
-                    
-                                        <!-- Event Title -->
-                                        <div class="form-group">
-                                            <label class="control-label col-sm-3" for="eventTitle">Tiêu Đề <span class="required">*</span></label>
-                                            <div class="col-sm-9">
-                                                <input type="text" class="form-control" id="eventTitle" name="eventTitle" placeholder="Nhập tiêu đề sự kiện" required>
-                                            </div>
-                                        </div>
-                                        <!-- Start Date -->
-                                        <div class="form-group">
-                                            <label class="control-label col-sm-3" for="startDate">Ngày Bắt Đầu <span class="required">*</span></label>
-                                            <div class="col-sm-9">
-                                                <input type="date" class="form-control" id="startDate" name="startDate" required>
-                                            </div>
-                                        </div>
-                                        <!-- End Date -->
-                                        <div class="form-group">
-                                            <label class="control-label col-sm-3" for="endDate">Ngày Kết Thúc <span class="required">*</span></label>
-                                            <div class="col-sm-9">
-                                                <input type="date" class="form-control" id="endDate" name="endDate" required>
-                                            </div>
-                                        </div>
-                                        <!-- Content -->
-                                        <div class="form-group">
-                                            <label class="control-label col-sm-3" for="content">Nội Dung <span class="required">*</span></label>
-                                            <div class="col-sm-9">
-                                                <textarea class="form-control" id="content" name="content" rows="3" placeholder="Nhập nội dung sự kiện" required></textarea>
-                                            </div>
-                                        </div>
-                                        <!-- Event Image -->
-                                        <div class="form-group">
-                                            <label class="control-label col-sm-3" for="eventImage">Hình Ảnh <span class="required">*</span></label>
-                                            <div class="col-sm-9">
-                                                <input type="file" class="form-control-file" id="eventImage" name="eventImage" accept="image/*" required>
-                                            </div>
-                                        </div>
-                                        <!-- Discount -->
-                                        <div class="form-group">
-                                            <label class="control-label col-sm-3" for="discount">Giảm Giá (%) <span class="required">*</span></label>
-                                            <div class="col-sm-9">
-                                                <div class="input-group">
-                                                    <input type="number" class="form-control" id="discount" name="discount" placeholder="VD: 5" step="0.01" min="0" max="100" oninput="validateDiscount(this)" required>
-                                                    <span class="input-group-addon">%</span>
-                                                </div>
-                                                <small class="help-block">Nhập số từ 0-100. VD: nhập <strong>5</strong> để giảm <strong>5%</strong></small>
-                                            </div>
-                                        </div>
-                                    
+            <form id="addLocationForm" action="AddNewEventStaff" method="post" enctype="multipart/form-data">
+                <div class="modal-body" style="padding: 1.5rem; background: #fff;">
+                    <div class="row">
+                        <!-- Event Title -->
+                        <div class="col-md-12 mb-3">
+                            <div class="form-group">
+                                <label for="eventTitle" style="color: #6c757d; font-size: 0.875rem; font-weight: 700; margin-bottom: 0.5rem; display: block;">TIÊU ĐỀ <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="eventTitle" name="eventTitle" required style="border-radius: 6px; box-shadow: none;">
+                            </div>
+                        </div>
+                        
+                        <!-- Start Date & End Date -->
+                        <div class="col-md-6 mb-3">
+                            <div class="form-group">
+                                <label for="startDate" style="color: #6c757d; font-size: 0.875rem; font-weight: 700; margin-bottom: 0.5rem; display: block;">NGÀY BẮT ĐẦU <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control" id="startDate" name="startDate" required style="border-radius: 6px; box-shadow: none;">
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-group">
+                                <label for="endDate" style="color: #6c757d; font-size: 0.875rem; font-weight: 700; margin-bottom: 0.5rem; display: block;">NGÀY KẾT THÚC <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control" id="endDate" name="endDate" required style="border-radius: 6px; box-shadow: none;">
+                            </div>
+                        </div>
+
+                        <!-- Content -->
+                        <div class="col-md-12 mb-3">
+                            <div class="form-group">
+                                <label for="content" style="color: #6c757d; font-size: 0.875rem; font-weight: 700; margin-bottom: 0.5rem; display: block;">NỘI DUNG <span class="text-danger">*</span></label>
+                                <textarea class="form-control" id="content" name="content" rows="4" required style="border-radius: 6px; box-shadow: none; resize: vertical;"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Discount -->
+                        <div class="col-md-12 mb-3">
+                            <div class="form-group">
+                                <label for="discount" style="color: #6c757d; font-size: 0.875rem; font-weight: 700; margin-bottom: 0.5rem; display: block;">GIẢM GIÁ (%) <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="discount" name="discount" step="0.01" min="0" max="100" oninput="validateDiscount(this)" required style="border-radius: 6px 0 0 6px; box-shadow: none; height: auto; padding: 6px 12px;">
+                                    <span class="input-group-addon" style="background-color: #e9ecef; border: 1px solid #ced4da; border-radius: 0 6px 6px 0; color: #495057;">%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Image Upload -->
+                        <div class="col-md-12 mb-3">
+                            <div class="form-group">
+                                <label style="color: #6c757d; font-size: 0.875rem; font-weight: 700; margin-bottom: 0.5rem; display: block;">ẢNH BANNER <span class="text-danger">*</span></label>
+                                <div id="addEventImagePreviewContainer" style="margin-bottom: 10px; display: none; position: relative;">
+                                    <img id="addEventImagePreview" src="#" alt="Preview" class="img-thumbnail cursor-pointer" style="max-height: 150px; border-radius: 6px; cursor: pointer;" onclick="if(window.parent && window.parent.openLightbox) window.parent.openLightbox(this.src)">
+                                </div>
+                                <input type="file" class="form-control-file" id="eventImage" name="eventImage" accept="image/*" required onchange="previewImage(this, 'addEventImagePreview', 'addEventImagePreviewContainer')" style="border-radius: 6px; box-shadow: none;">
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
-                    <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Thêm Sự Kiện</button>
+                <div class="modal-footer" style="border-top: none; padding-top: 0; background: transparent;">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" style="background-color: #f8f9fa; border-color: #f8f9fa; color: #000; border-radius: 6px;">Hủy</button>
+                    <button type="submit" class="btn btn-warning" style="background-color: #ffc107; border-color: #ffc107; color: #212529; font-weight: 700; border-radius: 6px; box-shadow: 0 .125rem .25rem rgba(0,0,0,.075);">Thêm Sự Kiện</button>
                 </div>
             </form>
         </div>
@@ -226,76 +265,84 @@
 <!-- Edit Event Modal -->
 <div class="modal fade" id="editEventModal" tabindex="-1" role="dialog" aria-labelledby="editEventModalLabel">
     <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header" style="background: #06b6d4; border-bottom: none; padding: 1.25rem 1.5rem;">
-                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close" style="opacity: 0.9;"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="editEventModalLabel" style="color: #fff; font-weight: 600; font-size: 1.125rem;"><i class="fa fa-edit"></i> Chỉnh Sửa Sự Kiện</h4>
+        <div class="modal-content" style="border-radius: 12px; border: none; box-shadow: 0 10px 25px rgba(0,0,0,0.1);">
+            <div class="modal-header" style="border-bottom: none; padding-bottom: 0; background: transparent;">
+                <button type="button" data-dismiss="modal" aria-label="Close" style="float: right; background: transparent; border: none; font-size: 1.5rem; line-height: 1; cursor: pointer; color: #64748b; padding: 0; outline: none; transition: color 0.2s;" onmouseover="this.style.color='#0f172a'" onmouseout="this.style.color='#64748b'"><i class="fa fa-times"></i></button>
+                <h4 class="modal-title" id="editEventModalLabel" style="font-weight: 700; color: #212529; font-size: 1.25rem;"><i class="fa fa-pencil-square-o"></i> Cập nhật Sự Kiện</h4>
             </div>
-            <form class="form-horizontal edit-event-form" id="editEventForm" action="UpdateEventStaff" method="post" enctype="multipart/form-data">
-                <div class="modal-body" style="padding: 1.5rem;">
-                    
-                                        <div class="form-group">
-                                            <label class="control-label col-sm-3" for="editEventID" style="font-weight: 600; color: #334155;">ID:</label>
-                                            <div class="col-sm-9">
-                                                <input type="text" class="form-control" id="editEventID" name="editEventID" readonly style="border-radius: 8px; border: 2px solid #e2e8f0; padding: 10px 14px; background: #f1f5f9; color: #64748b;">
-                                            </div>
-                                        </div>
+            <form id="editEventForm" action="UpdateEventStaff" method="post" enctype="multipart/form-data">
+                <div class="modal-body" style="padding: 1.5rem; background: #fff;">
+                    <div class="row">
+                        <!-- ID and Created Date -->
+                        <div class="col-md-6 mb-3">
+                            <div class="form-group">
+                                <label for="editEventID" style="color: #6c757d; font-size: 0.875rem; font-weight: 700; margin-bottom: 0.5rem; display: block;">ID</label>
+                                <input type="text" class="form-control" id="editEventID" name="editEventID" readonly style="border-radius: 6px; box-shadow: none; background: #e9ecef; cursor: not-allowed;">
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-group">
+                                <label for="editCreatedDate" style="color: #6c757d; font-size: 0.875rem; font-weight: 700; margin-bottom: 0.5rem; display: block;">NGÀY TẠO</label>
+                                <input type="date" class="form-control" id="editCreatedDate" name="editCreatedDate" readonly style="border-radius: 6px; box-shadow: none; background: #e9ecef; cursor: not-allowed;">
+                            </div>
+                        </div>
 
-                                        <div class="form-group">
-                                            <label class="control-label col-sm-3" for="editEventTitle" style="font-weight: 600; color: #334155;">Tiêu Đề: <span style="color: #ef4444;">*</span></label>
-                                            <div class="col-sm-9">
-                                                <input type="text" class="form-control" id="editEventTitle" name="editEventTitle" placeholder="Nhập tiêu đề" style="border-radius: 8px; border: 2px solid #e2e8f0; padding: 10px 14px;">
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label col-sm-3" for="editCreatedDate" style="font-weight: 600; color: #334155;">Ngày Tạo:</label>
-                                            <div class="col-sm-9">
-                                                <input type="date" class="form-control" id="editCreatedDate" name="editCreatedDate" readonly style="border-radius: 8px; border: 2px solid #e2e8f0; padding: 10px 14px; background: #f1f5f9; color: #64748b;">
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label col-sm-3" for="editStartDate" style="font-weight: 600; color: #334155;">Ngày Bắt Đầu: <span style="color: #ef4444;">*</span></label>
-                                            <div class="col-sm-9">
-                                                <input type="date" class="form-control" id="editStartDate" name="editStartDate" style="border-radius: 8px; border: 2px solid #e2e8f0; padding: 10px 14px;">
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label col-sm-3" for="editEndDate" style="font-weight: 600; color: #334155;">Ngày Kết Thúc: <span style="color: #ef4444;">*</span></label>
-                                            <div class="col-sm-9">
-                                                <input type="date" class="form-control" id="editEndDate" name="editEndDate" style="border-radius: 8px; border: 2px solid #e2e8f0; padding: 10px 14px;">
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label col-sm-3" for="editContent" style="font-weight: 600; color: #334155;">Nội Dung: <span style="color: #ef4444;">*</span></label>
-                                            <div class="col-sm-9">
-                                                <textarea class="form-control" id="editContent" name="editContent" rows="4" placeholder="Nhập nội dung" style="resize: vertical; border-radius: 8px; border: 2px solid #e2e8f0; padding: 10px 14px;"></textarea>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label col-sm-3" for="editEventImage" style="font-weight: 600; color: #334155;">Hình Ảnh:</label>
-                                            <div class="col-sm-9">
-                                                <div id="editEventImagePreview" style="margin-bottom: 10px;"></div>
-                                                <input type="file" class="form-control-file" id="editEventImage" name="editEventImage" accept="image/*" style="border: 2px dashed #cbd5e1; padding: 12px; border-radius: 8px; background: #fff;">
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label col-sm-3" for="editDiscount" style="font-weight: 600; color: #334155;">Giảm Giá (%): <span style="color: #ef4444;">*</span></label>
-                                            <div class="col-sm-9">
-                                                <div class="input-group">
-                                                    <input type="number" class="form-control" id="editDiscount" name="editDiscount" placeholder="VD: 5 (tương đương 5%)" step="0.01" min="0" max="100" oninput="validateDiscount(this)" style="border-radius: 8px 0 0 8px; border: 2px solid #e2e8f0; padding: 10px 14px;">
-                                                    <span class="input-group-addon" style="background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%); border: 2px solid #e2e8f0; border-left: none; font-weight: 700; color: #475569; border-radius: 0 8px 8px 0; padding: 10px 16px; display: flex; align-items: center;">%</span>
-                                                </div>
-                                                <small class="help-block" style="color: #64748b; font-style: italic; margin-top: 8px; display: block;">
-                                                    <i class="fa fa-info-circle" style="color: #06b6d4;"></i> Nhập số từ 0-100. VD: nhập <strong style="color: #059669;">5</strong> để giảm <strong style="color: #059669;">5%</strong>
-                                                </small>
-                                            </div>
-                                        </div>
-                                        
-                                    
+                        <!-- Event Title -->
+                        <div class="col-md-12 mb-3">
+                            <div class="form-group">
+                                <label for="editEventTitle" style="color: #6c757d; font-size: 0.875rem; font-weight: 700; margin-bottom: 0.5rem; display: block;">TIÊU ĐỀ <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="editEventTitle" name="editEventTitle" required style="border-radius: 6px; box-shadow: none;">
+                            </div>
+                        </div>
+                        
+                        <!-- Start Date & End Date -->
+                        <div class="col-md-6 mb-3">
+                            <div class="form-group">
+                                <label for="editStartDate" style="color: #6c757d; font-size: 0.875rem; font-weight: 700; margin-bottom: 0.5rem; display: block;">NGÀY BẮT ĐẦU <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control" id="editStartDate" name="editStartDate" required style="border-radius: 6px; box-shadow: none;">
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-group">
+                                <label for="editEndDate" style="color: #6c757d; font-size: 0.875rem; font-weight: 700; margin-bottom: 0.5rem; display: block;">NGÀY KẾT THÚC <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control" id="editEndDate" name="editEndDate" required style="border-radius: 6px; box-shadow: none;">
+                            </div>
+                        </div>
+
+                        <!-- Content -->
+                        <div class="col-md-12 mb-3">
+                            <div class="form-group">
+                                <label for="editContent" style="color: #6c757d; font-size: 0.875rem; font-weight: 700; margin-bottom: 0.5rem; display: block;">NỘI DUNG <span class="text-danger">*</span></label>
+                                <textarea class="form-control" id="editContent" name="editContent" rows="4" required style="border-radius: 6px; box-shadow: none; resize: vertical;"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Discount -->
+                        <div class="col-md-12 mb-3">
+                            <div class="form-group">
+                                <label for="editDiscount" style="color: #6c757d; font-size: 0.875rem; font-weight: 700; margin-bottom: 0.5rem; display: block;">GIẢM GIÁ (%) <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="editDiscount" name="editDiscount" step="0.01" min="0" max="100" oninput="validateDiscount(this)" required style="border-radius: 6px 0 0 6px; box-shadow: none; height: auto; padding: 6px 12px;">
+                                    <span class="input-group-addon" style="background-color: #e9ecef; border: 1px solid #ced4da; border-radius: 0 6px 6px 0; color: #495057;">%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Image Upload -->
+                        <div class="col-md-12 mb-3">
+                            <div class="form-group">
+                                <label style="color: #6c757d; font-size: 0.875rem; font-weight: 700; margin-bottom: 0.5rem; display: block;">ẢNH BANNER (Tùy chọn)</label>
+                                <div id="editEventImagePreviewContainer" style="margin-bottom: 10px; display: none; position: relative;">
+                                    <img id="editEventImagePreview" src="#" alt="Preview" class="img-thumbnail cursor-pointer" style="max-height: 150px; border-radius: 6px; cursor: pointer;" onclick="if(window.parent && window.parent.openLightbox) window.parent.openLightbox(this.src)">
+                                </div>
+                                <input type="file" class="form-control-file" id="editEventImage" name="editEventImage" accept="image/*" onchange="previewImage(this, 'editEventImagePreview', 'editEventImagePreviewContainer')" style="border-radius: 6px; box-shadow: none;">
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
-                    <button type="submit" class="btn btn-info"><i class="fa fa-save"></i> Cập Nhật</button>
+                <div class="modal-footer" style="border-top: none; padding-top: 0; background: transparent;">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" style="background-color: #f8f9fa; border-color: #f8f9fa; color: #000; border-radius: 6px;">Hủy</button>
+                    <button type="submit" class="btn btn-warning" style="background-color: #ffc107; border-color: #ffc107; color: #212529; font-weight: 700; border-radius: 6px; box-shadow: 0 .125rem .25rem rgba(0,0,0,.075);">Cập nhật Sự Kiện</button>
                 </div>
             </form>
         </div>
@@ -320,7 +367,16 @@
                 };
             }
 
-            function editEventForm(eventID, eventTitle, createdDate, startDate, endDate, content, eventImage, discount, staffID) {
+            function editEventForm(btn) {
+                const eventID = btn.getAttribute('data-id');
+                const eventTitle = btn.getAttribute('data-title');
+                const createdDate = btn.getAttribute('data-created');
+                const startDate = btn.getAttribute('data-start');
+                const endDate = btn.getAttribute('data-end');
+                const content = btn.getAttribute('data-content');
+                const eventImage = btn.getAttribute('data-img');
+                const discount = btn.getAttribute('data-discount');
+                
                 const formattedCreatedDate = convertToInputDateFormat(createdDate);
                 const formattedStartDate = convertToInputDateFormat(startDate);
                 const formattedEndDate = convertToInputDateFormat(endDate);
@@ -331,8 +387,7 @@
                 document.getElementById('editEndDate').value = formattedEndDate.year + "-" + formattedEndDate.month + "-" + formattedEndDate.day;
                 document.getElementById('editContent').value = content;
                 // Chuyển đổi từ thập phân (0.05) sang phần trăm (5) để hiển thị cho user
-                document.getElementById('editDiscount').value = parseFloat(discount) * 100;
-                document.getElementById('editStaffID').value = staffID;
+                document.getElementById('editDiscount').value = (parseFloat(discount) * 100).toFixed(0);
 
                 var imgContainer = document.getElementById('editEventImagePreview');
                 imgContainer.innerHTML = ''; // Xóa hình ảnh cũ (nếu có)
@@ -446,6 +501,66 @@
                     }
                 })
             }
+            
+            function publishNotification(type, id) {
+                Swal.fire({
+                    title: 'Phát hành thông báo Sự kiện?',
+                    text: "Thông báo này sẽ được gửi ngay lập tức đến chuông báo của TẤT CẢ KHÁCH HÀNG!",
+                    icon: 'info',
+                    showCancelButton: true,
+                    confirmButtonColor: '#17a2b8',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Phát hành ngay',
+                    cancelButtonText: 'Hủy'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: '${pageContext.request.contextPath}/api/publish-notification',
+                            type: 'POST',
+                            data: { type: type, id: id },
+                            success: function(res) {
+                                if (res.status === 'success') {
+                                    Swal.fire('Thành công!', 'Đã gửi Push Notification sự kiện đến toàn bộ khách hàng!', 'success');
+                                    // Update UI to show it's published
+                                    localStorage.setItem('published_event_' + id, 'true');
+                                    var btn = document.getElementById('publish-btn-' + id);
+                                    if(btn) {
+                                        btn.innerHTML = '<i class="fa fa-check-circle"></i> Đã phát hành';
+                                        btn.classList.remove('btn-outline-success-custom');
+                                        btn.style.backgroundColor = '#198754';
+                                        btn.style.color = '#fff';
+                                        btn.style.borderColor = '#198754';
+                                        btn.style.cursor = 'default';
+                                        btn.onclick = null;
+                                    }
+                                } else {
+                                    Swal.fire('Lỗi!', res.message || 'Không thể phát hành thông báo.', 'error');
+                                }
+                            },
+                            error: function() {
+                                Swal.fire('Lỗi!', 'Không thể kết nối đến máy chủ.', 'error');
+                            }
+                        });
+                    }
+                });
+            }
+            
+            // Check local storage on page load to update published buttons
+            document.addEventListener('DOMContentLoaded', function() {
+                var publishBtns = document.querySelectorAll('.publish-btn');
+                publishBtns.forEach(function(btn) {
+                    var eventId = btn.getAttribute('data-id');
+                    if (localStorage.getItem('published_event_' + eventId) === 'true') {
+                        btn.innerHTML = '<i class="fa fa-check-circle"></i> Đã phát hành';
+                        btn.classList.remove('btn-outline-success-custom');
+                        btn.style.backgroundColor = '#198754';
+                        btn.style.color = '#fff';
+                        btn.style.borderColor = '#198754';
+                        btn.style.cursor = 'default';
+                        btn.onclick = null;
+                    }
+                });
+            });
         </script>
         <script>
             document.getElementById('addLocationForm').addEventListener('submit', function (event) {
