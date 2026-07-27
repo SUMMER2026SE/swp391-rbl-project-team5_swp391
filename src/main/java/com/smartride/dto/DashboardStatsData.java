@@ -110,9 +110,9 @@ public class DashboardStatsData {
             NumberFormat format = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
             this.image = image;
             this.model = model;
-            this.priceDay = format.format(priceDay * 1000).replace("₫", "VNĐ");
-            this.priceWeek = format.format(priceWeek * 1000).replace("₫", "VNĐ");
-            this.priceMonth = format.format(priceMonth * 1000).replace("₫", "VNĐ");
+            this.priceDay = format.format(priceDay).replace("₫", "VNĐ");
+            this.priceWeek = format.format(priceWeek).replace("₫", "VNĐ");
+            this.priceMonth = format.format(priceMonth).replace("₫", "VNĐ");
             this.rentCount = rentCount;
         }
 

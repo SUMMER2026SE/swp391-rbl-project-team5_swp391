@@ -3,6 +3,7 @@ package com.smartride.dto;
 import com.smartride.util.RentalPricingUtil;
 import java.io.Serializable;
 import java.util.List;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,10 +14,9 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-
 public class Booking implements Serializable {
 
-    private String bookingID, bookingDate, startDate, endDate, statusBooking, deliveryLocation, returnedLocation, deliveryStatus;
+    private String bookingID, bookingDate, startDate, endDate, statusBooking, deliveryLocation, returnedLocation, deliveryStatus, deliveryImage, handoverChecklist;
     private int voucherID;
     private int customerID;
     private List<BookingDetail> listBookingDetails;
@@ -55,6 +55,26 @@ public class Booking implements Serializable {
 
     public String getRentalPlan() {
         return RentalPricingUtil.getPlanLabel(getRentalDays());
+    }
+
+    private int extractFee(String location) {
+        if (location == null) return 0;
+        int fee = 0;
+        try {
+            java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("(?i)giao xe:?\\s*([0-9,]+)");
+            java.util.regex.Matcher matcher = pattern.matcher(location);
+            if (matcher.find()) {
+                String feeStr = matcher.group(1).replace(",", "").trim();
+                fee = Integer.parseInt(feeStr);
+            }
+        } catch (Exception e) {
+            // Ignore parse errors, return 0
+        }
+        return fee;
+    }
+
+    public int getDeliveryFee() {
+        return extractFee(this.deliveryLocation) + extractFee(this.returnedLocation);
     }
 
 }
