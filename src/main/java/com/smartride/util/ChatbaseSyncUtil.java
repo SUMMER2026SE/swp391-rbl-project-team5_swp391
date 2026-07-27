@@ -11,7 +11,7 @@ import java.sql.Statement;
 public class ChatbaseSyncUtil {
 
     // Thay thế bằng API Key thật và Chatbot ID của bạn lấy từ Chatbase.co
-    private static final String CHATBASE_API_KEY = "REDACTED";
+    private static final String CHATBASE_API_KEY = "YOUR_CHATBASE_SECRET_KEY";
     private static final String CHATBOT_ID = "qUNf-UR7ycIWmYS6ZiWCL";
 
     /**
