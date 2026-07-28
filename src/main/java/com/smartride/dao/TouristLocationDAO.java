@@ -163,23 +163,23 @@ public class TouristLocationDAO implements Serializable, DAO<TouristLocation> {
                 "JOIN \"Motorcycle\" m ON r.\"MotorcycleID\" = m.\"MotorcycleID\" " +
                 "WHERE r.\"LocationID\" = ? " +
                 "ORDER BY r.\"Priority\" ASC";
-        try {
-            Connection conn = DBUtil.makeConnection();
-            PreparedStatement ps = conn.prepareStatement(sql);
+        try (Connection conn = DBUtil.makeConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, locationId);
-            ResultSet rs = ps.executeQuery();
-            Set<String> seenModels = new HashSet<>();
-            while (rs.next()) {
-                String model = rs.getString("Model");
-                if (!seenModels.contains(model)) {
-                    seenModels.add(model);
-                    list.add(new LocationRecommendationDTO(
-                            rs.getString("MotorcycleID"),
-                            model,
-                            rs.getString("Image"),
-                            rs.getString("Reason"),
-                            rs.getInt("Priority")
-                    ));
+            try (ResultSet rs = ps.executeQuery()) {
+                Set<String> seenModels = new HashSet<>();
+                while (rs.next()) {
+                    String model = rs.getString("Model");
+                    if (!seenModels.contains(model)) {
+                        seenModels.add(model);
+                        list.add(new LocationRecommendationDTO(
+                                rs.getString("MotorcycleID"),
+                                model,
+                                rs.getString("Image"),
+                                rs.getString("Reason"),
+                                rs.getInt("Priority")
+                        ));
+                    }
                 }
             }
         } catch (SQLException e) {
@@ -190,9 +190,8 @@ public class TouristLocationDAO implements Serializable, DAO<TouristLocation> {
 
     public boolean addRecommendation(int locationId, String motorcycleId, String reason, int priority) {
         String sql = "INSERT INTO \"LocationMotorcycleRecommendation\" (\"LocationID\", \"MotorcycleID\", \"Reason\", \"Priority\") VALUES (?, ?, ?, ?)";
-        try {
-            Connection conn = DBUtil.makeConnection();
-            PreparedStatement ps = conn.prepareStatement(sql);
+        try (Connection conn = DBUtil.makeConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, locationId);
             ps.setString(2, motorcycleId);
             ps.setString(3, reason);
@@ -206,9 +205,8 @@ public class TouristLocationDAO implements Serializable, DAO<TouristLocation> {
 
     public boolean deleteRecommendation(int locationId, String motorcycleId) {
         String sql = "DELETE FROM \"LocationMotorcycleRecommendation\" WHERE \"LocationID\" = ? AND \"MotorcycleID\" = ?";
-        try {
-            Connection conn = DBUtil.makeConnection();
-            PreparedStatement ps = conn.prepareStatement(sql);
+        try (Connection conn = DBUtil.makeConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, locationId);
             ps.setString(2, motorcycleId);
             return ps.executeUpdate() > 0;
