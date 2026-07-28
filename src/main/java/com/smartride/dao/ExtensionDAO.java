@@ -17,8 +17,8 @@ public class ExtensionDAO implements Serializable {
     private static ExtensionDAO instance;
     private Connection conn = DBUtil.makeConnection();
 
-    // Cấm new trực tiếp DAO
-    //Chỉ new DAO qua hàm static getInstance() để quản lí được số object/instance đã new - SINGLETON DESIGN PATTERN
+    // Cáº¥m new trá»±c tiáº¿p DAO
+    //Chá»‰ new DAO qua hÃ m static getInstance() Ä‘á»ƒ quáº£n lÃ­ Ä‘Æ°á»£c sá»‘ object/instance Ä‘Ã£ new - SINGLETON DESIGN PATTERN
     private ExtensionDAO() {
     }
 
@@ -31,16 +31,16 @@ public class ExtensionDAO implements Serializable {
     }
 
     public boolean addExtension(String previousEndDate, String newEndDate,
-            double extensionFee, String bookingId) {
+                                double extensionFee, String bookingId) {
         String sql = "INSERT INTO \"Extension\"\n"
                 + "           (\"ExtensionDate\"\n"
                 + "           ,\"PreviousEndDate\"\n"
                 + "           ,\"NewEndDate\"\n"
                 + "           ,\"ExtenstionFee\"\n"
                 + "           ,\"BookingID\"\n"
-                + "           ,\"StaffID\")\n"
+                + "           ,\"StaffID\", \"PaymentStatus\")\n"
                 + "     VALUES\n"
-                + "           (NOW(), ?, ?, ?, ?, null)";
+                + "           (NOW(), ?, ?, ?, ?, null, ?)";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, previousEndDate);
@@ -60,7 +60,7 @@ public class ExtensionDAO implements Serializable {
         PreparedStatement stm;
         ResultSet rs;
 
-        String sql = "SELECT * FROM Extension WHERE BookingID = ?";
+        String sql = "SELECT * FROM \"Extension\" WHERE \"BookingID\" = ?";
 
         try {
             stm = conn.prepareStatement(sql);
@@ -75,6 +75,7 @@ public class ExtensionDAO implements Serializable {
                 extension.setExtensionFee(rs.getDouble("ExtenstionFee"));
                 extension.setBookingID(rs.getString("BookingID"));
                 extension.setStaffID(rs.getString("StaffID"));
+                extension.setPaymentStatus(rs.getString("PaymentStatus"));
                 return extension;
             }
         } catch (SQLException e) {
@@ -87,14 +88,15 @@ public class ExtensionDAO implements Serializable {
         List<Extension> list = new ArrayList<>();
         PreparedStatement stm;
         ResultSet rs;
-        String sql = "SELECT ExtensionID, \n"
-                + "       TO_CHAR(ExtensionDate, 'DD-MM-YYYY HH24:MI:SS') AS ExtensionDateFormatted,\n"
-                + "       TO_CHAR(PreviousEndDate, 'DD-MM-YYYY HH24:MI:SS') AS PreviousEndDateFormatted,\n"
-                + "       TO_CHAR(NewEndDate, 'DD-MM-YYYY HH24:MI:SS') AS NewEndDateFormatted,\n"
-                + "       ExtenstionFee, \n"
-                + "       BookingID, \n"
-                + "       StaffID\n"
-                + "FROM Extension;";
+        String sql = "SELECT \"ExtensionID\", \n"
+                + "       TO_CHAR(\"ExtensionDate\", 'DD-MM-YYYY HH24:MI:SS') AS ExtensionDateFormatted,\n"
+                + "       TO_CHAR(\"PreviousEndDate\", 'DD-MM-YYYY HH24:MI:SS') AS PreviousEndDateFormatted,\n"
+                + "       TO_CHAR(\"NewEndDate\", 'DD-MM-YYYY HH24:MI:SS') AS NewEndDateFormatted,\n"
+                + "       \"ExtenstionFee\", \n"
+                + "       \"BookingID\", \n"
+                + "       \"StaffID\", \n"
+                + "       \"PaymentStatus\"\n"
+                + "FROM \"Extension\";";
         try {
             stm = conn.prepareStatement(sql);
             rs = stm.executeQuery();
@@ -107,6 +109,7 @@ public class ExtensionDAO implements Serializable {
                 e.setExtensionFee(rs.getDouble(5));
                 e.setBookingID(rs.getString(6));
                 e.setStaffID(rs.getString(7));
+                e.setPaymentStatus(rs.getString(8));
                 list.add(e);
             }
         } catch (SQLException ex) {
@@ -117,7 +120,7 @@ public class ExtensionDAO implements Serializable {
 
     public boolean updateExtensionByStaff(String staffId, String bookingId) {
         PreparedStatement stm;
-        String sql = "Update Extension SET StaffID = ? where BookingID = ?";
+        String sql = "Update \"Extension\" SET \"StaffID\" = ? where \"BookingID\" = ?";
         try {
             stm = conn.prepareStatement(sql);
             stm.setString(1, staffId);
@@ -133,6 +136,32 @@ public class ExtensionDAO implements Serializable {
         return false;
     }
 
+
+
+    public boolean markExtensionUnpaid(String bookingId) {
+        String sql = "UPDATE \"Extension\" SET \"PaymentStatus\" = 'Chưa thanh toán' WHERE \"BookingID\" = ?";
+        try {
+            PreparedStatement stm = conn.prepareStatement(sql);
+            stm.setString(1, bookingId);
+            return stm.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean markExtensionPaid(String bookingId) {
+        String sql = "UPDATE \"Extension\" SET \"PaymentStatus\" = 'Đã thanh toán (Tiền mặt)' WHERE \"BookingID\" = ?";
+        try {
+            PreparedStatement stm = conn.prepareStatement(sql);
+            stm.setString(1, bookingId);
+            return stm.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public static void main(String[] args) {
 //        System.out.println(ExtensionDAO.getInstance().getExtensionByBookingID("BOOK000006"));
         System.out.println(getInstance().getAllExtension());
@@ -140,3 +169,5 @@ public class ExtensionDAO implements Serializable {
     }
 
 }
+
+
