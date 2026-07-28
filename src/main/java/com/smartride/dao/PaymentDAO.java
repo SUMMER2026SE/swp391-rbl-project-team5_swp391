@@ -38,7 +38,8 @@ public class PaymentDAO implements Serializable {
     public Payment getPayMentbyBookingId(String bookingId) {
         PreparedStatement stm;
         ResultSet rs;
-        String sql = "Select * from \"Payment\" where \"BookingID\" = ?";
+        String sql = "SELECT MAX(\"PaymentID\"), \"BookingID\", MAX(\"PaymentMethod\"), MAX(\"PaymentDate\"), SUM(\"PaymentAmount\"), MAX(\"PaymentStatus\") "
+                + "FROM \"Payment\" WHERE \"BookingID\" = ? GROUP BY \"BookingID\"";
         try {
             stm = getConnection().prepareStatement(sql);
             stm.setString(1, bookingId);
@@ -60,20 +61,42 @@ public class PaymentDAO implements Serializable {
     }
 
     public void addPayment(String bookingId, String method, String paymentDate, int amount, String status) {
-        String sql = "INSERT INTO \"Payment\" \n"
+        String checkSql = "SELECT \"PaymentAmount\" FROM \"Payment\" WHERE \"BookingID\" = ?";
+        String insertSql = "INSERT INTO \"Payment\" \n"
                 + "    (\"BookingID\", \"PaymentMethod\", \"PaymentDate\", \"PaymentAmount\", \"PaymentStatus\")\n"
                 + "VALUES \n"
                 + "    (?,?, ?, ?, ?);";
+        String updateSql = "UPDATE \"Payment\" SET \"PaymentMethod\" = ?, \"PaymentDate\" = ?, \"PaymentAmount\" = \"PaymentAmount\" + ?, \"PaymentStatus\" = ? WHERE \"BookingID\" = ?";
+
         try {
-            PreparedStatement ps = getConnection().prepareStatement(sql);
-            ps.setString(1, bookingId);
-            ps.setString(2, method);
-            ps.setString(3, paymentDate);
-            ps.setInt(4, amount);
-            ps.setString(5, status);
-            ps.executeUpdate();
+            PreparedStatement checkPs = getConnection().prepareStatement(checkSql);
+            checkPs.setString(1, bookingId);
+            ResultSet rs = checkPs.executeQuery();
+
+            java.sql.Timestamp ts = java.sql.Timestamp.valueOf(paymentDate);
+
+            if (rs.next()) {
+                // Update
+                PreparedStatement updatePs = getConnection().prepareStatement(updateSql);
+                updatePs.setString(1, method);
+                updatePs.setTimestamp(2, ts);
+                updatePs.setInt(3, amount);
+                updatePs.setString(4, status);
+                updatePs.setString(5, bookingId);
+                updatePs.executeUpdate();
+            } else {
+                // Insert
+                PreparedStatement insertPs = getConnection().prepareStatement(insertSql);
+                insertPs.setString(1, bookingId);
+                insertPs.setString(2, method);
+                insertPs.setTimestamp(3, ts);
+                insertPs.setInt(4, amount);
+                insertPs.setString(5, status);
+                insertPs.executeUpdate();
+            }
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println("addPayment error: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -106,7 +129,7 @@ public class PaymentDAO implements Serializable {
                 + "order by p.\"PaymentDate\" desc";
         try {
             stm = getConnection().prepareStatement(sql);
-            stm.setInt(1, accountId); 
+            stm.setInt(1, accountId);
             rs = stm.executeQuery();
             while (rs.next()) {
                 Payment p = new Payment();
