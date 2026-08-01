@@ -25,13 +25,23 @@ public class BookingHistoryDetailServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String bookingId = request.getParameter("bookingId");
+        if (bookingId == null || bookingId.trim().isEmpty()) {
+            response.sendRedirect("bookingHistory?status=all");
+            return;
+        }
         Booking booking = bookingDAO.getBookingById(bookingId);
+        if (booking == null) {
+            response.sendRedirect("bookingHistory?status=all");
+            return;
+        }
         Map<String, Integer> motorcycleDetails = bookingDAO.getMotorcycleDetailsByBookingID(bookingId);
         java.util.List<Map<String, Object>> motorcycleList = bookingDAO.getMotorcycleListForBooking(bookingId);
         java.util.List<String> motorcyclePlates = bookingDAO.getMotorcyclePlatesByBookingID(bookingId);
         Extension extension = extensionDAO.getExtensionByBookingID(bookingId);
         Payment payment = PaymentDAO.getInstance().getPayMentbyBookingId(bookingId);
+        java.util.List<Payment> paymentList = PaymentDAO.getInstance().getListByBookingId(bookingId);
         request.setAttribute("payment", payment);
+        request.setAttribute("paymentList", paymentList);
         request.setAttribute("extension", extension);
         request.setAttribute("booking", booking);
         request.setAttribute("motorcycleDetails", motorcycleDetails);
@@ -53,15 +63,24 @@ public class BookingHistoryDetailServlet extends HttpServlet {
         
         try {
             long amount = Long.parseLong(amountStr);
-            // Convert paymentDate yyyyMMddHHmmss to yyyy-MM-dd HH:mm:ss
             java.time.format.DateTimeFormatter inputFormatter = java.time.format.DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
             java.time.LocalDateTime dateTime = java.time.LocalDateTime.parse(paymentDateText, inputFormatter);
             java.time.format.DateTimeFormatter outputFormatter = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             String formattedPaymentDate = dateTime.format(outputFormatter);
+
+            java.util.List<com.smartride.dto.Payment> existingPayments = PaymentDAO.getInstance().getListByBookingId(bookingId);
+            boolean isDuplicate = false;
+            for (com.smartride.dto.Payment p : existingPayments) {
+                if ("Thành công".equals(p.getPaymentStatus()) && p.getPaymentAmount() == amount) {
+                    isDuplicate = true;
+                    break;
+                }
+            }
             
-            PaymentDAO.getInstance().addPayment(bookingId, "Ngân hàng", formattedPaymentDate, (int)amount, "Thành công");
+            if (!isDuplicate) {
+                PaymentDAO.getInstance().addPayment(bookingId, "Ngân hàng", formattedPaymentDate, amount, "Thành công");
+            }
             
-            // Check if fully paid and update status
             com.smartride.dto.Payment totalPayment = PaymentDAO.getInstance().getPayMentbyBookingId(bookingId);
             Booking booking = BookingDAO.getInstance().getBookingById(bookingId);
             if (totalPayment != null && booking != null) {

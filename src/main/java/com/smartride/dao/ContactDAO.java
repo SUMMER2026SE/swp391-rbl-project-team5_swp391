@@ -45,19 +45,19 @@ public class ContactDAO implements Serializable {
             ps.setString(3, email);
             ps.setString(4, title);
             ps.setString(5, message);
-            if (accountID != null) {
+             if (accountID != null) {
                 ps.setInt(6, accountID);
             } else {
                 ps.setNull(6, java.sql.Types.INTEGER);
             }
-
-
+           
+           
             ps.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e);
         }
     }
-
+    
     public List<Contact> getAllContact() {
         List<Contact> list = new ArrayList<>();
 
@@ -67,7 +67,7 @@ public class ContactDAO implements Serializable {
             String sql = "select * from \"Contact\"";
             stm = conn.prepareStatement(sql);
             rs = stm.executeQuery();
-            while (rs.next()) {
+            while (rs.next()) {  
                 list.add(new Contact(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getInt(7)));
             }
         } catch (Exception ex) {
@@ -75,11 +75,11 @@ public class ContactDAO implements Serializable {
         }
         return list;
     }
-
+    
     public static void main(String[] args) {
         ContactDAO cd = ContactDAO.getInstance();
-
-        // cd.insertContact("Jessica", "0912345678", "jessica123@gmail.com", "Ask Question 1", "123 abc", null);
+       
+       // cd.insertContact("Jessica", "0912345678", "jessica123@gmail.com", "Ask Question 1", "123 abc", null);
         System.out.println(cd.getAllContact());
     }
 }

@@ -24,14 +24,14 @@ public class ChatMessageDAO {
     public List<ChatMessage> getMessagesByBookingId(String bookingId) {
         List<ChatMessage> list = new ArrayList<>();
         String sql = "SELECT c.\"MessageID\", c.\"BookingID\", c.\"SenderID\", c.\"SenderRole\", c.\"Message\", c.\"SentAt\", "
-                + "a.\"FirstName\", a.\"LastName\", a.\"Image\" "
-                + "FROM \"Chat_Message\" c "
-                + "JOIN \"Account\" a ON c.\"SenderID\" = a.\"AccountID\" "
-                + "WHERE c.\"BookingID\" = ? "
-                + "ORDER BY c.\"SentAt\" ASC";
-
+                   + "a.\"FirstName\", a.\"LastName\", a.\"Image\" "
+                   + "FROM \"Chat_Message\" c "
+                   + "JOIN \"Account\" a ON c.\"SenderID\" = a.\"AccountID\" "
+                   + "WHERE c.\"BookingID\" = ? "
+                   + "ORDER BY c.\"SentAt\" ASC";
+        
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-
+        
         try (Connection conn = DBUtil.makeConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, bookingId);
@@ -43,17 +43,17 @@ public class ChatMessageDAO {
                     msg.setSenderId(rs.getInt("SenderID"));
                     msg.setSenderRole(rs.getString("SenderRole"));
                     msg.setMessage(rs.getString("Message"));
-
+                    
                     Timestamp ts = rs.getTimestamp("SentAt");
                     if (ts != null) {
                         msg.setSentAt(sdf.format(ts));
                     }
-
+                    
                     String firstName = rs.getString("FirstName");
                     String lastName = rs.getString("LastName");
                     msg.setSenderName((lastName != null ? lastName : "") + " " + (firstName != null ? firstName : ""));
                     msg.setSenderImage(rs.getString("Image"));
-
+                    
                     list.add(msg);
                 }
             }
@@ -65,7 +65,7 @@ public class ChatMessageDAO {
 
     public void insertMessage(String bookingId, int senderId, String senderRole, String message) {
         String sql = "INSERT INTO \"Chat_Message\"(\"BookingID\", \"SenderID\", \"SenderRole\", \"Message\") "
-                + "VALUES(?, ?, ?, ?)";
+                   + "VALUES(?, ?, ?, ?)";
         try (Connection conn = DBUtil.makeConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, bookingId);

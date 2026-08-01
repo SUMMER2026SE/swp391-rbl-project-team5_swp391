@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,28 +18,42 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class BookingDAO {
-
+    
     private static BookingDAO instance;
-    private Connection conn = DBUtil.makeConnection();
 
-    // Cấm new trực tiếp DAO
-    //Chỉ new DAO qua hàm static getInstance() để quản lí được số object/instance đã new - SINGLETON DESIGN PATTERN
     private BookingDAO() {
-        try {
-            conn.createStatement().execute(
-                    "ALTER TABLE \"Booking\" ADD COLUMN IF NOT EXISTS \"HandoverChecklist\" TEXT"
+        try (Connection c = DBUtil.makeConnection()) {
+            c.createStatement().execute(
+                "ALTER TABLE \"Booking\" ADD COLUMN IF NOT EXISTS \"HandoverChecklist\" TEXT"
             );
         } catch (Exception ignored) {}
     }
-
+    
     public static BookingDAO getInstance() {
-
         if (instance == null) {
             instance = new BookingDAO();
         }
         return instance;
     }
 
+    private static final ThreadLocal<Connection> connHolder = ThreadLocal.withInitial(() -> DBUtil.makeConnection());
+
+    private static Connection getConnection() {
+        Connection c = connHolder.get();
+        try {
+            if (c == null || c.isClosed()) {
+                connHolder.remove();
+                c = DBUtil.makeConnection();
+                connHolder.set(c);
+            }
+        } catch (SQLException e) {
+            connHolder.remove();
+            c = DBUtil.makeConnection();
+            connHolder.set(c);
+        }
+        return c;
+    }
+    
     public void addBooking(String bookingID, String bookingDate, String startDate, String endDate, String deliveryLocation, String returnedLocation, Integer voucherID, int customerID) {
         String sql = " INSERT INTO \"Booking\" (\n"
                 + "    \"BookingID\", \n"
@@ -67,7 +82,7 @@ public class BookingDAO {
                 + " (?, CAST(? AS timestamp), CAST(? AS timestamp), CAST(? AS timestamp), ?, ?, ?, ?, ?)";
         try {
             if (voucherID == 0) {
-                PreparedStatement ps = conn.prepareStatement(sqlNoVoucher);
+                PreparedStatement ps = getConnection().prepareStatement(sqlNoVoucher);
                 ps.setString(1, bookingID);
                 ps.setString(2, bookingDate);
                 ps.setString(3, startDate);
@@ -79,7 +94,7 @@ public class BookingDAO {
                 ps.setInt(9, customerID);
                 ps.executeUpdate();
             } else {
-                PreparedStatement ps = conn.prepareStatement(sql);
+                PreparedStatement ps = getConnection().prepareStatement(sql);
                 ps.setString(1, bookingID);
                 ps.setString(2, bookingDate);
                 ps.setString(3, startDate);
@@ -92,13 +107,13 @@ public class BookingDAO {
                 ps.setInt(10, customerID);
                 ps.executeUpdate();
             }
-
+            
         } catch (SQLException e) {
             System.out.println(e);
             throw new RuntimeException("Lỗi lưu Booking: " + e.getMessage(), e);
         }
     }
-
+    
     public List<Map<String, Object>> getMotorcyclesByBookingID(String bookingID) {
         PreparedStatement stm;
         ResultSet rs;
@@ -110,7 +125,7 @@ public class BookingDAO {
                 + "WHERE md.\"MotorcycleDetailID\" IN (SELECT \"MotorcycleDetailID\" FROM \"Booking Detail\" WHERE \"BookingID\" = ?) "
                 + "GROUP BY m.\"Model\", m.\"Image\", c.\"CategoryName\"";
         try {
-            stm = conn.prepareStatement(sql);
+            stm = getConnection().prepareStatement(sql);
             stm.setString(1, bookingID);
             rs = stm.executeQuery();
             while (rs.next()) {
@@ -119,7 +134,7 @@ public class BookingDAO {
                 motorcycleInfo.put("Quantity", rs.getInt("Quantity"));
                 motorcycleInfo.put("Image", rs.getString("Image"));
                 motorcycleInfo.put("CategoryName", rs.getString("CategoryName"));
-
+                
                 motorcycleList.add(motorcycleInfo);
             }
         } catch (Exception ex) {
@@ -127,13 +142,13 @@ public class BookingDAO {
         }
         return motorcycleList;
     }
-
+    
     public Booking getBookingById(String bookingId) {
         PreparedStatement stm;
         ResultSet rs;
         try {
             String sql = "SELECT * FROM \"Booking\" WHERE \"BookingID\" = ?";
-            stm = conn.prepareStatement(sql);
+            stm = getConnection().prepareStatement(sql);
             stm.setString(1, bookingId);
             rs = stm.executeQuery();
             while (rs.next()) {
@@ -194,7 +209,7 @@ public class BookingDAO {
         }
         sql.append(" ORDER BY \"BookingDate\" DESC");
         try {
-            stm = conn.prepareStatement(sql.toString());
+            stm = getConnection().prepareStatement(sql.toString());
             stm.setInt(1, accountID);
             rs = stm.executeQuery();
             while (rs.next()) {
@@ -220,7 +235,7 @@ public class BookingDAO {
         }
         return list;
     }
-
+    
     public Map<String, Integer> getMotorcycleDetailsByBookingID(String bookingID) {
         PreparedStatement stm;
         ResultSet rs;
@@ -235,7 +250,7 @@ public class BookingDAO {
                 + ")\n"
                 + "GROUP BY m.\"MotorcycleID\", m.\"Model\"";
         try {
-            stm = conn.prepareStatement(sql);
+            stm = getConnection().prepareStatement(sql);
             stm.setString(1, bookingID);
             rs = stm.executeQuery();
             while (rs.next()) {
@@ -260,7 +275,7 @@ public class BookingDAO {
                 + ") "
                 + "GROUP BY m.\"MotorcycleID\", m.\"Model\"";
         try {
-            PreparedStatement stm = conn.prepareStatement(sql);
+            PreparedStatement stm = getConnection().prepareStatement(sql);
             stm.setString(1, bookingID);
             ResultSet rs = stm.executeQuery();
             while (rs.next()) {
@@ -277,20 +292,20 @@ public class BookingDAO {
         }
         return list;
     }
-
+    
     public boolean checkOverlapForExtension(String bookingID, String newEndDate) {
         String sql = "SELECT COUNT(*) FROM \"Booking Detail\" bd "
-                + "JOIN \"Booking\" b ON bd.\"BookingID\" = b.\"BookingID\" "
-                + "WHERE bd.\"MotorcycleDetailID\" IN ( "
-                + "    SELECT \"MotorcycleDetailID\" FROM \"Booking Detail\" WHERE \"BookingID\" = ? "
-                + ") "
-                + "AND b.\"BookingID\" != ? "
-                + "AND b.\"StatusBooking\" != 'Đã hủy' "
-                + "AND b.\"StatusBooking\" != 'Từ chối' "
-                + "AND CAST(b.\"StartDate\" AS TIMESTAMP) < CAST(? AS TIMESTAMP) "
-                + "AND COALESCE((SELECT CAST(\"NewEndDate\" AS TIMESTAMP) FROM \"Extension\" WHERE \"BookingID\" = b.\"BookingID\" ORDER BY \"ExtensionDate\" DESC LIMIT 1), CAST(b.\"EndDate\" AS TIMESTAMP)) > (SELECT COALESCE((SELECT CAST(\"NewEndDate\" AS TIMESTAMP) FROM \"Extension\" WHERE \"BookingID\" = ? ORDER BY \"ExtensionDate\" DESC LIMIT 1), CAST(\"EndDate\" AS TIMESTAMP)) FROM \"Booking\" WHERE \"BookingID\" = ?)";
+                   + "JOIN \"Booking\" b ON bd.\"BookingID\" = b.\"BookingID\" "
+                   + "WHERE bd.\"MotorcycleDetailID\" IN ( "
+                   + "    SELECT \"MotorcycleDetailID\" FROM \"Booking Detail\" WHERE \"BookingID\" = ? "
+                   + ") "
+                   + "AND b.\"BookingID\" != ? "
+                   + "AND b.\"StatusBooking\" != 'Đã hủy' "
+                   + "AND b.\"StatusBooking\" != 'Từ chối' "
+                   + "AND CAST(b.\"StartDate\" AS TIMESTAMP) < CAST(? AS TIMESTAMP) "
+                   + "AND COALESCE((SELECT CAST(\"NewEndDate\" AS TIMESTAMP) FROM \"Extension\" WHERE \"BookingID\" = b.\"BookingID\" ORDER BY \"ExtensionDate\" DESC LIMIT 1), CAST(b.\"EndDate\" AS TIMESTAMP)) > (SELECT COALESCE((SELECT CAST(\"NewEndDate\" AS TIMESTAMP) FROM \"Extension\" WHERE \"BookingID\" = ? ORDER BY \"ExtensionDate\" DESC LIMIT 1), CAST(\"EndDate\" AS TIMESTAMP)) FROM \"Booking\" WHERE \"BookingID\" = ?)";
         try {
-            java.sql.PreparedStatement stm = conn.prepareStatement(sql);
+            java.sql.PreparedStatement stm = getConnection().prepareStatement(sql);
             stm.setString(1, bookingID);
             stm.setString(2, bookingID);
             stm.setString(3, newEndDate);
@@ -305,7 +320,7 @@ public class BookingDAO {
         }
         return false;
     }
-
+    
     public List<String> getMotorcyclePlatesByBookingID(String bookingID) {
         PreparedStatement stm;
         ResultSet rs;
@@ -319,7 +334,7 @@ public class BookingDAO {
                 + "	where \"BookingID\" = ?\n"
                 + ")";
         try {
-            stm = conn.prepareStatement(sql);
+            stm = getConnection().prepareStatement(sql);
             stm.setString(1, bookingID);
             rs = stm.executeQuery();
             while (rs.next()) {
@@ -332,16 +347,19 @@ public class BookingDAO {
         }
         return motorcycleDetails;
     }
-
+    
     public boolean updateBookingStatus(String bookingID, String status) {
         PreparedStatement stm;
         String sql = "UPDATE \"Booking\" SET \"StatusBooking\" = ? WHERE \"BookingID\" = ?";
         try {
-            stm = conn.prepareStatement(sql);
+            stm = getConnection().prepareStatement(sql);
             stm.setString(1, status);
             stm.setString(2, bookingID);
             int rowAffect = stm.executeUpdate();
             if (rowAffect > 0) {
+                if ("Đã hoàn thành".equals(status)) {
+                    com.smartride.service.LoyaltyService.checkAndIssueVoucher(bookingID);
+                }
                 return true;
             }
         } catch (SQLException ex) {
@@ -349,17 +367,17 @@ public class BookingDAO {
         }
         return false;
     }
-
+    
     public boolean updateDeliveryStatusWithChecklist(String deliveryStatus, String bookingID, String imagePaths, String checklistJson) {
         PreparedStatement stm;
         String sql = "UPDATE \"Booking\" SET \"DeliveryStatus\" = ?, \"DeliveryImage\" = ?, \"HandoverChecklist\" = ? WHERE \"BookingID\" = ?";
         try {
-            stm = conn.prepareStatement(sql);
+            stm = getConnection().prepareStatement(sql);
             stm.setString(1, deliveryStatus);
             stm.setString(2, imagePaths);
             stm.setString(3, checklistJson);
             stm.setString(4, bookingID);
-
+            
             int rowAffect = stm.executeUpdate();
             if (rowAffect > 0) {
                 if ("Đã trả".equals(deliveryStatus)) {
@@ -372,16 +390,16 @@ public class BookingDAO {
         }
         return false;
     }
-
+    
     public boolean updateDeliveryStatusWithImage(String deliveryStatus, String bookingID, String imagePath) {
         PreparedStatement stm;
         String sql = "UPDATE \"Booking\" SET \"DeliveryStatus\" = ?, \"DeliveryImage\" = ? WHERE \"BookingID\" = ?";
         try {
-            stm = conn.prepareStatement(sql);
+            stm = getConnection().prepareStatement(sql);
             stm.setString(1, deliveryStatus);
             stm.setString(2, imagePath);
             stm.setString(3, bookingID);
-
+            
             int rowAffect = stm.executeUpdate();
             if (rowAffect > 0) {
                 if ("Đã trả".equals(deliveryStatus)) {
@@ -399,10 +417,10 @@ public class BookingDAO {
         PreparedStatement stm;
         String sql = "UPDATE \"Booking\" SET \"DeliveryStatus\" = ? WHERE \"BookingID\" = ?";
         try {
-            stm = conn.prepareStatement(sql);
+            stm = getConnection().prepareStatement(sql);
             stm.setString(1, deliveryStatus);
             stm.setString(2, bookingID);
-
+            
             int rowAffect = stm.executeUpdate();
             if (rowAffect > 0) {
                 if ("Đã trả".equals(deliveryStatus)) {
@@ -423,7 +441,7 @@ public class BookingDAO {
         // The DB might have NewEndDate in yyyy-MM-dd HH:mm:ss format
         String sql = "UPDATE \"Booking\" SET \"EndDate\" = ?, \"TotalPrice\" = COALESCE(\"TotalPrice\", 0) + ? WHERE \"BookingID\" = ?";
         try {
-            stm = conn.prepareStatement(sql);
+            stm = getConnection().prepareStatement(sql);
             stm.setString(1, newEndDate);
             stm.setDouble(2, additionalPrice);
             stm.setString(3, bookingID);
@@ -434,18 +452,18 @@ public class BookingDAO {
         }
         return false;
     }
-
+    
     private void makeMotorcyclesStatus(String bookingID, String status, String note) {
         String sqlDetails = "SELECT \"MotorcycleDetailID\" FROM \"Booking Detail\" WHERE \"BookingID\" = ?";
         try {
-            PreparedStatement stm = conn.prepareStatement(sqlDetails);
+            PreparedStatement stm = getConnection().prepareStatement(sqlDetails);
             stm.setString(1, bookingID);
             ResultSet rs = stm.executeQuery();
             while (rs.next()) {
                 int motorDetailId = rs.getInt("MotorcycleDetailID");
                 String sqlInsert = "INSERT INTO \"Motorcycle Status\" (\"MotorcycleDetailID\", \"StaffID\", \"StatusAction\", \"UpdateDate\", \"Note\") " +
-                        "VALUES (?, 'STAFF00001', ?, CURRENT_DATE, ?)";
-                PreparedStatement psInsert = conn.prepareStatement(sqlInsert);
+                                   "VALUES (?, 'STAFF00001', ?, CURRENT_DATE, ?)";
+                PreparedStatement psInsert = getConnection().prepareStatement(sqlInsert);
                 psInsert.setInt(1, motorDetailId);
                 psInsert.setString(2, status);
                 psInsert.setString(3, note);
@@ -458,9 +476,9 @@ public class BookingDAO {
 
     public void cancelExpiredPendingBookings(int minutes) {
         String sql = "SELECT \"BookingID\" FROM \"Booking\" "
-                + "WHERE \"StatusBooking\" = 'Chờ thanh toán' "
-                + "  AND \"BookingDate\" IS NOT NULL "
-                + "  AND EXTRACT(EPOCH FROM (NOW() - \"BookingDate\"::timestamp)) / 60 >= ?";
+                   + "WHERE \"StatusBooking\" = 'Chờ thanh toán' "
+                   + "  AND \"BookingDate\" IS NOT NULL "
+                   + "  AND EXTRACT(EPOCH FROM (NOW() - \"BookingDate\"::timestamp)) / 60 >= ?";
         java.util.List<String> expiredBookings = new java.util.ArrayList<>();
         try (java.sql.Connection c = com.smartride.util.DBUtil.makeConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
@@ -476,12 +494,12 @@ public class BookingDAO {
         }
 
         for (String bookingId : expiredBookings) {
-            updateBookingStatus(bookingId, "Đã huỷ");
+            updateBookingStatus(bookingId, "Đã hủy");
             makeMotorcyclesStatus(bookingId, "Có sẵn", "Đơn hàng quá hạn thanh toán");
             System.out.println("Auto-cancelled expired booking: " + bookingId);
         }
     }
-
+    
     public Booking getLastestBooking(int accountId) {
         PreparedStatement stm;
         ResultSet rs;
@@ -490,7 +508,7 @@ public class BookingDAO {
                 + "WHERE \"CustomerID\" = (SELECT \"CustomerID\" FROM \"Customer\" WHERE \"AccountID\" = ?)\n"
                 + "ORDER BY \"BookingDate\" DESC LIMIT 1;";
         try {
-            stm = conn.prepareStatement(sql);
+            stm = getConnection().prepareStatement(sql);
             stm.setInt(1, accountId);
             rs = stm.executeQuery();
             if (rs.next()) {
@@ -502,7 +520,7 @@ public class BookingDAO {
         }
         return null;
     }
-
+    
     public List<Booking> getAllBookings() {
         PreparedStatement stm;
         ResultSet rs;
@@ -521,7 +539,7 @@ public class BookingDAO {
                 + "    FROM \n"
                 + "    \"Booking\" where \"StatusBooking\" != 'Đã hủy' ORDER BY \"Booking\".\"BookingDate\" DESC";
         try {
-            stm = conn.prepareStatement(sql);
+            stm = getConnection().prepareStatement(sql);
             rs = stm.executeQuery();
             while (rs.next()) {
                 Booking b = new Booking();
@@ -546,22 +564,22 @@ public class BookingDAO {
         }
         return list;
     }
-
+    
     public Booking getBookingsByUsername(String username) {
         PreparedStatement stm;
         ResultSet rs;
-
+        
         String sql = "SELECT b.*, c.*, a.* "
                 + "FROM \"Booking\" b "
                 + "JOIN \"Customer\" c ON b.\"CustomerID\" = c.\"CustomerID\" "
                 + "JOIN \"Account\" a ON a.\"AccountID\" = b.\"CustomerID\" "
                 + "WHERE a.\"Username\" = ?";
-
+        
         try {
-            stm = conn.prepareStatement(sql);
+            stm = getConnection().prepareStatement(sql);
             stm.setString(1, username);
             rs = stm.executeQuery();
-
+            
             while (rs.next()) {
                 Booking booking = new Booking();
                 // Lấy thông tin Booking
@@ -580,7 +598,7 @@ public class BookingDAO {
                 booking.setCustomerID(customer.getCustomerId());
                 try { booking.setDeliveryImage(rs.getString("DeliveryImage")); } catch (SQLException ignore) {}
                 try { booking.setHandoverChecklist(rs.getString("HandoverChecklist")); } catch (SQLException ignore) {}
-
+                
                 return booking;
             }
         } catch (SQLException ex) {
@@ -588,14 +606,14 @@ public class BookingDAO {
         }
         return null;
     }
-
+    
     public List<Booking> searchBookingbyBookingId(String bookingId) {
         PreparedStatement stm;
         ResultSet rs;
         List<Booking> list = new ArrayList<>();
         String sql = "Select * from \"Booking\" where \"BookingID\" LIKE ?";
         try {
-            stm = conn.prepareStatement(sql);
+            stm = getConnection().prepareStatement(sql);
             stm.setString(1, "%" + bookingId + "%");
             rs = stm.executeQuery();
             while (rs.next()) {
@@ -619,7 +637,7 @@ public class BookingDAO {
         }
         return list;
     }
-
+    
     /**
      * Tự động đổi DeliveryStatus → "Quá hạn" cho tất cả booking đã quá ngày trả
      * mà khách vẫn đang giữ xe (DeliveryStatus = 'Đã giao').
@@ -635,13 +653,13 @@ public class BookingDAO {
                 + "AND b.\"StatusBooking\" = 'Đã xác nhận' "
                 + "AND COALESCE(CAST(e.\"NewEndDate\" AS TIMESTAMP), CAST(b.\"EndDate\" AS TIMESTAMP)) < NOW()";
         try {
-            PreparedStatement ps = conn.prepareStatement(sqlSelect);
+            PreparedStatement ps = getConnection().prepareStatement(sqlSelect);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 String bookingID = rs.getString("BookingID");
                 int accountId = rs.getInt("AccountID");
                 overdueIds.add(bookingID);
-
+                
                 // Gửi thông báo cho khách hàng
                 try {
                     String title = "Cảnh báo quá hạn trả xe!";
@@ -662,7 +680,7 @@ public class BookingDAO {
             String sqlUpdate = "UPDATE \"Booking\" SET \"DeliveryStatus\" = 'Quá hạn' "
                     + "WHERE \"BookingID\" = ?";
             try {
-                PreparedStatement psUpdate = conn.prepareStatement(sqlUpdate);
+                PreparedStatement psUpdate = getConnection().prepareStatement(sqlUpdate);
                 for (String id : overdueIds) {
                     psUpdate.setString(1, id);
                     psUpdate.addBatch();
@@ -691,7 +709,7 @@ public class BookingDAO {
                 + "LEFT JOIN \"Extension\" e ON b.\"BookingID\" = e.\"BookingID\" "
                 + "WHERE b.\"BookingID\" = ?";
         try {
-            PreparedStatement ps = conn.prepareStatement(sql);
+            PreparedStatement ps = getConnection().prepareStatement(sql);
             ps.setString(1, bookingID);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -700,7 +718,7 @@ public class BookingDAO {
                 // Tính tổng tiền thuê từ BookingDetail
                 double totalRentalFee = 0;
                 String sqlTotal = "SELECT SUM(\"TotalPrice\") FROM \"Booking Detail\" WHERE \"BookingID\" = ?";
-                PreparedStatement psTotal = conn.prepareStatement(sqlTotal);
+                PreparedStatement psTotal = getConnection().prepareStatement(sqlTotal);
                 psTotal.setString(1, bookingID);
                 ResultSet rsTotal = psTotal.executeQuery();
                 if (rsTotal.next()) {
@@ -739,8 +757,8 @@ public class BookingDAO {
     public boolean confirmReturn(String bookingID) {
         // Tự tạo cột ActualReturnDate nếu chưa có (safe migration)
         try {
-            conn.createStatement().execute(
-                    "ALTER TABLE \"Booking\" ADD COLUMN IF NOT EXISTS \"ActualReturnDate\" TIMESTAMP"
+            getConnection().createStatement().execute(
+                "ALTER TABLE \"Booking\" ADD COLUMN IF NOT EXISTS \"ActualReturnDate\" TIMESTAMP"
             );
         } catch (Exception ignored) {}
 
@@ -748,7 +766,7 @@ public class BookingDAO {
                 + "\"ActualReturnDate\" = NOW() "
                 + "WHERE \"BookingID\" = ?";
         try {
-            PreparedStatement ps = conn.prepareStatement(sql);
+            PreparedStatement ps = getConnection().prepareStatement(sql);
             ps.setString(1, bookingID);
             int rows = ps.executeUpdate();
             ps.close();
@@ -778,16 +796,16 @@ public class BookingDAO {
      */
     public String getCompletedBookingIdForMotorcycle(int accountId, String motorcycleId) {
         String sql = "SELECT b.\"BookingID\" FROM \"Booking\" b " +
-                "JOIN \"Customer\" c ON b.\"CustomerID\" = c.\"CustomerID\" " +
-                "JOIN \"Booking Detail\" bd ON b.\"BookingID\" = bd.\"BookingID\" " +
-                "JOIN \"MotorcycleDetail\" md ON bd.\"MotorcycleDetailID\" = md.\"MotorcycleDetailID\" " +
-                "LEFT JOIN \"Feedback\" f ON f.\"BookingID\" = b.\"BookingID\" " +
-                "WHERE c.\"AccountID\" = ? AND md.\"MotorcycleID\" = ? " +
-                "AND b.\"StatusBooking\" = N'Đã xác nhận' AND b.\"DeliveryStatus\" = N'Đã trả' " +
-                "AND f.\"FeedbackID\" IS NULL " +
-                "ORDER BY b.\"BookingDate\" DESC LIMIT 1";
+                     "JOIN \"Customer\" c ON b.\"CustomerID\" = c.\"CustomerID\" " +
+                     "JOIN \"Booking Detail\" bd ON b.\"BookingID\" = bd.\"BookingID\" " +
+                     "JOIN \"MotorcycleDetail\" md ON bd.\"MotorcycleDetailID\" = md.\"MotorcycleDetailID\" " +
+                     "LEFT JOIN \"Feedback\" f ON f.\"BookingID\" = b.\"BookingID\" " +
+                     "WHERE c.\"AccountID\" = ? AND md.\"MotorcycleID\" = ? " +
+                     "AND b.\"StatusBooking\" = N'Đã xác nhận' AND b.\"DeliveryStatus\" = N'Đã trả' " +
+                     "AND f.\"FeedbackID\" IS NULL " +
+                     "ORDER BY b.\"BookingDate\" DESC LIMIT 1";
         try {
-            PreparedStatement ps = conn.prepareStatement(sql);
+            PreparedStatement ps = getConnection().prepareStatement(sql);
             ps.setInt(1, accountId);
             ps.setString(2, motorcycleId);
             ResultSet rs = ps.executeQuery();
@@ -815,14 +833,14 @@ public class BookingDAO {
     public List<Map<String, Object>> getLateDeliveries() {
         List<Map<String, Object>> list = new ArrayList<>();
         String sql = "SELECT b.\"BookingID\", b.\"DeliveryLocation\", c.\"AccountID\" " +
-                "FROM \"Booking\" b " +
-                "JOIN \"Customer\" c ON c.\"CustomerID\" = b.\"CustomerID\" " +
-                "WHERE b.\"DeliveryStatus\" != N'Đã giao' " +
-                "AND b.\"StatusBooking\" IN (N'Đã xác nhận', N'Đã thanh toán') " +
-                "AND b.\"DeliveryLocation\" NOT LIKE N'Tại cửa hàng%' " +
-                "AND b.\"late_voucher_sent\" = FALSE " +
-                "AND b.\"ApprovedDate\" IS NOT NULL " +
-                "AND EXTRACT(EPOCH FROM (NOW() - GREATEST(b.\"ApprovedDate\", CAST(b.\"StartDate\" AS TIMESTAMP)))) / 60 > 45";
+                     "FROM \"Booking\" b " +
+                     "JOIN \"Customer\" c ON c.\"CustomerID\" = b.\"CustomerID\" " +
+                     "WHERE b.\"DeliveryStatus\" != N'Đã giao' " +
+                     "AND b.\"StatusBooking\" IN (N'Đã xác nhận', N'Đã thanh toán') " +
+                     "AND b.\"DeliveryLocation\" NOT LIKE N'Tại cửa hàng%' " +
+                     "AND b.\"late_voucher_sent\" = FALSE " +
+                     "AND b.\"ApprovedDate\" IS NOT NULL " +
+                     "AND EXTRACT(EPOCH FROM (NOW() - GREATEST(b.\"ApprovedDate\", CAST(b.\"StartDate\" AS TIMESTAMP)))) / 60 > 45";
         try (Connection c = DBUtil.makeConnection();
              PreparedStatement ps = c.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {

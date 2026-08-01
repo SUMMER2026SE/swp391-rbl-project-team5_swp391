@@ -19,9 +19,11 @@ public class DBUtil {
     // =============================================
     // KẾT NỐI SUPABASE (PostgreSQL)
     // =============================================
-    private static final String DB_URL = System.getenv("DB_URL");
-    private static final String DB_USER = System.getenv("DB_USER");
-    private static final String DB_PASS = System.getenv("DB_PASSWORD");
+    private static final String DB_URL =
+        "jdbc:postgresql://aws-1-ap-northeast-1.pooler.supabase.com:6543/postgres" +
+        "?sslmode=require&socketTimeout=30&connectTimeout=15&loginTimeout=15&prepareThreshold=0";
+    private static final String DB_USER = "postgres.zfvgigfjmbtgwgirdify";
+    private static final String DB_PASS = "Bimdiendie1@";
 
     // Pool kết nối raw (KHÔNG wrap proxy)
     private static final ConcurrentLinkedQueue<Connection> pool = new ConcurrentLinkedQueue<>();
@@ -164,6 +166,15 @@ public class DBUtil {
                     handler);
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static Connection makeFreshConnection() {
+        try {
+            return DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
+        } catch (Exception e) {
+            System.out.println("[DBUtil] Cannot create fresh connection: " + e.getMessage());
             return null;
         }
     }

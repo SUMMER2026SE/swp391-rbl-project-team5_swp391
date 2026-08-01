@@ -444,26 +444,30 @@
                                                 </p>
                                             </div>
                                         </div>
+                                        <c:set var="depositAmount" value="0" />
+                                        <c:if test="${not empty paymentList}">
+                                            <c:forEach items="${paymentList}" var="pm">
+                                                <c:if test="${pm.paymentStatus == 'Thành công'}">
+                                                    <c:set var="depositAmount" value="${depositAmount + pm.paymentAmount}" />
+                                                </c:if>
+                                            </c:forEach>
+                                        </c:if>
                                         <div class="flex justify-between items-center pt-1 border-b border-white/10 pb-4">
                                             <div>
-                                                <c:set var="paidAmount" value="0" />
-                                                <c:if test="${not empty payment}">
-                                                    <c:set var="paidAmount" value="${payment.paymentAmount}" />
-                                                </c:if>
-                                                <p class="text-gray-400 text-xs font-bold uppercase tracking-widest mb-1.5">Tiền cọc (${paidAmount > 0 ? 'Đã thanh toán' : 'Chưa thanh toán'})</p>
-                                                <p class="text-2xl font-bold ${paidAmount > 0 ? 'text-green-400' : 'text-yellow-400'}" id="amount-paid">
-                                                    <fmt:formatNumber value="${paidAmount}" pattern="#,##0" /> VNĐ
+                                                <p class="text-gray-400 text-xs font-bold uppercase tracking-widest mb-1.5">Tiền cọc (${depositAmount > 0 ? 'Đã cọc' : 'Chưa thanh toán'})</p>
+                                                <p class="text-2xl font-bold ${depositAmount > 0 ? 'text-green-400' : 'text-yellow-400'}" id="amount-paid">
+                                                    <fmt:formatNumber value="${depositAmount}" pattern="#,##0" /> VNĐ
                                                 </p>
                                             </div>
-                                            <div class="w-12 h-12 rounded-full ${paidAmount > 0 ? 'bg-green-500/20 border-green-500/30 text-green-400' : 'bg-yellow-500/20 border-yellow-500/30 text-yellow-400'} flex items-center justify-center border">
-                                                <i class="fas ${paidAmount > 0 ? 'fa-check' : 'fa-clock'} text-lg"></i>
+                                            <div class="w-12 h-12 rounded-full ${depositAmount > 0 ? 'bg-green-500/20 border-green-500/30 text-green-400' : 'bg-yellow-500/20 border-yellow-500/30 text-yellow-400'} flex items-center justify-center border">
+                                                <i class="fas ${depositAmount > 0 ? 'fa-check' : 'fa-clock'} text-lg"></i>
                                             </div>
                                         </div>
                                         <div class="flex justify-between items-center pt-1">
                                             <div>
                                                 <p class="text-gray-400 text-xs font-bold uppercase tracking-widest mb-1.5">Số tiền cần thanh toán thêm</p>
                                                 <p class="text-xl font-bold text-rose-400">
-                                                    <fmt:formatNumber value="${total - paidAmount}" pattern="#,##0" /> VNĐ
+                                                    <fmt:formatNumber value="${total - depositAmount}" pattern="#,##0" /> VNĐ
                                                 </p>
                                             </div>
                                         </div>
@@ -472,6 +476,55 @@
                                 
                             </div>
                         </div>
+
+                        <!-- Lịch sử thanh toán -->
+                        <c:if test="${not empty paymentList}">
+                        <div class="mb-6 bg-white border border-gray-100 shadow-sm rounded-2xl p-6 relative overflow-hidden animate-fadeIn">
+                            <h4 class="text-lg font-extrabold text-gray-800 mb-5 flex items-center">
+                                <i class="fas fa-receipt text-yellow-500 mr-3 text-xl"></i> Lịch sử thanh toán
+                            </h4>
+                            <div class="overflow-x-auto rounded-xl border border-gray-100">
+                                <table class="min-w-full text-sm">
+                                    <thead class="bg-gray-50 border-b border-gray-100">
+                                        <tr>
+                                            <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">Phương thức</th>
+                                            <th class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">Ngày thanh toán</th>
+                                            <th class="px-4 py-3 text-right text-xs font-bold text-gray-500 uppercase">Số tiền</th>
+                                            <th class="px-4 py-3 text-center text-xs font-bold text-gray-500 uppercase">Trạng thái</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-50">
+                                        <c:forEach items="${paymentList}" var="pm">
+                                        <tr class="hover:bg-gray-50 transition-colors">
+                                            <td class="px-4 py-3 text-sm text-gray-600 font-medium">${pm.paymentMethod}</td>
+                                            <td class="px-4 py-3 text-sm text-gray-500">${pm.paymentDate}</td>
+                                            <td class="px-4 py-3 text-sm font-bold text-gray-800 text-right"><fmt:formatNumber value="${pm.paymentAmount}" pattern="#,##0" /> VNĐ</td>
+                                            <td class="px-4 py-3 text-center">
+                                                <c:choose>
+                                                    <c:when test="${pm.paymentStatus == 'Thành công'}">
+                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-green-50 text-green-700 border border-green-200">
+                                                            <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> Thành công
+                                                        </span>
+                                                    </c:when>
+                                                    <c:when test="${fn:contains(pm.paymentStatus, 'Chờ')}">
+                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-yellow-50 text-yellow-700 border border-yellow-200">
+                                                            <span class="w-1.5 h-1.5 rounded-full bg-yellow-500"></span> ${pm.paymentStatus}
+                                                        </span>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-gray-50 text-gray-600 border border-gray-200">
+                                                            ${pm.paymentStatus}
+                                                        </span>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </td>
+                                        </tr>
+                                        </c:forEach>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        </c:if>
 
                         <!-- Gửi khiếu nại (Report) khi Admin từ chối/Hủy -->
                         <c:if test="${statusBooking == 'Đã hủy'}">
@@ -688,6 +741,7 @@
                         <p class="text-gray-600 text-sm font-semibold">Đang kết nối cổng thanh toán SePay VietQR...</p>
                     </div>
                 </div>
+                <button type="button" onclick="confirmBankPayment()" style="margin-top:16px; width:100%; padding:12px; background:#16a34a; color:white; border:none; border-radius:10px; font-weight:700; font-size:14px; cursor:pointer;">Tôi đã chuyển khoản</button>
             </div>
         </div>
 
@@ -845,7 +899,7 @@
                 const payButton = document.getElementById("pay-btn");
                 if (!payButton) return;
                 
-                const amountPaid = parseFloat("${paidAmount}") || 0;
+                const amountPaid = parseFloat("${depositAmount}") || 0;
                 const totalPrice = (parseFloat("${total}") || 0);
                 
                 if (amountPaid < totalPrice) {
@@ -862,7 +916,7 @@
                     
                     const iframe = document.getElementById('paymentIframe');
                     iframe.onload = function() {
-                        const amountPaid = parseFloat("${paidAmount}") || 0;
+                        const amountPaid = parseFloat("${depositAmount}") || 0;
                         const totalPrice = (parseFloat("${total}") || 0);
                         
                         // Send data to iframe
@@ -898,39 +952,50 @@
             }
 
             function handleSuccessPayment(paymentStatus) {
-                // Post payment info to backend
-                const bookingId = "${booking.bookingID}";
+                closePaymentModal();
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Thanh toán thành công!',
+                        text: 'Đơn hàng của bạn đã được ghi nhận.',
+                        confirmButtonColor: '#b59349',
+                        confirmButtonText: 'OK'
+                    }).then(() => { window.location.reload(); });
+                } else {
+                    alert('Thanh toán thành công!');
+                    window.location.reload();
+                }
+            }
+
+            function confirmBankPayment() {
+                const bookingId = '${booking.bookingID}';
+                const totalPrice = parseFloat("${total}") || 0;
+                const amountPaid = parseFloat("${depositAmount}") || 0;
+                const amount = totalPrice - amountPaid;
+                if (amount <= 0) {
+                    Swal.fire({ icon: 'info', title: 'Đã thanh toán', text: 'Đơn hàng này đã được thanh toán đủ.' });
+                    return;
+                }
                 const params = new URLSearchParams();
                 params.append("bookingId", bookingId);
-                params.append("paymentTime", paymentStatus.time);
-                params.append("amount", paymentStatus.amount);
-                
-                fetch("bookingHistoryDetail", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/x-www-form-urlencoded"
-                    },
+                params.append("amount", amount.toString());
+                fetch('${pageContext.request.contextPath}/sepay-webhook', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: params.toString()
                 })
-                .then(response => response.json())
+                .then(r => r.json())
                 .then(data => {
-                    if (data.status === "success") {
-                        // Remove status from localStorage
-                        localStorage.removeItem('payment_status');
-                        
-                        // Close modal
+                    if (data.success) {
                         closePaymentModal();
-                        
-                        // Show success alert and reload
-                        alert("Thanh toán thành công! Hệ thống sẽ cập nhật trạng thái đơn hàng của bạn.");
-                        window.location.reload();
+                        Swal.fire({ icon: 'success', title: 'Xác nhận thành công!', text: 'Đơn hàng đã được ghi nhận thanh toán.', confirmButtonColor: '#b59349' })
+                            .then(() => { window.location.reload(); });
                     } else {
-                        alert("Lỗi khi cập nhật thanh toán: " + data.message);
+                        Swal.fire({ icon: 'error', title: 'Lỗi', text: 'Không thể ghi nhận thanh toán.' });
                     }
                 })
-                .catch(err => {
-                    console.error("Lỗi:", err);
-                    alert("Đã xảy ra lỗi trong quá trình cập nhật thanh toán.");
+                .catch(() => {
+                    Swal.fire({ icon: 'error', title: 'Lỗi kết nối', text: 'Vui lòng thử lại.' });
                 });
             }
 
@@ -946,28 +1011,7 @@
                 }
                 // Handle payment success from sepay_pay.jsp iframe
                 if (event.data && event.data.status === 'success') {
-                    closePaymentModal();
-                    if (typeof Swal !== 'undefined') {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Thanh toán thành công!',
-                            text: 'Đơn hàng của bạn đã được ghi nhận. Vui lòng xem Hợp Đồng Điện Tử bên dưới.',
-                            showCancelButton: true,
-                            confirmButtonColor: '#059669',
-                            cancelButtonColor: '#1e293b',
-                            confirmButtonText: '<i class="fas fa-file-contract"></i> Xem Hợp Đồng',
-                            cancelButtonText: 'Đóng'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                document.getElementById('contract-modal').style.display='flex';
-                            } else {
-                                window.location.reload();
-                            }
-                        });
-                    } else {
-                        alert('Thanh toán thành công!');
-                        document.getElementById('contract-modal').style.display='flex';
-                    }
+                    handleSuccessPayment(event.data);
                 }
             });
 

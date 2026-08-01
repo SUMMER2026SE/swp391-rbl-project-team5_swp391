@@ -93,30 +93,24 @@ public class ExtendBookingHandlerServlet extends HttpServlet {
         String returnDate = (String) dataMap.get("returnDate");
         String paymentDate = (String) dataMap.get("paymenttime");
         int amount = Integer.parseInt((String) dataMap.get("amount"));
+        double amountDouble = (double) amount;
         
         //Extend
         ExtensionDAO daoE = ExtensionDAO.getInstance();
-        daoE.addExtension(returnPre, returnDate, amount/100000, bookingid);
+        daoE.addExtension(returnPre, returnDate, amountDouble / 100000, bookingid);
         
         //Payment
-        // Định dạng chuỗi đầu vào
         DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-        
-        // Chuyển đổi chuỗi thành LocalDateTime
         LocalDateTime dateTime = LocalDateTime.parse(paymentDate, inputFormatter);
-        
-        // Định dạng chuỗi đầu ra
         DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        
-        // Chuyển đổi LocalDateTime thành chuỗi định dạng mới
         String paymentDateText = dateTime.format(outputFormatter);
         PaymentDAO daoP = PaymentDAO.getInstance();
-        daoP.addPayment(bookingid, "Ngân hàng", paymentDateText, amount/100000, "Giao dịch thành công");
+        daoP.addPayment(bookingid, "Ngân hàng", paymentDateText, amountDouble / 100000, "Giao dịch thành công");
         
         // Notify staff
         NotificationDAO.getInstance().insertStaffNotification(
             "Khách gia hạn thuê xe",
-            "Đơn " + bookingid + " vừa được gia hạn và thanh toán thành công " + (amount/100000) + "k.",
+            "Đơn " + bookingid + " vừa được gia hạn và thanh toán thành công " + String.format("%,.0f", amountDouble) + " VNĐ.",
             "manageBooking"
         );
         

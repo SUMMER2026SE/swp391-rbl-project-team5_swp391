@@ -31,7 +31,7 @@ public class ExtensionDAO implements Serializable {
     }
 
     public boolean addExtension(String previousEndDate, String newEndDate,
-                                double extensionFee, String bookingId) {
+            double extensionFee, String bookingId) {
         String sql = "INSERT INTO \"Extension\"\n"
                 + "           (\"ExtensionDate\"\n"
                 + "           ,\"PreviousEndDate\"\n"
@@ -109,7 +109,7 @@ public class ExtensionDAO implements Serializable {
                 e.setExtensionFee(rs.getDouble(5));
                 e.setBookingID(rs.getString(6));
                 e.setStaffID(rs.getString(7));
-                e.setPaymentStatus(rs.getString(8));
+                  e.setPaymentStatus(rs.getString(8));
                 list.add(e);
             }
         } catch (SQLException ex) {
@@ -136,8 +136,8 @@ public class ExtensionDAO implements Serializable {
         return false;
     }
 
-
-
+    
+    
     public boolean markExtensionUnpaid(String bookingId) {
         String sql = "UPDATE \"Extension\" SET \"PaymentStatus\" = 'Chưa thanh toán' WHERE \"BookingID\" = ?";
         try {

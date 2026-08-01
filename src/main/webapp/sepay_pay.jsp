@@ -197,7 +197,7 @@
                         document.getElementById('status-box').innerHTML = '✅ Thanh toán thành công!';
                         
                         setTimeout(() => {
-                            window.parent.postMessage({ status: 'success' }, '*');
+                    window.parent.postMessage({ status: 'success' }, window.location.origin);
                         }, 1500);
                     }
                 }).catch(e => console.log(e));

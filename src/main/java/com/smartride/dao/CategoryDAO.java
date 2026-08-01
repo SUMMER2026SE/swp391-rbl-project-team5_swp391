@@ -36,7 +36,7 @@ public class CategoryDAO implements Serializable, DAO<Category>{
         }
         return instance;
     }
-
+    
     public List<Category> getAllCategory() {
         List<Category> list = new ArrayList<>();
         PreparedStatement stm;

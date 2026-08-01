@@ -1,9 +1,9 @@
 package com.smartride.constant;
 
 public interface IConstant {
-    String GOOGLE_CLIENT_ID = System.getenv("GOOGLE_CLIENT_ID");
+    String GOOGLE_CLIENT_ID = System.getenv().getOrDefault("GOOGLE_CLIENT_ID", "YOUR_GOOGLE_CLIENT_ID");
 
-    String GOOGLE_CLIENT_SECRET = System.getenv("GOOGLE_CLIENT_SECRET");
+    String GOOGLE_CLIENT_SECRET = System.getenv().getOrDefault("GOOGLE_CLIENT_SECRET", "YOUR_GOOGLE_CLIENT_SECRET");
 
     String GOOGLE_REDIRECT_URI = "http://localhost:8080/MotorcyleHiringProject/login-google";
 
@@ -13,7 +13,7 @@ public interface IConstant {
 
     String GOOGLE_LINK_GET_USER_INFO = "https://www.googleapis.com/oauth2/v1/userinfo?access_token=";
 
-    String SUPABASE_URL = System.getenv("SUPABASE_URL");
-    String SUPABASE_ANON_KEY = System.getenv("SUPABASE_ANON_KEY");
-    String SUPABASE_SERVICE_ROLE_KEY = System.getenv("SUPABASE_SERVICE_ROLE_KEY");
+    String SUPABASE_URL = "https://zfvgigfjmbtgwgirdify.supabase.co";
+    String SUPABASE_ANON_KEY = System.getenv().getOrDefault("SUPABASE_ANON_KEY", "YOUR_SUPABASE_ANON_KEY");
+    String SUPABASE_SERVICE_ROLE_KEY = System.getenv().getOrDefault("SUPABASE_SERVICE_ROLE_KEY", "YOUR_SUPABASE_SERVICE_ROLE_KEY");
 }

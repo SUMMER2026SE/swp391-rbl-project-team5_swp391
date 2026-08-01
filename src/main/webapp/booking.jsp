@@ -1796,6 +1796,10 @@
         
         <!-- SweetAlert2 for popups and image zoom -->
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        
+        <!-- Leaflet Map -->
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     </head>
 
     <body>
@@ -1877,411 +1881,55 @@
                             <div class="form-row location">
                                 <div class="form-flex">
                                     <div class="form-group">
-                                        <label for="pickuplocation" class="form-label">Địa điểm nhận xe <span class="note-star"> *</span></label>
-                                        <select name="pickuplocation" id="pickuplocation" class="form-label select2-location" onchange="toggleCustomLocation('pickup')" style="width: 100%;">
-                                            <option value="Tại cửa hàng SmartRide - 254 Nguyễn Văn Linh, Thạc Gián, Thanh Khê, Đà Nẵng" data-icon="fa-store" data-highlight="true">Tại cửa hàng SmartRide</option>
-                                            <option value="Ga Đà Nẵng - Số 202 đường Hải Phòng" data-icon="fa-map-marker-alt">Ga Đà Nẵng</option>
-                                            <option value="Sân bay Quốc tế Đà Nẵng - 132 Phan Đình Phùng" data-icon="fa-map-marker-alt">Sân bay Đà Nẵng</option>
-                                            <option value="Bến xe Trung tâm - 33 Tôn Đức Thắng" data-icon="fa-map-marker-alt">Bến xe Trung tâm</option>
-                                            <option value="Chợ Hàn - 119 Trần Phú" data-icon="fa-map-marker-alt">Chợ Hàn</option>
-                                            <option value="Vincom Plaza - 910A Ngô Quyền" data-icon="fa-map-marker-alt">Vincom Plaza</option>
-                                            <option value="Cầu Rồng - Trần Hưng Đạo" data-icon="fa-map-marker-alt">Cầu Rồng</option>
-                                            <option value="Ngũ Hành Sơn - Huyền Trân Công Chúa" data-icon="fa-map-marker-alt">Ngũ Hành Sơn</option>
-                                            <option value="Lotte Mart - 6 Nại Nam" data-icon="fa-map-marker-alt">Lotte Mart</option>
-                                            <option value="Phố đi bộ Bạch Đằng - Bạch Đằng" data-icon="fa-map-marker-alt">Phố đi bộ Bạch Đằng</option>
-                                            <option value="Bệnh viện Đà Nẵng - 124 Hải Phòng" data-icon="fa-map-marker-alt">Bệnh viện Đà Nẵng</option>
-                                            <option value="Your own address" data-icon="fa-map-location-dot" data-highlight="true">Địa chỉ của bạn (tự nhập)</option>
-                                        </select>
-                                        <div id="pickup_custom_wrapper" style="display:none; margin-top:8px;">
-                                            <div style="display: flex; gap: 10px;">
-                                                <input type="text" id="custom_pickup_input" placeholder="Nhập địa chỉ nhận xe của bạn..." style="border:1px solid #ebebeb; padding:10px 15px; border-radius:5px; flex: 1; box-sizing:border-box; font-family:'Montserrat',sans-serif; font-size:14px;" onblur="calcDistance('pickup')" oninput="updateCustomLocation('pickup')" />
-                                                <button type="button" onclick="autoGeolocate('pickup')" style="background-color: #4f46e5; color: white; border: none; padding: 0 15px; border-radius: 5px; cursor: pointer; font-weight: bold; white-space: nowrap;"><i class="fas fa-location-crosshairs"></i> Tự động lấy vị trí</button>
-                                            </div>
-                                            <div id="pickup_distance_info" style="font-size: 12px; color: #64748b; margin-top: 5px;"></div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="returnlocation" class="form-label">Địa điểm trả xe <span class="note-star"> *</span></label>
-                                        <select name="returnlocation" id="returnlocation" class="form-label select2-location" onchange="toggleCustomLocation('return')" style="width: 100%;">
-                                            <option value="Tại cửa hàng SmartRide - 254 Nguyễn Văn Linh, Thạc Gián, Thanh Khê, Đà Nẵng" data-icon="fa-store" data-highlight="true">Tại cửa hàng SmartRide</option>
-                                            <option value="Ga Đà Nẵng - Số 202 đường Hải Phòng" data-icon="fa-map-marker-alt">Ga Đà Nẵng</option>
-                                            <option value="Sân bay Quốc tế Đà Nẵng - 132 Phan Đình Phùng" data-icon="fa-map-marker-alt">Sân bay Đà Nẵng</option>
-                                            <option value="Bến xe Trung tâm - 33 Tôn Đức Thắng" data-icon="fa-map-marker-alt">Bến xe Trung tâm</option>
-                                            <option value="Chợ Hàn - 119 Trần Phú" data-icon="fa-map-marker-alt">Chợ Hàn</option>
-                                            <option value="Vincom Plaza - 910A Ngô Quyền" data-icon="fa-map-marker-alt">Vincom Plaza</option>
-                                            <option value="Cầu Rồng - Trần Hưng Đạo" data-icon="fa-map-marker-alt">Cầu Rồng</option>
-                                            <option value="Ngũ Hành Sơn - Huyền Trân Công Chúa" data-icon="fa-map-marker-alt">Ngũ Hành Sơn</option>
-                                            <option value="Lotte Mart - 6 Nại Nam" data-icon="fa-map-marker-alt">Lotte Mart</option>
-                                            <option value="Phố đi bộ Bạch Đằng - Bạch Đằng" data-icon="fa-map-marker-alt">Phố đi bộ Bạch Đằng</option>
-                                            <option value="Bệnh viện Đà Nẵng - 124 Hải Phòng" data-icon="fa-map-marker-alt">Bệnh viện Đà Nẵng</option>
-                                            <option value="Your own address" data-icon="fa-map-location-dot" data-highlight="true">Địa chỉ của bạn (tự nhập)</option>
-                                        </select>
-                                        <div id="return_custom_wrapper" style="display:none; margin-top:8px;">
-                                            <div style="display: flex; gap: 10px;">
-                                                <input type="text" id="custom_return_input" placeholder="Nhập địa chỉ trả xe của bạn..." style="border:1px solid #ebebeb; padding:10px 15px; border-radius:5px; flex: 1; box-sizing:border-box; font-family:'Montserrat',sans-serif; font-size:14px;" onblur="calcDistance('return')" oninput="updateCustomLocation('return')" />
-                                                <button type="button" onclick="autoGeolocate('return')" style="background-color: #4f46e5; color: white; border: none; padding: 0 15px; border-radius: 5px; cursor: pointer; font-weight: bold; white-space: nowrap;"><i class="fas fa-location-crosshairs"></i> Tự động lấy vị trí</button>
-                                            </div>
-                                            <div id="return_distance_info" style="font-size: 12px; color: #64748b; margin-top: 5px;"></div>
-                                        </div>
-                                    </div>
-                                    <script>
-                                        function toggleCustomLocation(type) {
-                                            var select = document.getElementById(type + 'location');
-                                            var wrapper = document.getElementById(type + '_custom_wrapper');
-                                            var input = document.getElementById('custom_' + type + '_input');
-                                            var selectedOption = select.options[select.selectedIndex];
-                                            if (selectedOption.text.includes('(tự nhập)')) {
-                                                wrapper.style.display = 'block';
-                                                input.required = true;
-                                            } else {
-                                                wrapper.style.display = 'none';
-                                                input.required = false;
-                                            }
-                                        }
-                                        function updateCustomLocation(type) {
-                                            var select = document.getElementById(type + 'location');
-                                            var input = document.getElementById('custom_' + type + '_input');
-                                            var selectedOption = select.options[select.selectedIndex];
-                                            if (selectedOption.text.includes('(tự nhập)')) {
-                                                selectedOption.value = input.value ? input.value : 'Your own address';
-                                            }
-                                        }
-                                    </script>
-                                </div>
-                            </div>
-                        </fieldset>
-
-                        <h3>Xe máy</h3>
-                        <fieldset>
-                            <h2>CHỌN XE MÁY</h2>
-                            <p class="desc">Hãy chọn những chiếc xe tuyệt vời nhất cho hành trình của bạn</p>
-                            
-                            <div class="fieldset-content">
-                                <!-- Banner xe đã chọn realtime -->
-                                <div id="bike-selection-banner" style="display:none; background: linear-gradient(135deg,#fdf8ee,#fff8e1); border:1.5px solid #e0c87a; border-radius:10px; padding:10px 16px; margin-bottom:14px; font-size:13px; color:#7a5c00; font-weight:600;">
-                                    <i class="bi bi-check-circle-fill" style="color:#b59349;"></i>
-                                    Đã chọn: <span id="bike-selection-list"></span>
-                                </div>
-                                <div class="scrollable-vertical" id="motorcyclelist">
-                                    <c:forEach items="${listM}" var="o">
-                                        <c:if test="${o.motorcycleId eq chosenmotor}">
-                                            <div class="form-box">
-                                                <div class="form-img-bike">
-                                                    <label style="width: 100%" for="body-bg"><img src="${empty o.image ? 'images/default.jpg' : (o.image.startsWith('http') ? o.image : 'images/'.concat(o.image))}" alt=""></label>
+                                        <label class="form-label">Địa điểm nhận xe <span class="note-star"> *</span></label>
+                                        
+                                        <!-- Location Type Toggle -->
+                                        <div class="location-type-toggle" style="display: flex; gap: 10px; margin-bottom: 12px;">
+                                            <label class="location-radio-card" id="lbl_pickup_store" style="flex: 1; border: 1px solid #4f46e5; padding: 12px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 10px; background: #eff6ff; transition: all 0.2s;">
+                                                <input type="radio" name="pickup_type" value="store" checked onchange="toggleLocationType('pickup')" style="margin: 0; cursor: pointer; display: none;">
+                                                <div style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: #fff; border-radius: 50%; color: #4f46e5; box-shadow: 0 2px 5px rgba(0,0,0,0.05);"><i class="fas fa-store"></i></div>
+                                                <div>
+                                                    <div style="font-weight: 600; font-size: 14px; color: #1e293b;">Tại Cửa Hàng</div>
+                                                    <div style="font-size: 12px; color: #64748b; margin-top: 2px;">SmartRide (Miễn phí)</div>
                                                 </div>
-                                                <div class="form-text">
-                                                    <h4 class="motor-name">${o.model} ${o.displacement}</h4>
-                                                    <div class="form-doc" style="box-sizing: border-box;">
-                                                        ${o.description}
-                                                    </div>
+                                            </label>
+                                            <label class="location-radio-card" id="lbl_pickup_custom" style="flex: 1; border: 1px solid #ddd; padding: 12px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 10px; background: #fff; transition: all 0.2s;">
+                                                <input type="radio" name="pickup_type" value="custom" onchange="toggleLocationType('pickup')" style="margin: 0; cursor: pointer; display: none;">
+                                                <div style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: #f1f5f9; border-radius: 50%; color: #64748b;"><i class="fas fa-map-marker-alt"></i></div>
+                                                <div>
+                                                    <div style="font-weight: 600; font-size: 14px; color: #1e293b;">Giao Tận Nơi</div>
+                                                    <div style="font-size: 12px; color: #64748b; margin-top: 2px;">Có phụ phí ship</div>
                                                 </div>
-                                                <div class="form-check"> 
-                                                    <c:forEach items="${listP}" var="p">
-                                                        <c:if test="${p.priceListId eq o.priceListID}">
-                                                            <c:choose>
-                                                                <c:when test="${not empty activeEvent and activeEvent.discount > 0}">
-                                                                    <div style="display: flex; gap: 8px; align-items: baseline;">
-                                                                        <fmt:formatNumber var="origDay" value="${p.dailyPriceForDay}" maxFractionDigits="0" groupingUsed="true"/>
-                                                                        <span style="text-decoration: line-through; color: #999; font-size: 16px;">₫${origDay}</span>
-                                                                        <span style="color: #dc2626; font-size: 14px; font-weight: bold; padding: 2px 6px; background: #fee2e2; border-radius: 4px;">Giảm <fmt:formatNumber value="${activeEvent.discount * 100}" maxFractionDigits="0"/>%</span>
-                                                                    </div>
-                                                                    <fmt:formatNumber var="discountedDay" value="${p.dailyPriceForDay * (1 - activeEvent.discount)}" maxFractionDigits="0" groupingUsed="true" />
-                                                                    <fmt:formatNumber var="discountedWeek" value="${p.dailyPriceForWeek * (1 - activeEvent.discount)}" maxFractionDigits="0" groupingUsed="true" />
-                                                                    <fmt:formatNumber var="discountedMonth" value="${p.dailyPriceForMonth * (1 - activeEvent.discount)}" maxFractionDigits="0" groupingUsed="true" />
-                                                                    <fmt:formatNumber var="discountedDayRaw" value="${p.dailyPriceForDay * (1 - activeEvent.discount)}" maxFractionDigits="0" groupingUsed="false" />
-                                                                    <fmt:formatNumber var="discountedWeekRaw" value="${p.dailyPriceForWeek * (1 - activeEvent.discount)}" maxFractionDigits="0" groupingUsed="false" />
-                                                                    <fmt:formatNumber var="discountedMonthRaw" value="${p.dailyPriceForMonth * (1 - activeEvent.discount)}" maxFractionDigits="0" groupingUsed="false" />
-                                                                    <h2 class="main-price price-day" data-rawprice="${discountedDayRaw}">₫${discountedDay}/Ngày</h2>
-                                                                    <h2 class="main-price price-week" data-rawprice="${discountedWeekRaw}">₫${discountedWeek}/Ngày</h2>
-                                                                    <h2 class="main-price price-month" data-rawprice="${discountedMonthRaw}">₫${discountedMonth}/Ngày</h2>
-                                                                    <div style="margin-top: 8px; display: flex; flex-direction: column; gap: 4px; align-items: flex-start;">
-                                                                        <span style="font-size: 11px; color: #15803d; background: #dcfce7; padding: 2px 6px; border-radius: 4px; font-weight: 600;">Gói Tuần (&ge;7 ngày): ₫${discountedWeek}/ngày</span>
-                                                                        <span style="font-size: 11px; color: #6d28d9; background: #ede9fe; padding: 2px 6px; border-radius: 4px; font-weight: 600;">Gói Tháng (&ge;30 ngày): ₫${discountedMonth}/ngày</span>
-                                                                    </div>
-                                                                </c:when>
-                                                                <c:otherwise>
-                                                                    <fmt:formatNumber var="fmtDay" value="${p.dailyPriceForDay}" maxFractionDigits="0" groupingUsed="true"/>
-                                                                    <fmt:formatNumber var="fmtWeek" value="${p.dailyPriceForWeek}" maxFractionDigits="0" groupingUsed="true"/>
-                                                                    <fmt:formatNumber var="fmtMonth" value="${p.dailyPriceForMonth}" maxFractionDigits="0" groupingUsed="true"/>
-                                                                    <fmt:formatNumber var="rawDay" value="${p.dailyPriceForDay}" maxFractionDigits="0" groupingUsed="false"/>
-                                                                    <fmt:formatNumber var="rawWeek" value="${p.dailyPriceForWeek}" maxFractionDigits="0" groupingUsed="false"/>
-                                                                    <fmt:formatNumber var="rawMonth" value="${p.dailyPriceForMonth}" maxFractionDigits="0" groupingUsed="false"/>
-                                                                    <h2 class="main-price price-day" data-rawprice="${rawDay}">₫${fmtDay}/Ngày</h2>
-                                                                    <h2 class="main-price price-week" data-rawprice="${rawWeek}">₫${fmtWeek}/Ngày</h2>
-                                                                    <h2 class="main-price price-month" data-rawprice="${rawMonth}">₫${fmtMonth}/Ngày</h2>
-                                                                    <div style="margin-top: 8px; display: flex; flex-direction: column; gap: 4px; align-items: flex-start;">
-                                                                        <span style="font-size: 11px; color: #15803d; background: #dcfce7; padding: 2px 6px; border-radius: 4px; font-weight: 600;">Gói Tuần (&ge;7 ngày): ₫${fmtWeek}/ngày</span>
-                                                                        <span style="font-size: 11px; color: #6d28d9; background: #ede9fe; padding: 2px 6px; border-radius: 4px; font-weight: 600;">Gói Tháng (&ge;30 ngày): ₫${fmtMonth}/ngày</span>
-                                                                    </div>
-                                                                </c:otherwise>
-                                                            </c:choose>
-                                                        </c:if>
-                                                    </c:forEach>                                             
-                                                    <p class="price-note">Không bao gồm thuế và bảo hiểm</p>                                                    
-                                                        <input style="display: none" type="checkbox"  id="daily-checkbox-${o.motorcycleId}" class="option-checkbox">
-                                                        <div class="rent-button">                                                     
-                                                            <c:set var="found" value="false" />
-                                                            <c:forEach var="entry" items="${listMA}">
-                                                                <c:if test="${entry.key eq o.motorcycleId}">
-                                                                    <c:set var="found" value="true" />
-                                                                    <a>Chọn số lượng xe: </a>
-                                                                    <select class="form-check-select" id="daily-select-${o.motorcycleId}">
-                                                                        <c:forEach begin="0" end="${entry.value}" var="i">
-                                                                            <option value="${i}" ${i == "1" ? 'selected' : ''}>${i}</option>
-                                                                        </c:forEach>
-                                                                    </select>
-                                                                </c:if>
-                                                            </c:forEach>
-                                                            <c:if test="${found eq false}">
-                                                                <a>Hết xe</a>
-                                                            </c:if>
-                                                        </div>
-                                                </div>                                                         
-                                            </div>
-                                           
-                                        </c:if>
-                                    </c:forEach>
-                                    <c:forEach items="${listM}" var="o">
-                                        <c:if test="${o.motorcycleId ne chosenmotor}">
-                                            <div class="form-box">
-                                                <div class="form-img-bike">
-                                                    <label style="width: 100%" for="body-bg"><img src="${empty o.image ? 'images/default.jpg' : (o.image.startsWith('http') ? o.image : 'images/'.concat(o.image))}" alt=""></label>
-                                                </div>
-                                                <div class="form-text">
-                                                    <h4 class="motor-name">${o.model} ${o.displacement}</h4>
-                                                    <div class="form-doc" style="box-sizing: border-box;">
-                                                        ${o.description}
-                                                    </div>
-                                                </div>
-                                                <div class="form-check"> 
-                                                    <c:forEach items="${listP}" var="p">
-                                                        <c:if test="${p.priceListId eq o.priceListID}">
-                                                            <c:choose>
-                                                                <c:when test="${not empty activeEvent and activeEvent.discount > 0}">
-                                                                    <div style="display: flex; gap: 8px; align-items: baseline;">
-                                                                        <fmt:formatNumber var="origDay2" value="${p.dailyPriceForDay}" maxFractionDigits="0" groupingUsed="true"/>
-                                                                        <span style="text-decoration: line-through; color: #999; font-size: 16px;">₫${origDay2}</span>
-                                                                        <span style="color: #dc2626; font-size: 14px; font-weight: bold; padding: 2px 6px; background: #fee2e2; border-radius: 4px;">Giảm <fmt:formatNumber value="${activeEvent.discount * 100}" maxFractionDigits="0"/>%</span>
-                                                                    </div>
-                                                                    <fmt:formatNumber var="discountedDay" value="${p.dailyPriceForDay * (1 - activeEvent.discount)}" maxFractionDigits="0" groupingUsed="true" />
-                                                                    <fmt:formatNumber var="discountedWeek" value="${p.dailyPriceForWeek * (1 - activeEvent.discount)}" maxFractionDigits="0" groupingUsed="true" />
-                                                                    <fmt:formatNumber var="discountedMonth" value="${p.dailyPriceForMonth * (1 - activeEvent.discount)}" maxFractionDigits="0" groupingUsed="true" />
-                                                                    <fmt:formatNumber var="discountedDayRaw2" value="${p.dailyPriceForDay * (1 - activeEvent.discount)}" maxFractionDigits="0" groupingUsed="false" />
-                                                                    <fmt:formatNumber var="discountedWeekRaw2" value="${p.dailyPriceForWeek * (1 - activeEvent.discount)}" maxFractionDigits="0" groupingUsed="false" />
-                                                                    <fmt:formatNumber var="discountedMonthRaw2" value="${p.dailyPriceForMonth * (1 - activeEvent.discount)}" maxFractionDigits="0" groupingUsed="false" />
-                                                                    <h2 class="main-price price-day" data-rawprice="${discountedDayRaw2}">₫${discountedDay}/Ngày</h2>
-                                                                    <h2 class="main-price price-week" data-rawprice="${discountedWeekRaw2}">₫${discountedWeek}/Ngày</h2>
-                                                                    <h2 class="main-price price-month" data-rawprice="${discountedMonthRaw2}">₫${discountedMonth}/Ngày</h2>
-                                                                    <div style="margin-top: 8px; display: flex; flex-direction: column; gap: 4px; align-items: flex-start;">
-                                                                        <span style="font-size: 11px; color: #15803d; background: #dcfce7; padding: 2px 6px; border-radius: 4px; font-weight: 600;">Gói Tuần (&ge;7 ngày): ₫${discountedWeek}/ngày</span>
-                                                                        <span style="font-size: 11px; color: #6d28d9; background: #ede9fe; padding: 2px 6px; border-radius: 4px; font-weight: 600;">Gói Tháng (&ge;30 ngày): ₫${discountedMonth}/ngày</span>
-                                                                    </div>
-                                                                </c:when>
-                                                                <c:otherwise>
-                                                                    <fmt:formatNumber var="fmtDay2" value="${p.dailyPriceForDay}" maxFractionDigits="0" groupingUsed="true"/>
-                                                                    <fmt:formatNumber var="fmtWeek2" value="${p.dailyPriceForWeek}" maxFractionDigits="0" groupingUsed="true"/>
-                                                                    <fmt:formatNumber var="fmtMonth2" value="${p.dailyPriceForMonth}" maxFractionDigits="0" groupingUsed="true"/>
-                                                                    <fmt:formatNumber var="rawDay2" value="${p.dailyPriceForDay}" maxFractionDigits="0" groupingUsed="false"/>
-                                                                    <fmt:formatNumber var="rawWeek2" value="${p.dailyPriceForWeek}" maxFractionDigits="0" groupingUsed="false"/>
-                                                                    <fmt:formatNumber var="rawMonth2" value="${p.dailyPriceForMonth}" maxFractionDigits="0" groupingUsed="false"/>
-                                                                    <h2 class="main-price price-day" data-rawprice="${rawDay2}">₫${fmtDay2}/Ngày</h2>
-                                                                    <h2 class="main-price price-week" data-rawprice="${rawWeek2}">₫${fmtWeek2}/Ngày</h2>
-                                                                    <h2 class="main-price price-month" data-rawprice="${rawMonth2}">₫${fmtMonth2}/Ngày</h2>
-                                                                    <div style="margin-top: 8px; display: flex; flex-direction: column; gap: 4px; align-items: flex-start;">
-                                                                        <span style="font-size: 11px; color: #15803d; background: #dcfce7; padding: 2px 6px; border-radius: 4px; font-weight: 600;">Gói Tuần (&ge;7 ngày): ₫${fmtWeek2}/ngày</span>
-                                                                        <span style="font-size: 11px; color: #6d28d9; background: #ede9fe; padding: 2px 6px; border-radius: 4px; font-weight: 600;">Gói Tháng (&ge;30 ngày): ₫${fmtMonth2}/ngày</span>
-                                                                    </div>
-                                                                </c:otherwise>
-                                                            </c:choose>
-                                                        </c:if>
-                                                    </c:forEach>                                             
-                                                    <p class="price-note">Không bao gồm thuế và bảo hiểm</p>                                                                                             
-                                                        <input style="display: none" type="checkbox"  id="daily-checkbox-${o.motorcycleId}" class="option-checkbox">
-                                                        <div class="rent-button">                                                     
-                                                            <c:set var="found" value="false" />
-                                                            <c:forEach var="entry" items="${listMA}">
-                                                                <c:if test="${entry.key eq o.motorcycleId}">
-                                                                    <c:set var="found" value="true" />
-                                                                    <a>Chọn số lượng xe: </a>
-                                                                    <select class="form-check-select" id="daily-select-${o.motorcycleId}">
-                                                                        <c:forEach begin="0" end="${entry.value}" var="i">
-                                                                            <option value="${i}">${i}</option>
-                                                                        </c:forEach>
-                                                                    </select>
-                                                                </c:if>
-                                                            </c:forEach>
-                                                            <c:if test="${found eq false}">
-                                                                <a>Hết xe</a>
-                                                            </c:if>
-                                                        </div>
-                                                </div>                                                         
-                                            </div>
-                                        </c:if>
-                                    </c:forEach>                                  
-                                </div>
-                            </div>
-                        </fieldset>
+                                            </label>
+                                        </div>
 
-                        <h3>Phụ kiện đi kèm</h3>
-                        <fieldset>
-                            <h2>PHỤ KIỆN ĐI KÈM</h2>
-                            <p class="desc">Hãy chọn những phụ kiện có thể giúp ích cho hành trình của bạn</p>
-                            <div class="fieldset-content">
-                                <!-- Banner phụ kiện đã chọn realtime -->
-                                <div id="acc-selection-banner" style="display:none; background: linear-gradient(135deg,#f0fdf4,#e8fce8); border:1.5px solid #86efac; border-radius:10px; padding:10px 16px; margin-bottom:14px; font-size:13px; color:#166534; font-weight:600;">
-                                    <i class="bi bi-bag-check-fill" style="color:#16a34a;"></i>
-                                    Phụ kiện đã chọn: <span id="acc-selection-list"></span>
-                                </div>
-                                <div class="scrollable-vertical" id="protection">
-<!--                                <h4>SERVICES</h4>
-                                <div class="form-box">
-                                    <div class="form-img">
-                                        <label for="body-bg"><img src="images/body-bg.jpg" alt=""></label>
-                                    </div>
-                                    <div class="form-text">
-                                        <h4>Xe đi đường dài</h4>
-                                        <div class="form-doc" style="box-sizing: border-box;">
-                                            <p>Khoản ph&iacute; n&agrave;y sẽ&nbsp;&aacute;p dụng&nbsp;cho c&aacute;c kh&aacute;ch h&agrave;ng
-                                                sử dụng xe một trong trường hợp sau:</p>
-                                            <ul>
-                                                <li>Kh&aacute;ch thu&ecirc; xe đi&nbsp;đường d&agrave;i, ra khỏi nội th&agrave;nh Da Nang</li>
-                                                <li>Xe đi phượt&nbsp;c&aacute;c tỉnh hoặc đến c&aacute;c địa h&igrave;nh v&ugrave;ng n&uacute;i.
-                                                </li>
-                                            </ul>
-                                            <p>Lưu &yacute;: Đối với c&aacute;c kh&aacute;ch&nbsp;đi đường d&agrave;i chưa lựa
-                                                chọn&nbsp;g&oacute;i ph&aacute;t sinh n&agrave;y, khi trả xe COLORMOTOR sẽ thu bổ sung của
-                                                kh&aacute;ch. Để biết th&ecirc;m chi tiết&nbsp;vui l&ograve;ng li&ecirc;n hệ <a
-                                                    href="tel:0338023344">0338.02.33.44</a> để được giải đ&aacute;p.</p>
-                                        </div>
-                                    </div>
-                                    <div class="form-check">
-                                        <div class="checkbox-container">
-                                            <input type="checkbox" id="daily-checkbox-1" class="option-checkbox">
-                                            <label for="daily-checkbox">₫50.000/Day</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <h4>PROTECTIONS & COVERAGES</h4>
-                                <div class="form-box">
-                                    <div class="form-img">
-                                        <label for="body-bg"><img src="images/baohiemhonghocxe.png" alt=""></label>
-                                    </div>
-                                    <div class="form-text">
-                                        <h4>Bảo hiểm hỏng hóc 50k/ngày Yamaha Sirius & Honda Vision</h4>
-                                        <div class="form-doc" style="box-sizing: border-box;">
-                                            <p>Ph&iacute;&nbsp;50.000đ/ng&agrave;y &aacute;p dụng cho d&ograve;ng xe Honda Airblade 125cc
-                                                v&agrave; Winner 150cc</p>
-                                            <p>Khoản ph&iacute; n&agrave;y sẽ&nbsp;&aacute;p dụng&nbsp;cho c&aacute;c kh&aacute;ch h&agrave;ng
-                                                sử dụng xe một trong trường hợp sau:</p>
-                                            <ul>
-                                                <li>G&oacute;i bảo hiểm &aacute;p dụng cho trường hợp kh&aacute;ch đi chuyển gặp bất kỳ vấn đề
-                                                    g&igrave; hư hỏng&nbsp;li&ecirc;n quan đến xe m&aacute;y đang thu&ecirc;, sẽ được chi trả 100%
-                                                    số tiền sửa chữa bao gồm cả vấn đề va chạm, tai nạn hư hại về xe.</li>
-                                            </ul>
-                                            <p>Lưu &yacute;: Đối với c&aacute;c kh&aacute;ch&nbsp;đi đường d&agrave;i n&ecirc;n&nbsp;lựa
-                                                chọn&nbsp;g&oacute;i ph&aacute;t sinh n&agrave;y&nbsp;để an to&agrave;n v&agrave; y&ecirc;n
-                                                t&acirc;m trong qu&aacute; tr&igrave;nh đi phượt,...</p>
-                                        </div>
-                                    </div>
-                                    <div class="form-check">
-                                        <div class="checkbox-container">
-                                            <input type="checkbox" id="daily-checkbox-2" class="option-checkbox">
-                                            <label for="daily-checkbox">₫50.000/Day</label>
-                                        </div>
-                                    </div>
-                                </div>-->
+                                        <input type="hidden" name="pickuplocation" id="pickuplocation" value="Tại cửa hàng SmartRide - 254 Nguyễn Văn Linh, Thạc Gián, Thanh Khê, Đà Nẵng">
 
-
-<!--                                <h4>EQUIPMENTS</h4>-->
-                                <c:forEach items="${listA}" var="a">
-                                    <div class="form-box">
-                                        <div class="form-img">
-                                            <label for="body-bg"><img src="${empty a.accessoryImage ? 'images/default.jpg' : (a.accessoryImage.startsWith('http') ? a.accessoryImage : 'images/'.concat(a.accessoryImage))}" alt=""></label>
-                                        </div>
-                                        <div class="form-text">
-                                            <h4>${a.accessoryName}</h4>
-                                            <div class="form-doc" style="box-sizing: border-box;">
-                                                ${a.accessoryDescription}
-                                            </div>
-                                        </div>
-                                        <div class="form-check">
-                                            <div class="checkbox-container">
-<!--                                                <input type="checkbox" id="daily-checkbox-${a.accessoryId}" class="option-checkbox">-->
-                                                <select class="form-check-select" id="daily-select-${a.accessoryId}"
-                                                    data-rawprice="${a.price}">
+                                        <!-- Custom Location Panel -->
+                                        <div id="pickup_custom_wrapper" style="display: none; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-top: 10px;">
+                                            <div style="margin-bottom: 12px;">
+                                                <label style="font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 6px; display: block;">Chọn nhanh địa điểm phổ biến:</label>
+                                                <select id="pickup_quick_select" class="form-label" onchange="applyQuickLocation('pickup')" style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; font-family: 'Poppins', sans-serif;">
+                                                    <option value="">-- Chọn hoặc nhập địa chỉ bên dưới --</option>
+                                                    <option value="Ga Đà Nẵng - Số 202 đường Hải Phòng" data-lat="16.0745" data-lng="108.2133">Ga Đà Nẵng</option>
+                                                    <option value="Sân bay Quốc tế Đà Nẵng - 132 Phan Đình Phùng" data-lat="16.0543" data-lng="108.2014">Sân bay Đà Nẵng</option>
+                                                    <option value="Bến xe Trung tâm - 33 Tôn Đức Thắng" data-lat="16.0532" data-lng="108.1691">Bến xe Trung tâm</option>
+                                                    <option value="Chợ Hàn - 119 Trần Phú" data-lat="16.0682" data-lng="108.2241">Chợ Hàn</option>
+                                                    <option value="Vincom Plaza - 910A Ngô Quyền" data-lat="16.0674" data-lng="108.2325">Vincom Plaza</option>
+                                                    <option value="Cầu Rồng - Trần Hưng Đạo" data-lat="16.0614" data-lng="108.2272">Cầu Rồng</option>
                                                 </select>
-                                                <c:if test="${a.price eq 0}">
-                                                    <label for="daily-checkbox" class="items-free">Free</label>
-                                                </c:if>
-                                                <c:if test="${a.price ne 0}">
-                                                    <fmt:formatNumber var="fmtAcc" value="${a.price}" maxFractionDigits="0" groupingUsed="true"/>
-                                                    <label for="daily-checkbox" data-rawprice="${a.price}">₫${fmtAcc}</label>
-                                                </c:if>
                                             </div>
-                                        </div>
-                                    </div>
-                                </c:forEach>                               
-                                </div><!-- end scrollable-vertical protection -->
-                            </div><!-- end fieldset-content -->
-                        </fieldset>
 
-                        <h3>Khách hàng</h3>
-                        <fieldset>
-                            <h2>THÔNG TIN CÁ NHÂN</h2>
-                            <p class="desc">Hãy xác nhận hoặc cập nhật thông tin của bạn</p>
-                            <div class="fieldset-content">
-                                <c:if test="${not empty sessionScope.account}">
-                                    <a id="accountId"  style="display: none">${account.accountId}</a>
-                                   
-                                    <div class="form-row">
-                                        <div class="form-flex">
-                                            <div class="form-group">
-                                                <label class="form-label">Họ <span class="note-star"> *</span></label>
-                                                <input type="text" name="first_name" id="first_name" value="${account.firstName}" oninput="validateForm()" />
-                                              
-                                            </div>
-                                            <div class="form-group">
-                                                <label class="form-label">Tên <span class="note-star"> *</span></label>
-                                                <input type="text" name="last_name" id="last_name" value="${account.lastName}" oninput="validateForm()" />
-                                                
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div style="width:100%; margin-bottom:15px; padding:12px; background:#fff1f2; border-left:4px solid #ef4444; border-radius:4px; color:#b91c1c; font-size:13px; font-weight:600; line-height:1.5;">
-                                        ⚠️ Vui lòng nhập chính xác Email và Số điện thoại để hệ thống gửi thông báo và hỗ trợ hoàn tiền khi cần thiết.
-                                    </div>
-                                    <div class="form-row">
-                                        <div class="form-flex">
-                                            <div class="form-group">
-                                                <label for="email" class="form-label">Email <span class="note-star"> *</span></label>
-                                                <input type="email" name="email" id="email" value="${account.email}" oninput="validateForm()" />
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="phonenumber" class="form-label">Số điện thoại <span class="note-star"> *</span></label>
-                                                <input type="text" name="phonenumber" id="phonenumber" value="${account.phoneNumber}" oninput="validateForm()"/>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-row">
-                                        <div class="form-group" style="width: 100%;">
-                                            <label for="address" class="form-label">Địa chỉ <span class="note-star"> *</span></label>
-                                            <input type="text" name="address" id="address" value="${account.address}" oninput="validateForm()" />
-                                        </div>
-                                    </div>
-                                    <div class="form-row">
-                                        <div class="form-flex">
-                                            <div class="form-group">
-                                                 <label for="birth_date" class="form-label">Ngày sinh <span class="note-star"> *</span></label>
-                                                 <input type="date" name="dob" id="dob" value="${account.dob}" oninput="validateForm()" />
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="gender" class="form-label">Giới tính <span class="note-star"> *</span></label>
-                                                <div class="form-radio-group">   
-                                                    <label><input type="radio" name="gender" value="Không muốn tiết lộ" ${account.gender == 'Không muốn tiết lộ' ? 'checked' : ''} onclick="validateForm()">Bí mật</label>
-                                                    <label><input type="radio" name="gender" value="Nam" ${account.gender == 'Nam' ? 'checked' : ''} onclick="validateForm()">Nam</label>
-                                                    <label><input type="radio" name="gender" value="Nữ" ${account.gender == 'Nữ' ? 'checked' : ''} onclick="validateForm()">Nữ</label>
+                                            <div style="margin-bottom: 10px;">
+                                                <label style="font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 6px; display: block;">Hoặc tìm địa chỉ cụ thể:</label>
+                                                <div style="display: flex; gap: 8px;">
+                                                    <input type="text" id="custom_pickup_input" placeholder="Nhập tên đường, tòa nhà..." style="border: 1px solid #cbd5e1; padding: 10px 15px; border-radius: 6px; flex: 1; font-size: 14px; font-family: 'Poppins', sans-serif;" onblur="calcDistance('pickup')" />
+                                                    <button type="button" onclick="autoGeolocate('pickup')" style="background-color: #4f46e5; color: white; border: none; padding: 0 15px; border-radius: 6px; cursor: pointer; font-weight: 600; white-space: nowrap; transition: 0.2s;"><i class="fas fa-location-crosshairs"></i> Vị trí của tôi</button>
                                                 </div>
+                                                <div id="pickup_distance_info" style="font-size: 13px; color: #4f46e5; margin-top: 8px; font-weight: 600;"></div>
                                             </div>
+                                            
+                                            <div id="pickup_map" style="height: 220px; border-radius: 8px; border: 1px solid #cbd5e1; margin-top: 15px; z-index: 1;"></div>
                                         </div>
                                     </div>
                                     <c:set var="flag" value="false" />                   
@@ -2525,8 +2173,29 @@
                                         <h4 style="margin:0 0 14px; color:#b59349; font-size:13px; text-transform:uppercase; letter-spacing:1px; border-bottom:1px solid #f0f0f0; padding-bottom:10px;">
                                             <i class="bi bi-ticket-perforated"></i> Mã Giảm Giá (Voucher)
                                         </h4>
+                                        
+                                        <%
+                                            com.smartride.dto.Account accVoucher = (com.smartride.dto.Account) session.getAttribute("account");
+                                            java.util.List<com.smartride.dto.Voucher> myVouchers = null;
+                                            if (accVoucher != null) {
+                                                myVouchers = com.smartride.dao.VoucherDAO.getInstance().getAvailableVouchersForAccount(accVoucher.getAccountId());
+                                            }
+                                            request.setAttribute("myVouchers", myVouchers);
+                                        %>
+                                        
+                                        <div style="margin-bottom: 12px;">
+                                            <select id="my-voucher-select" onchange="selectMyVoucher(this.value)" style="width:100%; padding:10px 14px; border:1.5px solid #ddd; border-radius:8px; font-size:14px; outline:none; background:#f9f9f9; color:#333; cursor:pointer;">
+                                                <option value="">-- Chọn voucher bạn đang có --</option>
+                                                <c:if test="">
+                                                    <c:forEach var="v" items="">
+                                                        <option value=""> (Mã: )</option>
+                                                    </c:forEach>
+                                                </c:if>
+                                            </select>
+                                        </div>
+                                        
                                         <div style="display:flex; gap:10px; align-items:center;">
-                                            <input type="text" id="voucher-code-input" placeholder="Nhập mã voucher..." style="flex:1; padding:10px 14px; border:1.5px solid #ddd; border-radius:8px; font-size:14px; outline:none;" />
+                                            <input type="text" id="voucher-code-input" placeholder="Hoặc nhập mã voucher..." style="flex:1; padding:10px 14px; border:1.5px solid #ddd; border-radius:8px; font-size:14px; outline:none;" />
                                             <button type="button" id="apply-voucher-btn" onclick="applyVoucher()" style="background:#b59349; color:#fff; border:none; padding:10px 20px; border-radius:8px; font-weight:700; cursor:pointer; font-size:14px; white-space:nowrap;">Áp dụng</button>
                                         </div>
                                         <div id="voucher-msg" style="font-size:13px; margin-top:8px;"></div>
@@ -2757,12 +2426,7 @@
                                     ⏳ Đang chờ thanh toán...
                                 </div>
 
-                                <!-- Dev test button (remove in production) -->
-                                <div style="text-align:center; margin-top:12px;">
-                                    <button type="button" onclick="simulatePaymentSuccess()" style="background:#6b7280; color:#fff; border:none; padding:8px 18px; border-radius:8px; cursor:pointer; font-size:12px; opacity:0.6;">
-                                        [Dev] Giả lập thanh toán thành công
-                                    </button>
-                                </div>
+                                <button type="button" onclick="simulatePaymentSuccess(event)" style="margin-top:12px; width:100%; padding:10px; background:#16a34a; color:white; border:none; border-radius:8px; font-weight:600; font-size:13px; cursor:pointer;">Tôi đã chuyển khoản</button>
                             </div>
 
                             <!-- Hiển thị khi chưa tạo QR -->
@@ -4239,8 +3903,9 @@
                         window.location.href = ctxPath + (ctxPath.endsWith('/') ? '' : '/') + 'bookingHistoryDetail?bookingId=' + bid + '&autoContract=1';
                     }, 2000);
                 } else {
-                    if (!window._sepayBookingId) window._sepayBookingId = 'BK' + (Date.now() % 100000).toString().padStart(5, '0') + Math.floor(Math.random() * 1000).toString().padStart(3, '0');
-                    var bookingId = window._sepayBookingId;
+                    var bookingId = (response && response.bookingId) ? response.bookingId : window._sepayBookingId;
+                    if (!bookingId) bookingId = 'BK' + (Date.now() % 100000).toString().padStart(5, '0') + Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+                    window._sepayBookingId = bookingId;
                     
                     var sepaySection = document.getElementById('sepay-payment-section');
                     if (sepaySection) sepaySection.style.display = 'block';
@@ -4257,7 +3922,8 @@
                     if (window.sepayInterval) clearInterval(window.sepayInterval);
                     if (window.sepayPollInterval) clearInterval(window.sepayPollInterval);
                     
-                    var timeLeft = 10 * 60;
+                    var PAYMENT_TIMEOUT_MINUTES = 10;
+                    var timeLeft = PAYMENT_TIMEOUT_MINUTES * 60;
                     var countdownEl = document.getElementById('sepay-countdown');
                     
                     window.sepayInterval = setInterval(function() {
@@ -4453,7 +4119,8 @@
             return yyyy + mm + dd + hh + mi + ss;
         }
 
-        function simulatePaymentSuccess() {
+        function simulatePaymentSuccess(event) {
+            if (!event) event = window.event;
             var bookingId = document.getElementById('sepay-transfer-note').textContent.trim();
             var amountText = document.getElementById('sepay-amount-text').textContent;
             var amount = amountText ? amountText.replace(/[^0-9]/g, '') : '0';
@@ -4667,6 +4334,12 @@
        
 
         // ===== VOUCHER FUNCTIONS =====
+        function selectMyVoucher(code) {
+            if (code) {
+                document.getElementById('voucher-code-input').value = code;
+            }
+        }
+
         function applyVoucher() {
             const code = document.getElementById('voucher-code-input').value.trim();
             const msgEl = document.getElementById('voucher-msg');
@@ -5124,99 +4797,187 @@
         <script>
         window.deliveryFee = 0;
         
-        function toggleCustomLocation(type) {
-            var select = document.getElementById(type + 'location');
-            var wrapper = document.getElementById(type + '_custom_wrapper');
+        
+        var maps = { pickup: null, return: null };
+        var markers = { pickup: null, return: null };
+        var geocoders = { pickup: null, return: null };
+
+        function initMap(type) {
+            if (maps[type]) return; // Already initialized
+            
+            var mapElement = document.getElementById(type + '_map');
+            maps[type] = L.map(mapElement).setView([16.0609, 108.2057], 13);
+            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(maps[type]);
+            
+            markers[type] = L.marker([16.0609, 108.2057], {draggable: true}).addTo(maps[type]);
+            
+            markers[type].on('dragend', function(event) {
+                var position = markers[type].getLatLng();
+                reverseGeocode(position.lat, position.lng, type);
+            });
+            
+            maps[type].on('click', function(event) {
+                markers[type].setLatLng(event.latlng);
+                reverseGeocode(event.latlng.lat, event.latlng.lng, type);
+            });
+            
+            // Fix map rendering issue when unhidden
+            setTimeout(function(){ maps[type].invalidateSize(); }, 100);
+        }
+
+        function reverseGeocode(lat, lng, type) {
             var input = document.getElementById('custom_' + type + '_input');
-            if (select.value === 'Your own address') {
+            input.value = "Đang tìm địa chỉ...";
+            
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&accept-language=vi`)
+                .then(response => response.json())
+                .then(data => {
+                    var address = data.display_name;
+                    input.value = address;
+                    document.getElementById(type + 'location').value = address;
+                    processDistance(lat, lng, type);
+                })
+                .catch(error => {
+                    input.value = lat + ", " + lng;
+                    document.getElementById(type + 'location').value = lat + ", " + lng;
+                    processDistance(lat, lng, type);
+                });
+        }
+
+        function toggleLocationType(type) {
+            var isCustom = document.querySelector(`input[name="${type}_type"]:checked`).value === 'custom';
+            var wrapper = document.getElementById(type + '_custom_wrapper');
+            var lblStore = document.getElementById('lbl_' + type + '_store');
+            var lblCustom = document.getElementById('lbl_' + type + '_custom');
+            
+            if (isCustom) {
                 wrapper.style.display = 'block';
-                input.required = true;
+                lblCustom.style.borderColor = '#4f46e5';
+                lblCustom.style.background = '#eff6ff';
+                lblStore.style.borderColor = '#ddd';
+                lblStore.style.background = '#fff';
+                
+                var inputVal = document.getElementById('custom_' + type + '_input').value;
+                if (inputVal) {
+                    document.getElementById(type + 'location').value = inputVal;
+                } else {
+                    document.getElementById(type + 'location').value = "";
+                }
+                
+                // Initialize map if not already done
+                initMap(type);
+                // Fix map size after display block
+                setTimeout(function(){ if(maps[type]) maps[type].invalidateSize(); }, 100);
             } else {
                 wrapper.style.display = 'none';
-                input.required = false;
-                document.getElementById(type + '_distance_info').innerHTML = '';
+                lblStore.style.borderColor = '#4f46e5';
+                lblStore.style.background = '#eff6ff';
+                lblCustom.style.borderColor = '#ddd';
+                lblCustom.style.background = '#fff';
+                
+                document.getElementById(type + 'location').value = "Tại cửa hàng SmartRide - 254 Nguyễn Văn Linh, Thạc Gián, Thanh Khê, Đà Nẵng";
+                
+                // Reset distance fee
+                var info = document.getElementById(type + '_distance_info');
+                info.innerHTML = '';
+                var inputEl = document.getElementById('custom_' + type + '_input');
+                if (inputEl) inputEl.dataset.dist = "0";
+                
+                if (type === 'pickup') window._pickupFee = 0;
+                else window._returnFee = 0;
+                
+                recalculateDeliveryFee();
+                updateTotal();
             }
-            recalculateDeliveryFee();
         }
-        
+
+        function applyQuickLocation(type) {
+            var select = document.getElementById(type + '_quick_select');
+            var selectedOption = select.options[select.selectedIndex];
+            
+            if (select.value) {
+                document.getElementById('custom_' + type + '_input').value = select.value;
+                document.getElementById(type + 'location').value = select.value;
+                
+                var lat = parseFloat(selectedOption.getAttribute('data-lat'));
+                var lng = parseFloat(selectedOption.getAttribute('data-lng'));
+                
+                if (maps[type] && markers[type]) {
+                    var newLatLng = new L.LatLng(lat, lng);
+                    markers[type].setLatLng(newLatLng);
+                    maps[type].setView(newLatLng, 15);
+                }
+                
+                processDistance(lat, lng, type);
+            }
+        }
+
         function autoGeolocate(type) {
             if (navigator.geolocation) {
-                var btn = event.currentTarget;
-                var oldHtml = btn.innerHTML;
-                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-                
+                document.getElementById('custom_' + type + '_input').value = "Đang lấy vị trí...";
                 navigator.geolocation.getCurrentPosition(function(position) {
                     var lat = position.coords.latitude;
                     var lon = position.coords.longitude;
                     
-                    fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + lat + '&lon=' + lon + '&accept-language=vi')
-                    .then(response => response.json())
-                    .then(data => {
-                        btn.innerHTML = oldHtml;
-                        var address;
-                        if (data && data.display_name) {
-                            address = data.display_name.replace(/ Ward/g, '').replace(/ District/g, '');
-                        } else {
-                            // Fallback: dùng tọa độ khi không lấy được tên địa chỉ
-                            address = lat.toFixed(5) + ', ' + lon.toFixed(5);
-                        }
-                        document.getElementById('custom_' + type + '_input').value = address;
-                        updateCustomLocation(type);
-                        processDistance(lat, lon, type);
-                    })
-                    .catch(error => {
-                        console.error('Error reverse geocoding:', error);
-                        btn.innerHTML = oldHtml;
-                        // Fallback: dùng tọa độ thay vì báo lỗi cứng
-                        var fallbackAddress = lat.toFixed(5) + ', ' + lon.toFixed(5);
-                        document.getElementById('custom_' + type + '_input').value = fallbackAddress;
-                        updateCustomLocation(type);
-                        processDistance(lat, lon, type);
-                    });
+                    if (maps[type] && markers[type]) {
+                        var newLatLng = new L.LatLng(lat, lon);
+                        markers[type].setLatLng(newLatLng);
+                        maps[type].setView(newLatLng, 15);
+                    }
+                    reverseGeocode(lat, lon, type);
                 }, function(error) {
-                    btn.innerHTML = oldHtml;
-                    Swal.fire({icon: 'error', title: 'Lỗi định vị', text: 'Vui lòng cho phép trình duyệt truy cập vị trí của bạn.'});
-                }, { timeout: 10000 });
+                    alert('Không thể lấy vị trí. Vui lòng kiểm tra quyền truy cập vị trí của trình duyệt.');
+                    document.getElementById('custom_' + type + '_input').value = "";
+                });
             } else {
-                Swal.fire({icon: 'warning', title: 'Không hỗ trợ', text: 'Trình duyệt của bạn không hỗ trợ định vị.'});
+                alert('Trình duyệt của bạn không hỗ trợ định vị.');
             }
         }
-        
+
         function calcDistance(type) {
             var address = document.getElementById('custom_' + type + '_input').value;
-            if (!address || address.trim() === '') return;
+            if (!address) return;
             
+            document.getElementById(type + 'location').value = address;
             var info = document.getElementById(type + '_distance_info');
-            info.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang tính khoảng cách...';
+            info.innerHTML = '<span style="color:#64748b;"><i class="fas fa-spinner fa-spin"></i> Đang tính khoảng cách...</span>';
             
-            fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(address + ', Đà Nẵng, Việt Nam') + '&accept-language=vi&limit=1')
-            .then(function(response) { return response.json(); })
-            .then(function(data) {
-                if (data && data.length > 0) {
-                    processDistance(parseFloat(data[0].lat), parseFloat(data[0].lon), type);
-                } else {
-                    info.innerHTML = '<span style="color:#ef4444;"><i class="fas fa-exclamation-circle"></i> Không tìm thấy địa chỉ này, vui lòng thử lại.</span>';
-                    var inputEl = document.getElementById('custom_' + type + '_input');
-                    if (inputEl) inputEl.dataset.dist = "8";
+            var query = encodeURIComponent(address + ", Đà Nẵng, Việt Nam");
+            fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + query)
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.length > 0) {
+                        var lat = parseFloat(data[0].lat);
+                        var lon = parseFloat(data[0].lon);
+                        
+                        if (maps[type] && markers[type]) {
+                            var newLatLng = new L.LatLng(lat, lon);
+                            markers[type].setLatLng(newLatLng);
+                            maps[type].setView(newLatLng, 15);
+                        }
+                        
+                        processDistance(lat, lon, type);
+                    } else {
+                        info.innerHTML = '<span style="color:#ef4444;"><i class="fas fa-exclamation-circle"></i> Không tìm thấy địa chỉ. Vui lòng chọn trên bản đồ.</span>';
+                        if (type === 'pickup') window._pickupFee = 25000;
+                        else window._returnFee = 25000;
+                        recalculateDeliveryFee();
+                        updateTotal();
+                    }
+                })
+                .catch(function() {
+                    info.innerHTML = '<span style="color:#ef4444;"><i class="fas fa-exclamation-circle"></i> Lỗi tìm kiếm địa chỉ.</span>';
                     if (type === 'pickup') window._pickupFee = 25000;
                     else window._returnFee = 25000;
                     recalculateDeliveryFee();
                     updateTotal();
-                }
-            })
-            .catch(function() {
-                info.innerHTML = '<span style="color:#ef4444;"><i class="fas fa-exclamation-circle"></i> Lỗi tính khoảng cách.</span>';
-                var inputEl = document.getElementById('custom_' + type + '_input');
-                if (inputEl) inputEl.dataset.dist = "8";
-                if (type === 'pickup') window._pickupFee = 25000;
-                else window._returnFee = 25000;
-                recalculateDeliveryFee();
-                updateTotal();
-            });
+                });
         }
-
-        // Tọa độ cửa hàng SmartRide
-        var SHOP_LAT = 16.0609, SHOP_LON = 108.2057;
+        
+var SHOP_LAT = 16.0609, SHOP_LON = 108.2057;
 
         function haversineKm(lat1, lon1, lat2, lon2) {
             var R = 6371;

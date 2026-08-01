@@ -189,7 +189,7 @@ public class AccountDAO implements Serializable {
     }
 
     public boolean update(String firstName, String lastName, String gender, String dob, String address, String phoneNumber,
-                          String email, String username, int accountid) {
+            String email, String username, int accountid) {
         String sql = "UPDATE \"Account\" SET \"FirstName\" = ?, \"LastName\" = ?, \"Gender\" = ?, \"DayOfBirth\" = ?, \"Address\" = ?,"
                 + "\"PhoneNumber\" = ?, \"Email\" = ?, \"Username\" = ? WHERE \"AccountID\" = ?";
 
@@ -198,7 +198,7 @@ public class AccountDAO implements Serializable {
             st.setString(1, firstName);
             st.setString(2, lastName);
             st.setString(3, gender);
-
+            
             if (dob == null || dob.trim().isEmpty()) {
                 st.setNull(4, java.sql.Types.DATE);
             } else {
@@ -209,7 +209,7 @@ public class AccountDAO implements Serializable {
                     st.setNull(4, java.sql.Types.DATE);
                 }
             }
-
+            
             st.setString(5, address);
             st.setString(6, phoneNumber);
             st.setString(7, email);
@@ -251,18 +251,18 @@ public class AccountDAO implements Serializable {
             ResultSet rs = st.executeQuery();
             if (rs.next()) {
                 return new Account(
-                        rs.getInt("AccountID"),
-                        rs.getString("FirstName"),
-                        rs.getString("LastName"),
-                        rs.getString("Gender"),
-                        rs.getString("DayOfBirth"),
-                        rs.getString("Address"),
-                        rs.getString("PhoneNumber"),
-                        rs.getString("Image"),
-                        rs.getString("Email"),
-                        rs.getString("Username"),
-                        rs.getString("Password"),
-                        rs.getInt("RoleID")
+                    rs.getInt("AccountID"),
+                    rs.getString("FirstName"),
+                    rs.getString("LastName"),
+                    rs.getString("Gender"),
+                    rs.getString("DayOfBirth"),
+                    rs.getString("Address"),
+                    rs.getString("PhoneNumber"),
+                    rs.getString("Image"),
+                    rs.getString("Email"),
+                    rs.getString("Username"),
+                    rs.getString("Password"),
+                    rs.getInt("RoleID")
                 );
             }
         } catch (SQLException ex) {
@@ -502,18 +502,18 @@ public class AccountDAO implements Serializable {
             rs = st.executeQuery();
             if (rs.next()) {
                 return new Account(
-                        rs.getInt("AccountID"),
-                        rs.getString("FirstName"),
-                        rs.getString("LastName"),
-                        rs.getString("Gender"),
-                        rs.getString("DayOfBirth"),
-                        rs.getString("Address"),
-                        rs.getString("PhoneNumber"),
-                        rs.getString("Image"),
-                        rs.getString("Email"),
-                        rs.getString("Username"),
-                        rs.getString("Password"),
-                        rs.getInt("RoleID")
+                    rs.getInt("AccountID"),
+                    rs.getString("FirstName"),
+                    rs.getString("LastName"),
+                    rs.getString("Gender"),
+                    rs.getString("DayOfBirth"),
+                    rs.getString("Address"),
+                    rs.getString("PhoneNumber"),
+                    rs.getString("Image"),
+                    rs.getString("Email"),
+                    rs.getString("Username"),
+                    rs.getString("Password"),
+                    rs.getInt("RoleID")
                 );
             }
         } catch (SQLException ex) {
@@ -568,18 +568,18 @@ public class AccountDAO implements Serializable {
             rs = st.executeQuery();
             if (rs.next()) {
                 return new Account(
-                        rs.getInt("AccountID"),
-                        rs.getString("FirstName"),
-                        rs.getString("LastName"),
-                        rs.getString("Gender"),
-                        rs.getString("DayOfBirth"),
-                        rs.getString("Address"),
-                        rs.getString("PhoneNumber"),
-                        rs.getString("Image"),
-                        rs.getString("Email"),
-                        rs.getString("Username"),
-                        rs.getString("Password"),
-                        rs.getInt("RoleID")
+                    rs.getInt("AccountID"),
+                    rs.getString("FirstName"),
+                    rs.getString("LastName"),
+                    rs.getString("Gender"),
+                    rs.getString("DayOfBirth"),
+                    rs.getString("Address"),
+                    rs.getString("PhoneNumber"),
+                    rs.getString("Image"),
+                    rs.getString("Email"),
+                    rs.getString("Username"),
+                    rs.getString("Password"),
+                    rs.getInt("RoleID")
                 );
             }
         } catch (SQLException ex) {

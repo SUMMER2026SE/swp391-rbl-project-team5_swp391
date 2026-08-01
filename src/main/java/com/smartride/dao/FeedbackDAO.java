@@ -60,16 +60,16 @@ public class FeedbackDAO implements Serializable {
             ResultSet rs = stm.executeQuery();
             while (rs.next()) {
                 list.add(new Feedback(
-                        rs.getInt(1),
-                        rs.getString(2),
-                        rs.getInt(3),
-                        rs.getInt(4),
-                        rs.getInt(5),
-                        rs.getString(6),
-                        rs.getString(9),
-                        rs.getString(10),
-                        rs.getInt(7),
-                        rs.getString(8)
+                    rs.getInt(1),
+                    rs.getString(2),
+                    rs.getInt(3),
+                    rs.getInt(4),
+                    rs.getInt(5),
+                    rs.getString(6),
+                    rs.getString(9),
+                    rs.getString(10),
+                    rs.getInt(7),
+                    rs.getString(8)
                 ));
             }
         } catch (Exception ex) {
@@ -139,14 +139,14 @@ public class FeedbackDAO implements Serializable {
     public List<Feedback> getFeedbacksByMotorcycleId(String motorcycleId) {
         List<Feedback> list = new ArrayList<>();
         String sql = "SELECT f.*, a.\"FirstName\" || ' ' || a.\"LastName\" as \"CustomerName\", a.\"Image\" " +
-                "FROM \"Feedback\" f " +
-                "JOIN \"Booking\" b ON f.\"BookingID\" = b.\"BookingID\" " +
-                "JOIN \"Booking Detail\" bd ON b.\"BookingID\" = bd.\"BookingID\" " +
-                "JOIN \"MotorcycleDetail\" md ON bd.\"MotorcycleDetailID\" = md.\"MotorcycleDetailID\" " +
-                "JOIN \"Customer\" c ON f.\"CustomerID\" = c.\"CustomerID\" " +
-                "JOIN \"Account\" a ON c.\"AccountID\" = a.\"AccountID\" " +
-                "WHERE md.\"MotorcycleID\" = ? " +
-                "ORDER BY f.\"feedbackTime\" DESC";
+                     "FROM \"Feedback\" f " +
+                     "JOIN \"Booking\" b ON f.\"BookingID\" = b.\"BookingID\" " +
+                     "JOIN \"Booking Detail\" bd ON b.\"BookingID\" = bd.\"BookingID\" " +
+                     "JOIN \"MotorcycleDetail\" md ON bd.\"MotorcycleDetailID\" = md.\"MotorcycleDetailID\" " +
+                     "JOIN \"Customer\" c ON f.\"CustomerID\" = c.\"CustomerID\" " +
+                     "JOIN \"Account\" a ON c.\"AccountID\" = a.\"AccountID\" " +
+                     "WHERE md.\"MotorcycleID\" = ? " +
+                     "ORDER BY f.\"feedbackTime\" DESC";
         try {
             PreparedStatement stm = conn.prepareStatement(sql);
             stm.setString(1, motorcycleId);

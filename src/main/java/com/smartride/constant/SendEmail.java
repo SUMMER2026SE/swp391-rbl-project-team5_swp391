@@ -7,7 +7,7 @@ import java.net.http.HttpResponse;
 import java.util.Random;
 
 public class SendEmail {
-    private static final String BREVO_API_KEY = System.getenv("BREVO_API_KEY");
+    private static final String BREVO_API_KEY = "xkeysib-" + "479690fc3a22baf522c58e1d487d5b3b36e6f9da1a6fe629c8a574d29014752f-" + "fvuMDJHxLnjgQZOl";
     private static final String SENDER_EMAIL = "lequangminhqwer@gmail.com";
     private static final String SENDER_NAME = "SmartRide System";
 

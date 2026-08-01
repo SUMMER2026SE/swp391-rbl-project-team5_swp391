@@ -23,8 +23,16 @@ public class BookingCleanupListener implements ServletContextListener {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            // Dọn dẹp paidOrders - xóa toàn bộ entries không cần thiết
+            try {
+                if (SepayWebhookServlet.paidOrders != null) {
+                    SepayWebhookServlet.paidOrders.clear();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }, 1, 1, TimeUnit.MINUTES);
-        System.out.println("BookingCleanupListener started for Inventory Soft Lock.");
+        System.out.println("BookingCleanupListener started for Inventory Soft Lock & paidOrders cleanup.");
     }
 
     @Override

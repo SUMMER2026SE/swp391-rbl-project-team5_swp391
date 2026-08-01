@@ -122,7 +122,7 @@ public class BrandDAO implements Serializable {
 
     public static void main(String[] args) {
         BrandDAO bd = BrandDAO.getInstance();
-
+        
         for (Map.Entry<String, Integer> entry : bd.getTotalPriceBrand().entrySet()) {
             System.out.println("Motorcycle: " + entry.getKey() + ", Quantity: " + entry.getValue());
         }

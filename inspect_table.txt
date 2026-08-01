@@ -1,0 +1,213 @@
+//calculator motorcycles
+                            const  savedBikeCal = document.querySelectorAll('#savedBikeContainer .form-box');
+                            savedBikeCal.forEach(formBox => { 
+                                 const selects = formBox.querySelector('.form-check-select');
+                                 const title = formBox.querySelector('h4') ? formBox.querySelector('h4').textContent.trim() : '?';
+                                 const quantity = parseInt(selects ? selects.value : 0, 10) || 0;
+
+                                 // Quantity là số ngày chênh lệch giữa ngày trả và ngày pickup
+                                 const quantityDay = Math.max(1, Math.ceil(differenceInDays)); // Đảm bảo quantity ít nhất là 1
+
+                                 // Động chọn giá dựa trên số ngày thuê
+                                 let price = 0;
+                                 let priceLabelDesc = "Ngày";
+                                 if (quantityDay >= 30) {
+                                     const priceEl = formBox.querySelector('.price-month');
+                                     if (priceEl) price = parseInt(priceEl.dataset.rawprice, 10) || 0;
+                                     priceLabelDesc = "Tháng (Ưu đãi)";
+                                 } else if (quantityDay >= 7) {
+                                     const priceEl = formBox.querySelector('.price-week');
+                                     if (priceEl) price = parseInt(priceEl.dataset.rawprice, 10) || 0;
+                                     priceLabelDesc = "Tuần (Ưu đãi)";
+                                 } else {
+                                     const priceEl = formBox.querySelector('.price-day');
+                                     if (priceEl) price = parseInt(priceEl.dataset.rawprice, 10) || 0;
+                                     priceLabelDesc = "Ngày";
+                                 }
+
+                                 // Fallback nếu không tìm thấy thẻ giá
+                                 if (price === 0) {
+                                     const activePrice = formBox.dataset.activeprice;
+                                     if (activePrice && activePrice !== '') price = parseInt(activePrice, 10) || 0;
+                                 }
+
+                                 // Tính tổng giá
+                                 const totalPrice = quantityDay * price * quantity;
+                                 totalAmount += totalPrice;
+
+                                 tableHtml += `
+                                    <tr style="border-bottom: 1px dashed #eee;">
+                                        <td style="padding: 16px 10px;">
+                                            <h4 style="margin: 0 0 6px 0; font-size: 15px; color: #333; font-weight: bold;">` + title + `</h4>
+                                            <div style="font-size: 11px; color: #888; display: inline-block; padding: 2px 8px; border-radius: 4px; border: 1px solid #e0c87a; background: #fffdf5;">
+                                                Gói áp dụng: <strong style="color: #b59349;">` + priceLabelDesc + `</strong>
+                                            </div>
+                                        </td>
+                                        <td style="padding: 16px 10px; text-align: center; color: #555; font-size: 14px; font-weight: 500;">` + quantityDay + ` Ngày</td>
+                                        <td style="padding: 16px 10px; text-align: center; color: #555; font-size: 14px; font-weight: 500;">` + quantity + ` Xe</td>
+                                        <td style="padding: 16px 10px; text-align: right; color: #555; font-size: 14px; font-weight: 500;">₫` + price.toLocaleString() + `/Ngày</td>
+                                        <td style="padding: 16px 10px; text-align: right; color: #b59349; font-size: 16px; font-weight: bold;">₫` + totalPrice.toLocaleString() + `</td>
+                                    </tr>
+                                 `;
+                            });
+                            
+                            // Calculator items
+                            const savedAsseccCal = document.querySelectorAll('#savedItemsContainer .form-box');
+                            savedAsseccCal.forEach(formBox => {                              
+                                 // Lấy nội dung từ thẻ h4 và data-rawprice
+                                 const selects = formBox.querySelector('.form-check-select');
+                                 const title = formBox.querySelector('h4') ? formBox.querySelector('h4').textContent.trim() : '?';
+                                 const quantity = parseInt(selects ? selects.value : 0, 10) || 0;
+                                 let price = 0;
+
+                                 // Đọc raw price từ data attribute (chính xác nhất)
+                                 const rawPriceAttr = selects ? selects.dataset.rawprice : null;
+                                 if (rawPriceAttr && rawPriceAttr !== '0') {
+                                     price = parseInt(rawPriceAttr, 10) || 0;
+                                 } else {
+                                     const priceLabel = formBox.querySelector('label[data-rawprice]');
+                                     if (priceLabel) price = parseInt(priceLabel.dataset.rawprice, 10) || 0;
+                                 }
+
+                                 // Tính tổng giá
+                                 const totalPrice = quantity * price;
+                                 totalAmount += totalPrice;
+
+                                 tableHtml += `
+                                    <tr style="border-bottom: 1px dashed #eee;">
+                                        <td style="padding: 16px 10px;">
+                                            <h4 style="margin: 0; font-size: 15px; color: #444; font-weight: bold;">` + title + `</h4>
+                                        </td>
+                                        <td style="padding: 16px 10px; text-align: center; color: #aaa; font-size: 14px;">-</td>
+                                        <td style="padding: 16px 10px; text-align: center; color: #555; font-size: 14px; font-weight: 500;">` + quantity + ` Cái</td>
+                                        <td style="padding: 16px 10px; text-align: right; color: #555; font-size: 14px; font-weight: 500;">₫` + price.toLocaleString() + `</td>
+                                        <td style="padding: 16px 10px; text-align: right; color: #555; font-size: 15px; font-weight: bold;">₫` + totalPrice.toLocaleString() + `</td>
+                                    </tr>
+                                 `;
+                            });
+
+                            tableHtml += `
+                                        </tbody>
+                                    </table>
+                            `;
+
+                            // Tính phí giao nhận (3km đầu miễn phí, từ km 4 tính 5k/km)
+                            const distanceMap = {
+                                "Tại cửa hàng SmartRide - 202 Hải Phòng, Đà Nẵng": 0,
+                                "Ga Đà Nẵng - Số 202 đường Hải Phòng": 0,
+                                "Bệnh viện Đà Nẵng - 124 Hải Phòng": 1,
+                                "Chợ Hàn - 119 Trần Phú": 2,
+                                "Phố đi bộ Bạch Đằng - Bạch Đằng": 2,
+                                "Sân bay Quốc tế Đà Nẵng - 132 Phan Đình Phùng": 3,
+                                "Cầu Rồng - Trần Hưng Đạo": 3,
+                                "Vincom Plaza - 910A Ngô Quyền": 4,
+                                "Lotte Mart - 6 Nại Nam": 5,
+                                "Bến xe Trung tâm - 33 Tôn Đức Thắng": 6,
+                                "Ngũ Hành Sơn - Huyền Trân Công Chúa": 12,
+                                "Your own address": 8 // Mặc định 8km cho địa chỉ tự nhập
+                            };
+
+                            let pickupLoc = document.getElementById('pickuplocation') ? document.getElementById('pickuplocation').value : '';
+                            let returnLoc = document.getElementById('returnlocation') ? document.getElementById('returnlocation').value : '';
+                            
+                            let distPickup = distanceMap[pickupLoc] !== undefined ? distanceMap[pickupLoc] : 0;
+                            let distReturn = distanceMap[returnLoc] !== undefined ? distanceMap[returnLoc] : 0;
+                            
+                            // Tổng khoảng cách cần giao + nhận (chỉ tính 1 chiều đi từ cửa hàng)
+                            let totalDistance = distPickup + distReturn;
+                            
+                            // Công thức: 3km đầu Free. Từ km 4: 5k/km.
+                            let deliveryFee = 0;
+                            if (totalDistance > 3) {
+                                deliveryFee = (totalDistance - 3) * 5000;
+                            }
+                            
+                            // Cộng phí giao xe vào tổng
+                            totalAmount += deliveryFee;
+
+                            // Apply voucher discount if any
+                            const appliedDiscount = parseInt(document.getElementById('applied-discount').value) || 0;
+                            const finalAmount = Math.max(0, totalAmount - appliedDiscount);
+
+                            let totalFooterHtml = '';
+                            // Tính % cọc theo gói thuê
+                            const rentalDaysForDeposit = Math.max(1, Math.ceil(differenceInDays));
+                            let depositRate, depositPlanLabel;
+                            if (rentalDaysForDeposit >= 30) {
+                                depositRate = 0.20; // 20% cho thuê theo tháng
+                                depositPlanLabel = 'theo tháng';
+                            } else if (rentalDaysForDeposit >= 7) {
+                                depositRate = 0.30; // 30% cho thuê theo tuần
+                                depositPlanLabel = 'theo tuần';
+                            } else {
+                                depositRate = 0.50; // 50% cho thuê theo ngày
+                                depositPlanLabel = 'theo ngày';
+                            }
+                            const depositPercent = Math.round(depositRate * 100);
+                            const depositAmount = Math.round(finalAmount * depositRate);
+
+                            // Hiển thị dòng Phí giao xe nếu có
+                            let deliveryHtml = '';
+                            if (totalDistance > 0) {
+                                if (deliveryFee === 0) {
+                                    deliveryHtml = `
+                                        <div style="display:flex; justify-content:space-between; width:100%; align-items:center; margin-top:6px;">
+                                            <span style="font-size:14px; color:#6b7280; font-weight:500;">🛵 Phí giao/nhận xe (` + totalDistance + `km):</span>
+                                            <span style="font-size:15px; color:#16a34a; font-weight:700;">Miễn phí</span>
+                                        </div>
+                                    `;
+                                } else {
+                                    deliveryHtml = `
+                                        <div style="display:flex; justify-content:space-between; width:100%; align-items:center; margin-top:6px;">
+                                            <span style="font-size:14px; color:#6b7280; font-weight:500;">🛵 Phí giao/nhận xe (` + totalDistance + `km):</span>
+                                            <span style="font-size:15px; color:#333; font-weight:600;">₫` + deliveryFee.toLocaleString() + `</span>
+                                        </div>
+                                    `;
+                                }
+                            }
+
+                            if (appliedDiscount > 0) {
+                                // Giá gốc gạch ngang + dòng giảm + giá sau giảm
+                                totalFooterHtml = `
+                                    <div style="display:flex; justify-content:space-between; width:100%; align-items:center; margin-top:10px; padding-top:10px; border-top:2px solid #e0c87a;">
+                                        <h4 style="margin:0; font-size:16px; color:#888;">Tạm tính:</h4>
+                                        <span style="font-size:18px; color:#aaa; text-decoration:line-through; font-weight:600;">₫` + (totalAmount - deliveryFee).toLocaleString() + `</span>
+                                    </div>
+                                    ` + deliveryHtml + `
+                                    <div style="display:flex; justify-content:space-between; width:100%; align-items:center; margin-top:6px;">
+                                        <span style="font-size:14px; color:#16a34a; font-weight:600;">🎉 Voucher giảm:</span>
+                                        <span style="font-size:15px; color:#16a34a; font-weight:700;">-₫` + appliedDiscount.toLocaleString() + `</span>
+                                    </div>
+                                    <div style="display:flex; justify-content:space-between; width:100%; align-items:center; margin-top:10px; padding-top:10px; border-top:1px dashed #e0c87a;">
+                                        <h4 style="margin:0; font-size:16px; color:#333; font-weight:600;">Tổng thanh toán:</h4>
+                                        <h4 style="margin:0; font-size:16px; color:#333; font-weight:600;">₫` + finalAmount.toLocaleString() + `</h4>
+                                    </div>
+                                    <div style="display:flex; justify-content:space-between; width:100%; align-items:center; margin-top:10px; padding-top:10px; border-top:2px solid #b59349;">
+                                        <h4 style="margin:0; font-size:18px; color:#333; font-weight:700;">Cần đặt cọc (` + depositPercent + `% ` + depositPlanLabel + `):</h4>
+                                        <h2 id="dataInput" data-amount="` + depositAmount + `" style="margin:0; font-size:26px; color:#b59349; font-weight:700;">₫` + depositAmount.toLocaleString('vi-VN') + `</h2>
+                                    </div>
+                                `;
+                            } else {
+                                totalFooterHtml = `
+                                    <div style="display:flex; justify-content:space-between; width:100%; align-items:center; margin-top:10px; padding-top:10px; border-top:1px dashed #e0c87a;">
+                                        <h4 style="margin:0; font-size:16px; color:#888;">Tạm tính:</h4>
+                                        <span style="font-size:16px; color:#333; font-weight:600;">₫` + (totalAmount - deliveryFee).toLocaleString() + `</span>
+                                    </div>
+                                    ` + deliveryHtml + `
+                                    <div style="display:flex; justify-content:space-between; width:100%; align-items:center; margin-top:10px; padding-top:10px; border-top:1px dashed #e0c87a;">
+                                        <h4 style="margin:0; font-size:16px; color:#333; font-weight:600;">Tổng thanh toán:</h4>
+                                        <h4 style="margin:0; font-size:16px; color:#333; font-weight:600;">₫` + finalAmount.toLocaleString() + `</h4>
+                                    </div>
+                                    <div style="display:flex; justify-content:space-between; width:100%; align-items:center; margin-top:10px; padding-top:10px; border-top:2px solid #b59349;">
+                                        <h4 style="margin:0; font-size:18px; color:#333; font-weight:700;">Cần đặt cọc (` + depositPercent + `% ` + depositPlanLabel + `):</h4>
+                                        <h2 id="dataInput" data-amount="` + depositAmount + `" style="margin:0; font-size:26px; color:#b59349; font-weight:700;">₫` + depositAmount.toLocaleString('vi-VN') + `</h2>
+                                    </div>
+                                `;
+                            }
+
+                            tableHtml += totalFooterHtml + `</div>`; // close wrapper div
+                            
+                            formBoxTotal.innerHTML = tableHtml;
+                        }
+
+                        

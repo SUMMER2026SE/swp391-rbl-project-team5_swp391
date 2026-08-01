@@ -12,7 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class DemandDAO {
-    private static DemandDAO instance;
+     private static DemandDAO instance;
     private Connection conn = DBUtil.makeConnection();
 
     // Cấm new trực tiếp DAO
@@ -27,7 +27,7 @@ public class DemandDAO {
         }
         return instance;
     }
-
+    
     public List<Demand> getAllDemand() {
         List<Demand> list = new ArrayList<>();
         PreparedStatement stm;
@@ -45,7 +45,7 @@ public class DemandDAO {
         }
         return list;
     }
-
+    
     public static void main(String[] args) {
         System.out.println(DemandDAO.getInstance().getAllDemand());
     }

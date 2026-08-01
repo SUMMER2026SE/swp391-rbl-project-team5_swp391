@@ -105,7 +105,7 @@ public class NotificationDAO implements Serializable {
         }
         return false;
     }
-
+    
     public boolean markAllAsRead(int accountId) {
         String sql = "UPDATE \"Notification\" SET is_read = TRUE WHERE account_id = ? OR account_id IS NULL";
         try {
@@ -134,7 +134,7 @@ public class NotificationDAO implements Serializable {
 
     public boolean insertStaffNotification(String title, String message, String link) {
         String sql = "INSERT INTO \"Notification\" (account_id, title, message, link, is_read) " +
-                "SELECT \"AccountID\", ?, ?, ?, FALSE FROM \"Account\" WHERE \"RoleID\" IN (2, 3)";
+                     "SELECT \"AccountID\", ?, ?, ?, FALSE FROM \"Account\" WHERE \"RoleID\" IN (2, 3)";
         try {
             PreparedStatement stm = conn.prepareStatement(sql);
             stm.setString(1, title);

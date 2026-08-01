@@ -110,7 +110,7 @@ public class CancellationDAO {
     }
 
     public static void main(String[] args) {
-//        System.out.println(CancellationDAO.getInstance().insertCancellation("Hahahihihuhu", "BOOK00000"));
+//        System.out.println(CancellationDAO.getInstance().insertCancellation("Hahahihihuhu", "BOOK00000")); 
 //        System.out.println(getInstance().getAllCancellation());
         System.out.println(getInstance().updateCancellationByStaff("STAFF00003", "BOOK000003"));
     }

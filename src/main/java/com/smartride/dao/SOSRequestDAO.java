@@ -63,13 +63,13 @@ public class SOSRequestDAO implements Serializable {
     public List<SOSRequest> getAllPendingSOSRequests() {
         List<SOSRequest> list = new ArrayList<>();
         String sql = "SELECT s.*, a.\"FirstName\" as first_name, a.\"LastName\" as last_name, m.\"LicensePlate\" as license_plate " +
-                "FROM \"SOSRequest\" s " +
-                "JOIN \"Booking\" b ON s.booking_id = b.\"BookingID\" " +
-                "JOIN \"Account\" a ON b.\"CustomerID\" = a.\"AccountID\" " +
-                "JOIN \"BookingDetail\" bd ON b.\"BookingID\" = bd.\"BookingID\" " +
-                "JOIN \"Motorcycle\" m ON bd.\"MotorcycleID\" = m.\"MotorcycleID\" " +
-                "WHERE s.status = 'Đang chờ xử lý' " +
-                "ORDER BY s.created_at DESC";
+                     "FROM \"SOSRequest\" s " +
+                     "JOIN \"Booking\" b ON s.booking_id = b.\"BookingID\" " +
+                     "JOIN \"Account\" a ON b.\"CustomerID\" = a.\"AccountID\" " +
+                     "JOIN \"BookingDetail\" bd ON b.\"BookingID\" = bd.\"BookingID\" " +
+                     "JOIN \"Motorcycle\" m ON bd.\"MotorcycleID\" = m.\"MotorcycleID\" " +
+                     "WHERE s.status = 'Đang chờ xử lý' " +
+                     "ORDER BY s.created_at DESC";
         try {
             PreparedStatement stm = conn.prepareStatement(sql);
             ResultSet rs = stm.executeQuery();

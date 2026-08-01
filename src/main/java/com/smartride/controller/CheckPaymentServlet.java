@@ -37,8 +37,8 @@ public class CheckPaymentServlet extends HttpServlet {
 
         try {
             // Check real-time map from SePay webhook
-            Boolean isPaidRealtime = SepayWebhookServlet.paidOrders.get(bookingId);
-            if (isPaidRealtime != null && isPaidRealtime) {
+            Long paidTime = SepayWebhookServlet.paidOrders.get(bookingId);
+            if (paidTime != null) {
                 json.put("status", "success");
                 json.put("paid", true);
                 // Remove it once consumed if needed, or leave it. We'll remove it to free memory.

@@ -82,16 +82,16 @@ public class EventDAO implements Serializable {
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
                 Event c = new Event(
-                        rs.getInt(1),
-                        rs.getString(2),
-                        rs.getString(3),
-                        rs.getString(4),
-                        rs.getString(5),
-                        rs.getString(6),
-                        rs.getString(7),
-                        rs.getDouble(8),
-                        rs.getString(9),
-                        false
+                    rs.getInt(1), 
+                    rs.getString(2), 
+                    rs.getString(3), 
+                    rs.getString(4), 
+                    rs.getString(5), 
+                    rs.getString(6), 
+                    rs.getString(7), 
+                    rs.getDouble(8), 
+                    rs.getString(9),
+                    false
                 );
                 list.add(c);
             }
@@ -192,16 +192,16 @@ public class EventDAO implements Serializable {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 Event c = new Event(
-                        rs.getInt(1),
-                        rs.getString(2),
-                        rs.getString(3),
-                        rs.getString(4),
-                        rs.getString(5),
-                        rs.getString(6),
-                        rs.getString(7),
-                        rs.getDouble(8),
-                        rs.getString(9),
-                        false
+                    rs.getInt(1), 
+                    rs.getString(2), 
+                    rs.getString(3), 
+                    rs.getString(4), 
+                    rs.getString(5), 
+                    rs.getString(6), 
+                    rs.getString(7), 
+                    rs.getDouble(8), 
+                    rs.getString(9),
+                    false
                 );
                 list.add(c);
             }

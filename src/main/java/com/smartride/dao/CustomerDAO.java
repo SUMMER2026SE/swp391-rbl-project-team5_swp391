@@ -204,8 +204,8 @@ public class CustomerDAO implements Serializable, DAO<Customer> {
         }
         return customerMap;
     }
-
-
+    
+    
 
     @Override
     public void delete(Customer t) {
@@ -214,4 +214,57 @@ public class CustomerDAO implements Serializable, DAO<Customer> {
 
     public static void main(String[] args) {
     }
+
+    public float getTotalSpentByAccountId(int accountId) {
+        String sql = "SELECT SUM(bd.\"TotalPrice\") AS \"TotalSpent\" "
+                   + "FROM \"Customer\" c "
+                   + "JOIN \"Booking\" b ON c.\"CustomerID\" = b.\"CustomerID\" "
+                   + "JOIN \"Booking Detail\" bd ON b.\"BookingID\" = bd.\"BookingID\" "
+                   + "WHERE c.\"AccountID\" = ? AND b.\"StatusBooking\" = 'Đã hoàn thành'";
+        try {
+            PreparedStatement stm = conn.prepareStatement(sql);
+            stm.setInt(1, accountId);
+            ResultSet rs = stm.executeQuery();
+            if (rs.next()) {
+                return rs.getFloat("TotalSpent");
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return 0;
+    }
+
+    public List<Map<String, Object>> getTopCustomers(int limit) {
+        List<Map<String, Object>> topCustomers = new ArrayList<>();
+        String sql = "SELECT c.\"CustomerID\", a.\"FullName\", a.\"Email\", a.\"Phone\", "
+                   + "COUNT(b.\"BookingID\") AS \"TotalBookings\", "
+                   + "SUM(bd.\"TotalPrice\") AS \"TotalSpent\" "
+                   + "FROM \"Customer\" c "
+                   + "JOIN \"Account\" a ON c.\"AccountID\" = a.\"AccountID\" "
+                   + "JOIN \"Booking\" b ON c.\"CustomerID\" = b.\"CustomerID\" "
+                   + "JOIN \"Booking Detail\" bd ON b.\"BookingID\" = bd.\"BookingID\" "
+                   + "WHERE b.\"StatusBooking\" = 'Đã hoàn thành' "
+                   + "GROUP BY c.\"CustomerID\", a.\"FullName\", a.\"Email\", a.\"Phone\" "
+                   + "ORDER BY \"TotalSpent\" DESC, \"TotalBookings\" DESC "
+                   + "LIMIT ?";
+        try {
+            PreparedStatement stm = conn.prepareStatement(sql);
+            stm.setInt(1, limit);
+            ResultSet rs = stm.executeQuery();
+            while (rs.next()) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("CustomerID", rs.getInt("CustomerID"));
+                map.put("FullName", rs.getString("FullName"));
+                map.put("Email", rs.getString("Email"));
+                map.put("Phone", rs.getString("Phone"));
+                map.put("TotalBookings", rs.getInt("TotalBookings"));
+                map.put("TotalSpent", rs.getFloat("TotalSpent"));
+                topCustomers.add(map);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(CustomerDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return topCustomers;
+    }
+
 }

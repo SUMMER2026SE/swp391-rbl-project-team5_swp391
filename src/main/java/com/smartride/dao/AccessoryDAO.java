@@ -128,7 +128,7 @@ public class AccessoryDAO implements Serializable, DAO<Accessory> {
             Logger.getLogger(AccessoryDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
+    
     public void deleteAccessory(String id) {
         try {
             String sql = "DELETE FROM \"Accessory\" WHERE \"AccessoryID\" = ?;";

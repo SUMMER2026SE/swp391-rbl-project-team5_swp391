@@ -562,13 +562,13 @@
                                                         </td>
                                                         <td class="px-6 py-4 whitespace-nowrap">
                                                             <c:choose>
-                                                                <c:when test="${trans.paymentStatus == 'Giao dịch thành công'}">
+                                                                <c:when test="${trans.paymentStatus == 'Thành công'}">
                                                                     <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold" style="background-color: #dcfce7; color: #16a34a; border: 1px solid #bbf7d0;">
                                                                         <span class="w-1.5 h-1.5 rounded-full" style="background-color: #22c55e;"></span>
                                                                         Giao dịch thành công
                                                                     </span>
                                                                 </c:when>
-                                                                <c:when test="${trans.paymentStatus == 'Giao dịch thất bại'}">
+                                                                <c:when test="${trans.paymentStatus == 'Giao dịch thất bại' || trans.paymentStatus == 'Thất bại'}">
                                                                     <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold animate-pulse" style="background-color: #ffe4e6; color: #e11d48; border: 1px solid #fecdd3;">
                                                                         <span class="w-1.5 h-1.5 rounded-full" style="background-color: #f43f5e;"></span>
                                                                         Giao dịch thất bại

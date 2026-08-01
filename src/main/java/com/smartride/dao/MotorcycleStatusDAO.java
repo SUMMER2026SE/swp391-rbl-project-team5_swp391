@@ -29,10 +29,10 @@ public class MotorcycleStatusDAO implements Serializable, DAO<MotorcycleStatus>{
         }
         return instance;
     }
-
+        
     public void insertMotorcycleStatus(int motorcycleStatusId, String staffid, String status,String updatedate, String note) {
-        String sql = "INSERT INTO [dbo].[Motorcycle Status] ([MotorcycleDetailID], [StaffID], [StatusAction], [UpdateDate], [Note])\n" +
-                "VALUES (?, ?, ?, ?, ?);";
+         String sql = "INSERT INTO [dbo].[Motorcycle Status] ([MotorcycleDetailID], [StaffID], [StatusAction], [UpdateDate], [Note])\n" +
+                    "VALUES (?, ?, ?, ?, ?);";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, motorcycleStatusId);
@@ -46,14 +46,14 @@ public class MotorcycleStatusDAO implements Serializable, DAO<MotorcycleStatus>{
             System.out.println(e);
         }
     }
-
+    
     public static void main(String[] args) {
         MotorcycleStatusDAO dao = getInstance();
         dao.insertMotorcycleStatus(1, "STAFF00001", "Khong Có sẵn", "2024-05-01", "Không có vấn đề gì");
-
+        
     }
 
-
+  
 
     @Override
     public void update(MotorcycleStatus t) {

@@ -50,7 +50,7 @@ public class BookingDetailDAO {
         return list;
 
     }
-
+    
     public void addBookingDetail(int MotorcycleDetailID, String BookingID, double TotalPrice) {
         String sql = "INSERT INTO \"Booking Detail\"\n"
                 + "           (\"MotorcycleDetailID\"\n"
@@ -68,11 +68,11 @@ public class BookingDetailDAO {
             System.out.println(e);
         }
     }
-
+    
     public static void main(String[] args) {
         BookingDetailDAO dao = getInstance();
         dao.addBookingDetail(3,"BOOK271639",200.000);
-
+       
 //        List<Motorcycle> list = dao.searchMotorcycleByName("maha");
 //        for (Motorcycle x : list) {
 //            System.out.println(x);

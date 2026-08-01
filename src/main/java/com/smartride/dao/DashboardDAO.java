@@ -50,14 +50,14 @@ public class DashboardDAO {
 
             DashboardStatsData.Trends trends = new DashboardStatsData.Trends(orderTrend, revenueTrend, customerTrend, rentalTrend);
             DashboardStatsData.Stats stats = new DashboardStatsData.Stats(current.orders, current.revenue, current.customers, current.rentals, trends);
-
+            
             DashboardStatsData.LineChart lineChart = getLineChart(conn, period, startDate, endDate);
             Map<String, Double> radarChart = getRadarChart(conn, period, startDate, endDate);
             Map<String, Integer> pieChart = getPieChart(conn, period, startDate, endDate);
             DashboardStatsData.ChartData chartData = new DashboardStatsData.ChartData(lineChart, radarChart, pieChart);
-
+            
             List<DashboardStatsData.TopMotorcycle> topMotorcycles = getTopMotorcycles(conn, period, startDate, endDate);
-
+            
             return new DashboardStatsData(stats, chartData, topMotorcycles);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -72,17 +72,55 @@ public class DashboardDAO {
         return ((current - previous) / previous) * 100.0;
     }
 
+    private String getPaymentDateCondition(String period, String startDate, String endDate, boolean isPrevious) {
+        if ("custom".equals(period) && startDate != null && !startDate.isEmpty() && endDate != null && !endDate.isEmpty()) {
+            try {
+                LocalDate start = LocalDate.parse(startDate);
+                LocalDate end = LocalDate.parse(endDate);
+                if (isPrevious) {
+                    long days = ChronoUnit.DAYS.between(start, end) + 1;
+                    return "p.\"PaymentDate\" >= '" + start.minusDays(days) + "' AND p.\"PaymentDate\" <= '" + start.minusDays(1) + " 23:59:59'";
+                }
+                return "p.\"PaymentDate\" >= '" + start + "' AND p.\"PaymentDate\" <= '" + end + " 23:59:59'";
+            } catch (Exception e) {
+            }
+        }
+        
+        switch (period) {
+            case "today":
+                if (isPrevious) return "p.\"PaymentDate\" >= current_date - interval '1 day' AND p.\"PaymentDate\" < current_date";
+                return "p.\"PaymentDate\" >= current_date";
+            case "30days":
+                if (isPrevious) return "p.\"PaymentDate\" >= current_date - interval '60 days' AND p.\"PaymentDate\" < current_date - interval '30 days'";
+                return "p.\"PaymentDate\" >= current_date - interval '30 days'";
+            case "90days":
+                if (isPrevious) return "p.\"PaymentDate\" >= current_date - interval '180 days' AND p.\"PaymentDate\" < current_date - interval '90 days'";
+                return "p.\"PaymentDate\" >= current_date - interval '90 days'";
+            case "180days":
+                if (isPrevious) return "p.\"PaymentDate\" >= current_date - interval '360 days' AND p.\"PaymentDate\" < current_date - interval '180 days'";
+                return "p.\"PaymentDate\" >= current_date - interval '180 days'";
+            case "7days":
+                if (isPrevious) return "p.\"PaymentDate\" >= current_date - interval '14 days' AND p.\"PaymentDate\" < current_date - interval '7 days'";
+                return "p.\"PaymentDate\" >= current_date - interval '7 days'";
+            default:
+                return "";
+        }
+    }
+
     private StatRaw getStatsForPeriod(Connection conn, String period, String startDate, String endDate, boolean isPrevious) {
         StatRaw raw = new StatRaw();
         String dateCondition = getDateCondition(period, startDate, endDate, isPrevious);
         String conditionWithAlias = dateCondition.isEmpty() ? "" : (" WHERE " + dateCondition.replace("\"BookingDate\"", "b.\"BookingDate\""));
         String conditionRentals = " WHERE b.\"DeliveryStatus\" IN ('Đã giao', 'Đã trả')" + (dateCondition.isEmpty() ? "" : (" AND " + dateCondition.replace("\"BookingDate\"", "b.\"BookingDate\"")));
 
+        String paymentDateCondition = getPaymentDateCondition(period, startDate, endDate, isPrevious);
+        String paymentConditionWithAlias = paymentDateCondition.isEmpty() ? "" : (" WHERE " + paymentDateCondition);
+
         String sql = "SELECT "
-                + "(SELECT COUNT(*) FROM \"Booking\" b " + conditionWithAlias + ") AS orders, "
-                + "(SELECT COALESCE(SUM(p.\"PaymentAmount\"), 0) FROM \"Payment\" p JOIN \"Booking\" b ON p.\"BookingID\" = b.\"BookingID\" " + conditionWithAlias + ") AS revenue, "
-                + "(SELECT COUNT(DISTINCT b.\"CustomerID\") FROM \"Booking\" b " + conditionWithAlias + ") AS customers, "
-                + "(SELECT COUNT(*) FROM \"Booking\" b " + conditionRentals + ") AS rentals";
+                   + "(SELECT COUNT(*) FROM \"Booking\" b " + conditionWithAlias + ") AS orders, "
+                   + "(SELECT COALESCE(SUM(p.\"PaymentAmount\"), 0) FROM \"Payment\" p JOIN \"Booking\" b ON p.\"BookingID\" = b.\"BookingID\" " + paymentConditionWithAlias + ") AS revenue, "
+                   + "(SELECT COUNT(DISTINCT b.\"CustomerID\") FROM \"Booking\" b " + conditionWithAlias + ") AS customers, "
+                   + "(SELECT COUNT(*) FROM \"Booking\" b " + conditionRentals + ") AS rentals";
 
         try (PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -97,7 +135,7 @@ public class DashboardDAO {
         }
         return raw;
     }
-
+    
     private LocalDate getEarliestBookingDate(Connection conn) {
         String sql = "SELECT MIN(\"BookingDate\") FROM \"Booking\"";
         try (PreparedStatement ps = conn.prepareStatement(sql);
@@ -115,7 +153,7 @@ public class DashboardDAO {
         LocalDate today = LocalDate.now();
         LocalDate start = today.minusDays(30);
         LocalDate end = today;
-
+        
         if ("custom".equals(period) && startDate != null && !startDate.isEmpty() && endDate != null && !endDate.isEmpty()) {
             try {
                 start = LocalDate.parse(startDate);
@@ -196,16 +234,20 @@ public class DashboardDAO {
         String conditionWithAlias = dateCondition.isEmpty() ? "" : (" WHERE " + dateCondition.replace("\"BookingDate\"", "b.\"BookingDate\""));
 
         String dtSelect = "DATE(b.\"BookingDate\")";
-        if (diffDays == 0) dtSelect = "TO_CHAR(b.\"BookingDate\", 'YYYY-MM-DD\"T\"HH24:00:00')";
-        else if (diffDays > 31) dtSelect = "DATE(DATE_TRUNC('month', b.\"BookingDate\"))";
-        else if (diffDays > 7) dtSelect = "DATE(DATE_TRUNC('week', b.\"BookingDate\"))";
+        if (diffDays == 0) {
+            dtSelect = "TO_CHAR(b.\"BookingDate\", 'YYYY-MM-DD\"T\"HH24:00:00')";
+        } else if (diffDays > 31) {
+            dtSelect = "DATE(DATE_TRUNC('month', b.\"BookingDate\"))";
+        } else if (diffDays > 7) {
+            dtSelect = "DATE(DATE_TRUNC('week', b.\"BookingDate\"))";
+        }
 
         String sql = "SELECT " + dtSelect + " as dt, COUNT(b.\"BookingID\") as orders, "
-                + "COALESCE(SUM(p.\"PaymentAmount\"), 0) as revenue, "
-                + "COUNT(DISTINCT b.\"CustomerID\") as customers "
-                + "FROM \"Booking\" b LEFT JOIN \"Payment\" p ON b.\"BookingID\" = p.\"BookingID\" "
-                + conditionWithAlias
-                + " GROUP BY " + dtSelect;
+                   + "COALESCE(SUM(p.\"PaymentAmount\"), 0) as revenue, "
+                   + "COUNT(DISTINCT b.\"CustomerID\") as customers "
+                   + "FROM \"Booking\" b LEFT JOIN \"Payment\" p ON b.\"BookingID\" = p.\"BookingID\" "
+                   + conditionWithAlias
+                   + " GROUP BY " + dtSelect;
 
         try (PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -251,10 +293,10 @@ public class DashboardDAO {
 
         return new DashboardStatsData.LineChart(categories, orders, revenue, customers);
     }
-
+    
     private Map<String, Double> getRadarChart(Connection conn, String period, String startDate, String endDate) {
         Map<String, Double> data = new LinkedHashMap<>();
-
+        
         // Initialize all brands in CSDL with 0.0 to make it look professional
         String sqlAllBrands = "SELECT \"BrandName\" FROM \"Brand\" ORDER BY \"BrandName\" ASC";
         try (PreparedStatement ps = conn.prepareStatement(sqlAllBrands);
@@ -266,19 +308,19 @@ public class DashboardDAO {
             e.printStackTrace();
         }
 
-        String dateCondition = getDateCondition(period, startDate, endDate, false);
-        String conditionWithAlias = dateCondition.isEmpty() ? "" : (" WHERE " + dateCondition.replace("\"BookingDate\"", "b.\"BookingDate\""));
-
+        String paymentDateCondition = getPaymentDateCondition(period, startDate, endDate, false);
+        String paymentConditionWithAlias = paymentDateCondition.isEmpty() ? "" : (" WHERE " + paymentDateCondition);
+        
         String sql = "SELECT br.\"BrandName\", SUM(p.\"PaymentAmount\") as revenue "
-                + "FROM \"Payment\" p "
-                + "JOIN \"Booking\" b ON p.\"BookingID\" = b.\"BookingID\" "
-                + "JOIN \"Booking Detail\" bd ON b.\"BookingID\" = bd.\"BookingID\" "
-                + "JOIN \"Motorcycle Detail\" md ON bd.\"MotorcycleDetailID\" = md.\"MotorcycleDetailID\" "
-                + "JOIN \"Motorcycle\" m ON md.\"MotorcycleID\" = m.\"MotorcycleID\" "
-                + "JOIN \"Brand\" br ON m.\"BrandID\" = br.\"BrandID\" "
-                + conditionWithAlias
-                + " GROUP BY br.\"BrandName\"";
-
+                   + "FROM \"Payment\" p "
+                   + "JOIN \"Booking\" b ON p.\"BookingID\" = b.\"BookingID\" "
+                   + "JOIN \"Booking Detail\" bd ON b.\"BookingID\" = bd.\"BookingID\" "
+                   + "JOIN \"Motorcycle Detail\" md ON bd.\"MotorcycleDetailID\" = md.\"MotorcycleDetailID\" "
+                   + "JOIN \"Motorcycle\" m ON md.\"MotorcycleID\" = m.\"MotorcycleID\" "
+                   + "JOIN \"Brand\" br ON m.\"BrandID\" = br.\"BrandID\" "
+                   + paymentConditionWithAlias
+                   + " GROUP BY br.\"BrandName\"";
+                   
         try (PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
@@ -289,10 +331,10 @@ public class DashboardDAO {
         }
         return data;
     }
-
+    
     private Map<String, Integer> getPieChart(Connection conn, String period, String startDate, String endDate) {
         Map<String, Integer> data = new LinkedHashMap<>();
-
+        
         String sqlAllCats = "SELECT \"CategoryName\" FROM \"Category\" ORDER BY \"CategoryName\" ASC";
         try (PreparedStatement ps = conn.prepareStatement(sqlAllCats);
              ResultSet rs = ps.executeQuery()) {
@@ -305,16 +347,16 @@ public class DashboardDAO {
 
         String dateCondition = getDateCondition(period, startDate, endDate, false);
         String conditionWithAlias = dateCondition.isEmpty() ? "" : (" WHERE " + dateCondition.replace("\"BookingDate\"", "b.\"BookingDate\""));
-
+        
         String sql = "SELECT c.\"CategoryName\", COUNT(md.\"MotorcycleID\") as rentCount "
-                + "FROM \"Booking Detail\" bd "
-                + "JOIN \"Booking\" b ON bd.\"BookingID\" = b.\"BookingID\" "
-                + "JOIN \"Motorcycle Detail\" md ON bd.\"MotorcycleDetailID\" = md.\"MotorcycleDetailID\" "
-                + "JOIN \"Motorcycle\" m ON md.\"MotorcycleID\" = m.\"MotorcycleID\" "
-                + "JOIN \"Category\" c ON m.\"CategoryID\" = c.\"CategoryID\" "
-                + conditionWithAlias
-                + " GROUP BY c.\"CategoryName\"";
-
+                   + "FROM \"Booking Detail\" bd "
+                   + "JOIN \"Booking\" b ON bd.\"BookingID\" = b.\"BookingID\" "
+                   + "JOIN \"Motorcycle Detail\" md ON bd.\"MotorcycleDetailID\" = md.\"MotorcycleDetailID\" "
+                   + "JOIN \"Motorcycle\" m ON md.\"MotorcycleID\" = m.\"MotorcycleID\" "
+                   + "JOIN \"Category\" c ON m.\"CategoryID\" = c.\"CategoryID\" "
+                   + conditionWithAlias
+                   + " GROUP BY c.\"CategoryName\"";
+                   
         try (PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
@@ -330,27 +372,27 @@ public class DashboardDAO {
         List<DashboardStatsData.TopMotorcycle> list = new ArrayList<>();
         String dateCondition = getDateCondition(period, startDate, endDate, false);
         String conditionWithAlias = dateCondition.isEmpty() ? "" : (" WHERE " + dateCondition.replace("\"BookingDate\"", "b.\"BookingDate\""));
-
+        
         String sql = "SELECT m.\"Image\", m.\"Model\", p.\"DailyPriceForDay\", p.\"DailyPriceForWeek\", p.\"DailyPriceForMonth\", COUNT(md.\"MotorcycleID\") as rentCount "
-                + "FROM \"Motorcycle\" m "
-                + "JOIN \"Motorcycle Detail\" md ON m.\"MotorcycleID\" = md.\"MotorcycleID\" "
-                + "JOIN \"Booking Detail\" bd ON md.\"MotorcycleDetailID\" = bd.\"MotorcycleDetailID\" "
-                + "JOIN \"Booking\" b ON bd.\"BookingID\" = b.\"BookingID\" "
-                + "JOIN \"PriceList\" p ON m.\"PriceListID\" = p.\"PriceListID\" "
-                + conditionWithAlias
-                + " GROUP BY m.\"Image\", m.\"Model\", p.\"DailyPriceForDay\", p.\"DailyPriceForWeek\", p.\"DailyPriceForMonth\" "
-                + " ORDER BY rentCount DESC";
-
+                   + "FROM \"Motorcycle\" m "
+                   + "JOIN \"Motorcycle Detail\" md ON m.\"MotorcycleID\" = md.\"MotorcycleID\" "
+                   + "JOIN \"Booking Detail\" bd ON md.\"MotorcycleDetailID\" = bd.\"MotorcycleDetailID\" "
+                   + "JOIN \"Booking\" b ON bd.\"BookingID\" = b.\"BookingID\" "
+                   + "JOIN \"PriceList\" p ON m.\"PriceListID\" = p.\"PriceListID\" "
+                   + conditionWithAlias
+                   + " GROUP BY m.\"Image\", m.\"Model\", p.\"DailyPriceForDay\", p.\"DailyPriceForWeek\", p.\"DailyPriceForMonth\" "
+                   + " ORDER BY rentCount DESC";
+                   
         try (PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 list.add(new DashboardStatsData.TopMotorcycle(
-                        rs.getString("Image"),
-                        rs.getString("Model"),
-                        rs.getDouble("DailyPriceForDay"),
-                        rs.getDouble("DailyPriceForWeek"),
-                        rs.getDouble("DailyPriceForMonth"),
-                        rs.getInt("rentCount")
+                    rs.getString("Image"),
+                    rs.getString("Model"),
+                    rs.getDouble("DailyPriceForDay"),
+                    rs.getDouble("DailyPriceForWeek"),
+                    rs.getDouble("DailyPriceForMonth"),
+                    rs.getInt("rentCount")
                 ));
             }
         } catch (SQLException e) {
@@ -373,7 +415,7 @@ public class DashboardDAO {
                 // Ignore parse errors, fallback to all
             }
         }
-
+        
         switch (period) {
             case "today":
                 if (isPrevious) return "\"BookingDate\" >= current_date - interval '1 day' AND \"BookingDate\" < current_date";

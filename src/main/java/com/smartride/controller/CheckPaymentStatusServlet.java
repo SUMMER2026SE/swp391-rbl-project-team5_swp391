@@ -28,6 +28,7 @@ public class CheckPaymentStatusServlet extends HttpServlet {
 
         // Kiểm tra trong in-memory map trước (để xử lý webhook ngay lập tức)
         if (SepayWebhookServlet.paidOrders != null && SepayWebhookServlet.paidOrders.containsKey(bookingId)) {
+            SepayWebhookServlet.paidOrders.remove(bookingId);
             out.print("{\"status\":\"paid\"}");
         } else {
             // Dự phòng: Kiểm tra trong database

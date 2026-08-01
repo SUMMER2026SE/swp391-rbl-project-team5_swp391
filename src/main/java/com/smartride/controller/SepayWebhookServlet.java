@@ -26,7 +26,24 @@ import jakarta.servlet.http.HttpServletResponse;
 @WebServlet(name = "SepayWebhookServlet", urlPatterns = {"/sepay-webhook"})
 public class SepayWebhookServlet extends HttpServlet {
 
-    public static java.util.Map<String, Boolean> paidOrders = new java.util.concurrent.ConcurrentHashMap<>();
+    public static java.util.Map<String, Long> paidOrders = new java.util.concurrent.ConcurrentHashMap<>();
+
+    static {
+        Thread cleanupThread = new Thread(() -> {
+            while (true) {
+                try {
+                    Thread.sleep(300_000);
+                    long cutoff = System.currentTimeMillis() - 600_000;
+                    paidOrders.values().removeIf(v -> v < cutoff);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
+            }
+        }, "paidOrders-cleanup");
+        cleanupThread.setDaemon(true);
+        cleanupThread.start();
+    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -35,7 +52,25 @@ public class SepayWebhookServlet extends HttpServlet {
         String bookingId = request.getParameter("bookingId");
         String amountStr = request.getParameter("amount");
         
+        System.out.println("[SepayWebhook] ========== NEW WEBHOOK REQUEST ==========");
+        System.out.println("[SepayWebhook] bookingId param: " + bookingId);
+        System.out.println("[SepayWebhook] amount param: " + amountStr);
+        System.out.println("[SepayWebhook] Request method: " + request.getMethod());
+        System.out.println("[SepayWebhook] Request content type: " + request.getContentType());
+        System.out.println("[SepayWebhook] Request URI: " + request.getRequestURI());
+        System.out.println("[SepayWebhook] Request path: " + request.getRequestURL());
+        
+        // Debug: Print all parameters
+        java.util.Enumeration<String> paramNames = request.getParameterNames();
+        System.out.println("[SepayWebhook] All parameters:");
+        while (paramNames.hasMoreElements()) {
+            String paramName = paramNames.nextElement();
+            String paramValue = request.getParameter(paramName);
+            System.out.println("[SepayWebhook]   " + paramName + " = " + paramValue);
+        }
+        
         if (bookingId == null && amountStr == null) {
+            System.out.println("[SepayWebhook] No URL parameters found, trying to read request body...");
             StringBuilder buffer = new StringBuilder();
             BufferedReader reader = request.getReader();
             String line;
@@ -43,6 +78,7 @@ public class SepayWebhookServlet extends HttpServlet {
                 buffer.append(line);
             }
             String payload = buffer.toString();
+            System.out.println("[SepayWebhook] Request body: " + payload);
             
             Matcher mContent = Pattern.compile("\"content\"\\s*:\\s*\"([^\"]+)\"").matcher(payload);
             if (mContent.find()) {
@@ -59,26 +95,58 @@ public class SepayWebhookServlet extends HttpServlet {
             }
         }
         
-        if (bookingId == null || bookingId.isEmpty()) {
+        if (bookingId == null || bookingId.isEmpty() || !bookingId.matches("BK\\d+")) {
+            System.out.println("[SepayWebhook] INVALID booking ID: " + bookingId);
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.setContentType("application/json");
+            response.getWriter().write("{\"success\":false,\"reason\":\"Invalid booking ID: " + bookingId + "\",\"debug\":{\"received_bookingId\":\"" + bookingId + "\",\"received_amount\":\"" + amountStr + "\"}}");
             return;
         }
 
+        System.out.println("[SepayWebhook] Valid booking ID detected: " + bookingId);
+
         try {
             int amount = (amountStr != null) ? Integer.parseInt(amountStr) : 0;
-            
-            // Lưu vào map tĩnh để frontend polling có thể lấy ngay lập tức!
-            paidOrders.put(bookingId, true);
+            System.out.println("[SepayWebhook] Parsed amount: " + amount);
             
             BookingDAO daoB = BookingDAO.getInstance();
             com.smartride.dto.Booking existingBooking = daoB.getBookingById(bookingId);
             
-            if (existingBooking != null) {
-                PaymentDAO daoP = PaymentDAO.getInstance();
-                LocalDateTime currentDateTime = LocalDateTime.now();
-                DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-                String paymentDateText = currentDateTime.format(outputFormatter);
+            if (existingBooking == null) {
+                System.out.println("[SepayWebhook] ERROR: Booking not found in database for " + bookingId);
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                response.getWriter().write("{\"success\":false,\"reason\":\"Booking not found\"}");
+                return;
+            }
+            
+            System.out.println("[SepayWebhook] Booking found - Current Status: " + existingBooking.getStatusBooking() + ", Delivery: " + existingBooking.getDeliveryStatus());
+            
+            PaymentDAO daoP = PaymentDAO.getInstance();
+            LocalDateTime currentDateTime = LocalDateTime.now();
+            DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            String paymentDateText = currentDateTime.format(outputFormatter);
+            // Check if payment already exists to avoid UNIQUE constraint violation
+            java.util.List<com.smartride.dto.Payment> existingPays = daoP.getListByBookingId(bookingId);
+            boolean alreadyInserted = false;
+            for (com.smartride.dto.Payment p : existingPays) {
+                if ("Thành công".equals(p.getPaymentStatus())) {
+                    alreadyInserted = true;
+                    break;
+                }
+            }
+            if (!alreadyInserted) {
                 daoP.addPayment(bookingId, "SePay VietQR", paymentDateText, amount, "Thành công");
+                System.out.println("[SepayWebhook] Inserted payment for booking " + bookingId + " - Amount: " + amount);
+            } else {
+                System.out.println("[SepayWebhook] Skipped duplicate payment for booking " + bookingId);
+            }
+            
+            // Verify payment was inserted
+            java.util.List<com.smartride.dto.Payment> allPaymentsCheck = daoP.getListByBookingId(bookingId);
+            System.out.println("[SepayWebhook] Verification - Total payments in DB for " + bookingId + ": " + allPaymentsCheck.size());
+                for (com.smartride.dto.Payment p : allPaymentsCheck) {
+                    System.out.println("[SepayWebhook] Payment - Amount: " + p.getPaymentAmount() + ", Status: " + p.getPaymentStatus());
+                }
                 
                 // Calculate total paid - sum all payments for this booking
                 java.util.List<com.smartride.dto.Payment> allPayments = daoP.getListByBookingId(bookingId);
@@ -102,14 +170,19 @@ public class SepayWebhookServlet extends HttpServlet {
                 String currentDelivery = existingBooking.getDeliveryStatus();
                 
                 if ("Chờ thanh toán".equals(currentStatus)) {
+                    System.out.println("[SepayWebhook] Updating status from 'Chờ thanh toán' to 'Chờ xác nhận'");
                     daoB.updateBookingStatus(bookingId, "Chờ xác nhận");
                 } else if (fullyPaid && ("Đã xác nhận".equals(currentStatus) || "Đang thuê".equals(currentStatus))) {
                     // Nếu xe đã giao cho khách thì chuyển thẳng sang Đang thuê, ngược lại là Đã thanh toán
                     if ("Đã giao".equals(currentDelivery)) {
+                        System.out.println("[SepayWebhook] Fully paid + already delivered. Updating to 'Đang thuê'");
                         daoB.updateBookingStatus(bookingId, "Đang thuê");
                     } else {
+                        System.out.println("[SepayWebhook] Fully paid. Updating to 'Đã thanh toán'");
                         daoB.updateBookingStatus(bookingId, "Đã thanh toán");
                     }
+                } else {
+                    System.out.println("[SepayWebhook] No status update needed. Current: " + currentStatus + ", Fully paid: " + fullyPaid);
                 }
 
                 MotorcycleStatusDAO daoMS = MotorcycleStatusDAO.getInstance();
@@ -162,29 +235,23 @@ public class SepayWebhookServlet extends HttpServlet {
                 } catch (Exception ex) {
                     System.out.println("Lỗi gửi email/thông báo SePay: " + ex.getMessage());
                 }
-            }
+                
+                // Chỉ thêm vào paidOrders sau khi đã insert Payment thành công vào DB
+                paidOrders.put(bookingId, System.currentTimeMillis());
+                System.out.println("[SepayWebhook] paidOrders marked for booking " + bookingId);
             
             response.setContentType("application/json");
             PrintWriter out = response.getWriter();
             out.print("{\"success\":true}");
             out.flush();
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("[SepayWebhook] ERROR: " + e.getMessage());
+            java.io.StringWriter sw = new java.io.StringWriter();
+            e.printStackTrace(new java.io.PrintWriter(sw));
+            System.out.println("[SepayWebhook] StackTrace: " + sw.toString());
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 }
 
-// Minor update 10
 
-// Minor update 14
-
-// Minor update 34
-
-// fix patch 3
-
-// fix patch 8
-
-// fix patch 48
-
-// fix patch 50

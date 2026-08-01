@@ -27,6 +27,20 @@
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <!-- Bootstrap 5 JS -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Bootstrap 5 removed the jQuery .modal() API; polyfill it so existing $.fn.modal('show'/'hide') calls keep working -->
+        <script>
+            (function ($) {
+                if (!$.fn || $.fn.modal) return;
+                $.fn.modal = function (action, options) {
+                    return this.each(function () {
+                        var instance = bootstrap.Modal.getOrCreateInstance(this, options);
+                        if (action === 'hide') instance.hide();
+                        else if (action === 'toggle') instance.toggle();
+                        else instance.show();
+                    });
+                };
+            })(window.jQuery);
+        </script>
         <style>
             
             /* Custom styles - chỉ giữ lại những gì cần override */
@@ -1620,7 +1634,7 @@ function showStaffExtendModal() {
             });
         }
 
-        $('#returnModal-confirmBtn').on('click', function() {
+        $(document).on('click', '#returnModal-confirmBtn', function() {
             if (!_pendingReturnBookingId) return;
             var btn = $(this);
             btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Đang xử lý...');

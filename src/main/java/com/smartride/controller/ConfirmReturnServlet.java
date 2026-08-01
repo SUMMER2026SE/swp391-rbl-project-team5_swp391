@@ -58,11 +58,14 @@ public class ConfirmReturnServlet extends HttpServlet {
                 return;
             }
 
+            // 3. Cập nhật StatusBooking → 'Đã hoàn thành' (hoàn tất)
+            bookingDAO.updateBookingStatus(bookingID, "Đã hoàn thành");
+
             // 3. Nếu có phí phạt → insert bản ghi Payment "Phí trễ hạn"
             if (lateFee > 0) {
                 String paymentDate = LocalDateTime.now()
                         .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-                PaymentDAO.getInstance().addLateFeePayment(bookingID, "Phí trễ hạn", paymentDate, (int) lateFee);
+                PaymentDAO.getInstance().addLateFeePayment(bookingID, "Phí trễ hạn", paymentDate, lateFee);
             }
 
             // 4. Trả JSON về cho frontend

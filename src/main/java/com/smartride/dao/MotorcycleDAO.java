@@ -83,7 +83,7 @@ public class MotorcycleDAO implements Serializable, DAO<Motorcycle> {
                 motorcycle.setBrandID(rs.getInt(7));
                 motorcycle.setCategoryID(rs.getInt(8));
                 motorcycle.setPriceListID(rs.getInt(9));
-
+                
                 motorcycle.setListMotorcycleDetails(detailsMap.getOrDefault(mId, new ArrayList<>()));
                 list.add(motorcycle);
             }
@@ -255,7 +255,7 @@ public class MotorcycleDAO implements Serializable, DAO<Motorcycle> {
             rs = stm.executeQuery();
             while (rs.next()) {
                 list.put(new Motorcycle(rs.getString(1), rs.getString(2), rs.getString(3),
-                                rs.getString(4), rs.getString(5), rs.getInt(6), rs.getInt(7), rs.getInt(8), rs.getInt(9)),
+                        rs.getString(4), rs.getString(5), rs.getInt(6), rs.getInt(7), rs.getInt(8), rs.getInt(9)),
                         rs.getInt(10));
             }
         } catch (Exception ex) {
@@ -478,7 +478,7 @@ public class MotorcycleDAO implements Serializable, DAO<Motorcycle> {
             sql.append(" AND m.\"Model\" ILIKE ?");
             params.add("%" + criteria.getKeyword().trim() + "%");
         }
-
+        
         if (criteria.getPriceRanges() != null && !criteria.getPriceRanges().isEmpty()) {
             sql.append(" AND \"PriceListID\" IN (SELECT \"PriceListID\" FROM \"PriceList\" WHERE ");
             for (int i = 0; i < criteria.getPriceRanges().size(); i++) {
@@ -680,7 +680,7 @@ public class MotorcycleDAO implements Serializable, DAO<Motorcycle> {
         }
         return list;
     }
-
+    
 
     @Override
     protected Object clone() throws CloneNotSupportedException {
@@ -920,7 +920,7 @@ public class MotorcycleDAO implements Serializable, DAO<Motorcycle> {
         }
         return list;
     }
-
+    
     public String getNewMotorcycleID() {
         String sql = "SELECT \"MotorcycleID\" FROM \"Motorcycle\" ORDER BY \"MotorcycleID\" DESC LIMIT 1";
         try {

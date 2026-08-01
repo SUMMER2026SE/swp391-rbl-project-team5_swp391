@@ -13,7 +13,7 @@ import java.nio.file.Files;
  */
 public class IdCardVerifier {
 
-    public static final String FPT_API_KEY = System.getenv("FPT_API_KEY");
+    public static final String FPT_API_KEY = "6wNP06jo9FT0N0rihPRgR0GgHAkw5jdQ";
     private static final String FPT_API_URL = "https://api.fpt.ai/vision/idr/vnm/";
 
     /**

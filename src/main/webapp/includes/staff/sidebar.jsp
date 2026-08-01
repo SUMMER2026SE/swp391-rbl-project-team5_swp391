@@ -178,6 +178,12 @@
                 <span>Quản lý khách hàng</span>
             </a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link ${param.iframeSrc == 'topCustomersStaff' ? 'active-page' : 'collapsed'}" style="cursor: pointer;" onclick="CallSideBar('topCustomersStaff', this)">
+                <i class="bi bi-award" style="color: #FFD700;"></i>
+                <span style="color: #FFD700; font-weight: bold;">Top Khách Hàng VIP</span>
+            </a>
+        </li>
 
         <li class="nav-item">
             <a class="nav-link ${param.iframeSrc == 'manageVoucher' ? 'active-page' : 'collapsed'}" style="cursor: pointer;" onclick="CallSideBar('manageVoucher', this)">

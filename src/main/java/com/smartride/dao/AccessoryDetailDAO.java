@@ -34,7 +34,7 @@ public class AccessoryDetailDAO implements Serializable, DAO<AccessoryDetail> {
     public LinkedHashMap<Integer, Integer> getListByBookingId(String id) {
         LinkedHashMap<Integer, Integer> list = new LinkedHashMap<>();
         ResultSet rs;
-        String sql = "Select AccessoryID,Quantity from \"AccessoryDetail\" where BookingID like ?;";
+            String sql = "Select AccessoryID,Quantity from \"AccessoryDetail\" where BookingID like ?;";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, id);
@@ -66,7 +66,7 @@ public class AccessoryDetailDAO implements Serializable, DAO<AccessoryDetail> {
             System.out.println(e);
         }
     }
-
+    
     public List<AccessoryDetail> getAccessoryDetail(String accessoryID) {
         List<AccessoryDetail> list = new ArrayList<>();
         PreparedStatement stm;

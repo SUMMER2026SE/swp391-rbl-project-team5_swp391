@@ -99,27 +99,27 @@ public class FAQDAO implements Serializable, DAO<FAQDAO> {
             }
         } catch (Exception e) {
             System.out.println("Error updating FAQ: " + e.getMessage());
-        }
+        }    
     }
 
     @Override
     public List<FAQDAO> getAll() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Not supported yet."); 
     }
 
     @Override
     public void insert(FAQDAO t) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Not supported yet."); 
     }
 
     @Override
     public void update(FAQDAO t) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Not supported yet."); 
     }
 
     @Override
     public void delete(FAQDAO t) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("Not supported yet."); 
     }
 
     public static void main(String[] args) {

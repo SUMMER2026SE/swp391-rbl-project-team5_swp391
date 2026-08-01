@@ -53,12 +53,12 @@ public class TouristLocationDAO implements Serializable, DAO<TouristLocation> {
                     url = url.replace("Đạo_Hải_Vân", "Đèo_Hải_Vân");
                 }
                 list.add(new TouristLocation(
-                        rs.getInt("LocationID"),
-                        rs.getString("LocationName"),
-                        rs.getString("LocationImage"),
-                        rs.getString("Description"),
-                        url,
-                        rs.getString("StaffID")
+                    rs.getInt("LocationID"), 
+                    rs.getString("LocationName"), 
+                    rs.getString("LocationImage"), 
+                    rs.getString("Description"), 
+                    url, 
+                    rs.getString("StaffID")
                 ));
             }
         } catch (Exception ex) {
@@ -80,12 +80,12 @@ public class TouristLocationDAO implements Serializable, DAO<TouristLocation> {
                     url = url.replace("Đạo_Hải_Vân", "Đèo_Hải_Vân");
                 }
                 list.add(new TouristLocation(
-                        rs.getInt("LocationID"),
-                        rs.getString("LocationName"),
-                        rs.getString("LocationImage"),
-                        rs.getString("Description"),
-                        url,
-                        rs.getString("StaffID")
+                    rs.getInt("LocationID"), 
+                    rs.getString("LocationName"), 
+                    rs.getString("LocationImage"), 
+                    rs.getString("Description"), 
+                    url, 
+                    rs.getString("StaffID")
                 ));
             }
         } catch (Exception ex) {
@@ -97,9 +97,9 @@ public class TouristLocationDAO implements Serializable, DAO<TouristLocation> {
     public int getTotalTouristLocation() {
         int total = 0;
         try (Connection connection = DBUtil.makeConnection();
-             PreparedStatement ps = connection.prepareStatement(
-                     "SELECT COUNT(*) FROM \"TouristLocation\"");
-             ResultSet rs = ps.executeQuery()) {
+                PreparedStatement ps = connection.prepareStatement(
+                        "SELECT COUNT(*) FROM \"TouristLocation\"");
+                ResultSet rs = ps.executeQuery()) {
             if (rs.next()) {
                 total = rs.getInt(1);
             }
@@ -126,7 +126,7 @@ public class TouristLocationDAO implements Serializable, DAO<TouristLocation> {
 
         Map<Integer, Set<String>> seenModelsByLocation = new HashMap<>();
         try (Connection connection = DBUtil.makeConnection();
-             PreparedStatement ps = connection.prepareStatement(sql)) {
+                PreparedStatement ps = connection.prepareStatement(sql)) {
             for (int i = 0; i < locations.size(); i++) {
                 int locationId = locations.get(i).getLocationId();
                 ps.setInt(i + 1, locationId);
@@ -159,10 +159,10 @@ public class TouristLocationDAO implements Serializable, DAO<TouristLocation> {
     public List<LocationRecommendationDTO> getRecommendationsByLocation(int locationId) {
         List<LocationRecommendationDTO> list = new ArrayList<>();
         String sql = "SELECT r.\"MotorcycleID\", m.\"Model\", m.\"Image\", r.\"Reason\", r.\"Priority\" " +
-                "FROM \"LocationMotorcycleRecommendation\" r " +
-                "JOIN \"Motorcycle\" m ON r.\"MotorcycleID\" = m.\"MotorcycleID\" " +
-                "WHERE r.\"LocationID\" = ? " +
-                "ORDER BY r.\"Priority\" ASC";
+                     "FROM \"LocationMotorcycleRecommendation\" r " +
+                     "JOIN \"Motorcycle\" m ON r.\"MotorcycleID\" = m.\"MotorcycleID\" " +
+                     "WHERE r.\"LocationID\" = ? " +
+                     "ORDER BY r.\"Priority\" ASC";
         try (Connection conn = DBUtil.makeConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, locationId);
@@ -173,11 +173,11 @@ public class TouristLocationDAO implements Serializable, DAO<TouristLocation> {
                     if (!seenModels.contains(model)) {
                         seenModels.add(model);
                         list.add(new LocationRecommendationDTO(
-                                rs.getString("MotorcycleID"),
-                                model,
-                                rs.getString("Image"),
-                                rs.getString("Reason"),
-                                rs.getInt("Priority")
+                            rs.getString("MotorcycleID"),
+                            model,
+                            rs.getString("Image"),
+                            rs.getString("Reason"),
+                            rs.getInt("Priority")
                         ));
                     }
                 }

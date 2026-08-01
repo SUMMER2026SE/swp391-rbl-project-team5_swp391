@@ -14,7 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class MotorcycleDetailDAO implements Serializable, DAO<MotorcycleDetail> {
-
+    
     private static MotorcycleDetailDAO instance;
     private Connection conn = DBUtil.makeConnection();
 
@@ -22,37 +22,37 @@ public class MotorcycleDetailDAO implements Serializable, DAO<MotorcycleDetail> 
     //Chỉ new DAO qua hàm static getInstance() để quản lí được số object/instance đã new - SINGLETON DESIGN PATTERN
     private MotorcycleDetailDAO() {
     }
-
+    
     public static MotorcycleDetailDAO getInstance() {
-
+        
         if (instance == null) {
             instance = new MotorcycleDetailDAO();
         }
         return instance;
     }
-
+    
     public List<MotorcycleDetail> getAllMotorcycleDetail() {
         List<MotorcycleDetail> list = new ArrayList<>();
         PreparedStatement stm;
         ResultSet rs;
         try {
             String sql = "WITH LatestStatus AS (\n"
-                    + "    SELECT\n"
-                    + "        ms.\"MotorcycleDetailID\",\n"
-                    + "        ms.\"StatusAction\",\n"
-                    + "        ms.\"Note\",\n"
-                    + "        ROW_NUMBER() OVER (PARTITION BY ms.\"MotorcycleDetailID\" ORDER BY ms.\"MotorcycleStatusID\" DESC) AS \"RowNum\"\n"
-                    + "    FROM\n"
-                    + "        \"Motorcycle Status\" ms\n"
-                    + ")\n"
-                    + "SELECT\n"
-                    + "    md.*,\n"
-                    + "    ls.\"StatusAction\",\n"
-                    + "    ls.\"Note\"\n"
-                    + "FROM\n"
-                    + "    \"Motorcycle Detail\" md\n"
-                    + "LEFT JOIN\n"
-                    + "    LatestStatus ls ON md.\"MotorcycleDetailID\" = ls.\"MotorcycleDetailID\" AND ls.\"RowNum\" = 1;";
+                       + "    SELECT\n"
+                       + "        ms.\"MotorcycleDetailID\",\n"
+                       + "        ms.\"StatusAction\",\n"
+                       + "        ms.\"Note\",\n"
+                       + "        ROW_NUMBER() OVER (PARTITION BY ms.\"MotorcycleDetailID\" ORDER BY ms.\"MotorcycleStatusID\" DESC) AS \"RowNum\"\n"
+                       + "    FROM\n"
+                       + "        \"Motorcycle Status\" ms\n"
+                       + ")\n"
+                       + "SELECT\n"
+                       + "    md.*,\n"
+                       + "    ls.\"StatusAction\",\n"
+                       + "    ls.\"Note\"\n"
+                       + "FROM\n"
+                       + "    \"Motorcycle Detail\" md\n"
+                       + "LEFT JOIN\n"
+                       + "    LatestStatus ls ON md.\"MotorcycleDetailID\" = ls.\"MotorcycleDetailID\" AND ls.\"RowNum\" = 1;";
             stm = conn.prepareStatement(sql);
             rs = stm.executeQuery();
             while (rs.next()) {
@@ -66,7 +66,7 @@ public class MotorcycleDetailDAO implements Serializable, DAO<MotorcycleDetail> 
         }
         return list;
     }
-
+    
     public List<MotorcycleDetail> getMotorcycleDetail(String motorcycleId) {
         List<MotorcycleDetail> list = new ArrayList<>();
         PreparedStatement stm;
@@ -84,7 +84,7 @@ public class MotorcycleDetailDAO implements Serializable, DAO<MotorcycleDetail> 
         }
         return list;
     }
-
+    
     public List<Integer> getListAvailableMotorcycleDetailIdByMotorcycleName(String motorcycleName) {
         List<Integer> list = new ArrayList<>();
         PreparedStatement stm;
@@ -124,7 +124,7 @@ public class MotorcycleDetailDAO implements Serializable, DAO<MotorcycleDetail> 
         }
         return list;
     }
-
+    
     public void addMotorDetail(MotorcycleDetail detail) {
         String sql = "INSERT INTO \"Motorcycle Detail\"\n"
                 + "           (\"MotorcycleID\"\n"
@@ -140,7 +140,7 @@ public class MotorcycleDetailDAO implements Serializable, DAO<MotorcycleDetail> 
             System.out.println(e);
         }
     }
-
+    
     public MotorcycleDetail getDetailByLicensePlate(String licensePlate) {
         PreparedStatement stm;
         ResultSet rs;
@@ -159,27 +159,27 @@ public class MotorcycleDetailDAO implements Serializable, DAO<MotorcycleDetail> 
         }
         return null;
     }
-
+    
     @Override
     public List<MotorcycleDetail> getAll() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-
+    
     @Override
     public void insert(MotorcycleDetail t) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-
+    
     @Override
     public void update(MotorcycleDetail t) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-
+    
     @Override
     public void delete(MotorcycleDetail t) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-
+    
     public static void main(String[] args) {
         MotorcycleDetailDAO dao = getInstance();
 //        for (int x : dao.getListAvailableMotorcycleDetailIdByMotorcycleName("VinFast Klara S 62 kW")) {

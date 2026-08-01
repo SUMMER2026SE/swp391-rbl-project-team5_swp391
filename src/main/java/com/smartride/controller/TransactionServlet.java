@@ -38,6 +38,10 @@ public class TransactionServlet extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         Account acc = (Account) session.getAttribute("account");
+        if (acc == null) {
+            response.sendRedirect("login.jsp");
+            return;
+        }
         List<Payment> payment = PaymentDAO.getInstance().getAllPaymentsByCustomer(acc.getAccountId());
         
         // Populate synthetic pending transactions for bookings without any payments
@@ -101,12 +105,4 @@ public class TransactionServlet extends HttpServlet {
 
 }
 
-// Minor update 8
 
-// Minor update 28
-
-// fix patch 7
-
-// fix patch 44
-
-// fix patch 53

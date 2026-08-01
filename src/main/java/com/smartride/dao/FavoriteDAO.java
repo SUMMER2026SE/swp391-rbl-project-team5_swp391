@@ -78,10 +78,10 @@ public class FavoriteDAO implements Serializable {
     public List<Favorite> getFavoritesByAccountId(int accountId) {
         List<Favorite> list = new ArrayList<>();
         String sql = "SELECT f.*, m.\"Model\" AS \"MotorcycleName\", m.\"Image\", pl.\"DailyPriceForDay\" AS \"RentPrice\" " +
-                "FROM \"Favorite\" f " +
-                "JOIN \"Motorcycle\" m ON f.motorcycle_id = m.\"MotorcycleID\" " +
-                "LEFT JOIN \"PriceList\" pl ON m.\"PriceListID\" = pl.\"PriceListID\" " +
-                "WHERE f.account_id = ? ORDER BY f.created_at DESC";
+                     "FROM \"Favorite\" f " +
+                     "JOIN \"Motorcycle\" m ON f.motorcycle_id = m.\"MotorcycleID\" " +
+                     "LEFT JOIN \"PriceList\" pl ON m.\"PriceListID\" = pl.\"PriceListID\" " +
+                     "WHERE f.account_id = ? ORDER BY f.created_at DESC";
         try {
             PreparedStatement stm = conn.prepareStatement(sql);
             stm.setInt(1, accountId);
